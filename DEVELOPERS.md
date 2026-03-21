@@ -116,18 +116,20 @@ password = pypi-YOUR-TOKEN-HERE
 
 ### 5. Update Homebrew Formula
 
-After PyPI publish completes, update `formula/brow.rb`:
+After PyPI publish completes, update the formula in the `homebrew-tap` repo:
 
 ```bash
 # Download the tarball and get sha256
 VERSION="0.1.X"
-curl -sL "https://files.pythonhosted.org/packages/source/b/brow-cli/brow_cli-${VERSION}.tar.gz" | shasum -a 256
+SHA256=$(curl -sL "https://files.pythonhosted.org/packages/source/b/brow-cli/brow_cli-${VERSION}.tar.gz" | shasum -a 256 | cut -d' ' -f1)
+echo "SHA256: $SHA256"
 
-# Update formula/brow.rb:
-# 1. Set url to the tarball URL
-# 2. Set sha256 to the hash from above
-# 3. Commit and push
-git add formula/brow.rb
-git commit -m "chore: update homebrew formula to v${VERSION}"
+# Update the formula
+cd ~/Documents/projects-personal/homebrew-tap
+# Edit Formula/brow.rb:
+# 1. Update version in url line
+# 2. Update sha256 with the hash above
+git add Formula/brow.rb
+git commit -m "chore: update brow to v${VERSION}"
 git push
 ```
