@@ -4,16 +4,17 @@ Standalone Playwright CLI for agent browser automation. Launches a real Chromium
 
 ## Install
 
-**Homebrew:**
-```bash
-brew tap detrin/tap
-brew install brow
-```
-
 **pip:**
 ```bash
 pip install brow-cli
 playwright install chromium
+```
+
+**Homebrew** (experimental - use pip for now):
+```bash
+brew tap detrin/tap
+brew install brow
+# Then manually: pip install -U brow-cli
 ```
 
 **Agent skill:**
