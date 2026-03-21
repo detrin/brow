@@ -136,10 +136,18 @@ def snapshot_cmd(search: Optional[str] = None, locator: Optional[str] = None, s:
     typer.echo(result["tree"])
 
 @app.command("screenshot")
-def screenshot_cmd(full: bool = False, path: Optional[str] = None, s: Optional[str] = session_opt):
+def screenshot_cmd(
+    full: bool = False,
+    path: Optional[str] = None,
+    width: Optional[int] = None,
+    scale: Optional[float] = None,
+    quality: Optional[str] = typer.Option(None, help="low (400px), medium (800px), high (1200px)"),
+    s: Optional[str] = session_opt
+):
     ensure_daemon()
     c = _client()
-    result = run_async(c.post(f"/browser/{s}/screenshot", json={"full": full, "path": path}))
+    payload = {"full": full, "path": path, "width": width, "scale": scale, "quality": quality}
+    result = run_async(c.post(f"/browser/{s}/screenshot", json=payload))
     typer.echo(result["path"])
 
 @app.command("html")
@@ -172,16 +180,42 @@ def logs_cmd(search: Optional[str] = None, count: int = 50, s: Optional[str] = s
     typer.echo(result["logs"])
 
 @app.command("click")
-def click_cmd(selector: str, s: Optional[str] = session_opt, timeout: int = 30000):
+def click_cmd(
+    selector: str,
+    s: Optional[str] = session_opt,
+    timeout: int = 30000,
+    retry: int = 0,
+    no_wait: bool = typer.Option(False, help="Skip waiting for selector to be visible")
+):
     ensure_daemon()
     c = _client()
-    run_async(c.post(f"/browser/{s}/click", json={"selector": selector, "timeout": timeout}))
+    payload = {
+        "selector": selector,
+        "timeout": timeout,
+        "retry": retry,
+        "wait_for_selector": not no_wait
+    }
+    run_async(c.post(f"/browser/{s}/click", json=payload))
 
 @app.command("fill")
-def fill_cmd(selector: str, value: str, s: Optional[str] = session_opt, timeout: int = 30000):
+def fill_cmd(
+    selector: str,
+    value: str,
+    s: Optional[str] = session_opt,
+    timeout: int = 30000,
+    retry: int = 0,
+    no_wait: bool = typer.Option(False, help="Skip waiting for selector to be visible")
+):
     ensure_daemon()
     c = _client()
-    run_async(c.post(f"/browser/{s}/fill", json={"selector": selector, "value": value, "timeout": timeout}))
+    payload = {
+        "selector": selector,
+        "value": value,
+        "timeout": timeout,
+        "retry": retry,
+        "wait_for_selector": not no_wait
+    }
+    run_async(c.post(f"/browser/{s}/fill", json=payload))
 
 @app.command("type")
 def type_cmd(text: str, s: Optional[str] = session_opt):

@@ -16,6 +16,7 @@ dependencies = [
     "uvicorn>=0.24",
     "typer>=0.9",
     "httpx>=0.25",
+    "pillow>=10.0",
 ]
 
 [project.optional-dependencies]

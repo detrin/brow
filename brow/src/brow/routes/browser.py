@@ -34,11 +34,15 @@ class WaitReq(BaseModel):
 class ClickReq(BaseModel):
     selector: str
     timeout: int = DEFAULT_TIMEOUT
+    retry: int = 0
+    wait_for_selector: bool = True
 
 class FillReq(BaseModel):
     selector: str
     value: str
     timeout: int = DEFAULT_TIMEOUT
+    retry: int = 0
+    wait_for_selector: bool = True
 
 class TypeReq(BaseModel):
     text: str
@@ -65,6 +69,9 @@ class UploadReq(BaseModel):
 class ScreenshotReq(BaseModel):
     full: bool = False
     path: Optional[str] = None
+    width: Optional[int] = None
+    scale: Optional[float] = None
+    quality: Optional[str] = None
 
 @router.post("/navigate")
 async def navigate(req: Request, sid: str, body: NavigateReq):
@@ -151,6 +158,8 @@ async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator
 
 @router.post("/screenshot")
 async def screenshot(req: Request, sid: str, body: ScreenshotReq):
+    from PIL import Image
+
     session = _get_session(req, sid)
     page = _get_page(session)
     ensure_dirs()
@@ -158,7 +167,28 @@ async def screenshot(req: Request, sid: str, body: ScreenshotReq):
         path = Path(body.path)
     else:
         path = SCREENSHOTS_DIR / f"{sid}-{int(time.time())}.png"
+
     await page.screenshot(path=str(path), full_page=body.full)
+
+    if body.width or body.scale or body.quality:
+        img = Image.open(path)
+
+        if body.quality:
+            presets = {"low": 400, "medium": 800, "high": 1200}
+            target_width = presets.get(body.quality, 800)
+        elif body.width:
+            target_width = body.width
+        elif body.scale:
+            target_width = int(img.width * body.scale)
+        else:
+            target_width = img.width
+
+        if target_width != img.width:
+            aspect_ratio = img.height / img.width
+            target_height = int(target_width * aspect_ratio)
+            img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
+            img.save(path, optimize=True, quality=85)
+
     return {"path": str(path)}
 
 @router.get("/html")
@@ -185,17 +215,57 @@ async def get_logs(req: Request, sid: str, search: Optional[str] = None, count: 
 
 @router.post("/click")
 async def click(req: Request, sid: str, body: ClickReq):
+    import asyncio as aio
+
     session = _get_session(req, sid)
     page = _get_page(session)
-    await page.click(body.selector, timeout=body.timeout)
-    return {"ok": True}
+
+    attempts = body.retry + 1
+    last_error = None
+
+    for attempt in range(attempts):
+        try:
+            if body.wait_for_selector:
+                await page.wait_for_selector(body.selector, timeout=body.timeout, state="visible")
+
+            await page.click(body.selector, timeout=body.timeout)
+            return {"ok": True}
+        except Exception as e:
+            last_error = e
+            if attempt < attempts - 1:
+                await aio.sleep(1)
+
+    raise HTTPException(
+        500,
+        f"Failed to click selector '{body.selector}' after {attempts} attempts. Last error: {str(last_error)}"
+    )
 
 @router.post("/fill")
 async def fill(req: Request, sid: str, body: FillReq):
+    import asyncio as aio
+
     session = _get_session(req, sid)
     page = _get_page(session)
-    await page.fill(body.selector, body.value, timeout=body.timeout)
-    return {"ok": True}
+
+    attempts = body.retry + 1
+    last_error = None
+
+    for attempt in range(attempts):
+        try:
+            if body.wait_for_selector:
+                await page.wait_for_selector(body.selector, timeout=body.timeout, state="visible")
+
+            await page.fill(body.selector, body.value, timeout=body.timeout)
+            return {"ok": True}
+        except Exception as e:
+            last_error = e
+            if attempt < attempts - 1:
+                await aio.sleep(1)
+
+    raise HTTPException(
+        500,
+        f"Failed to fill selector '{body.selector}' after {attempts} attempts. Last error: {str(last_error)}"
+    )
 
 @router.post("/type")
 async def type_text(req: Request, sid: str, body: TypeReq):
