@@ -21,9 +21,8 @@ playwright install chromium
 # For most agents (Cline, Cursor, Amp, Gemini CLI, etc.)
 npx -y skills add detrin/brow
 
-# For Claude Code or OpenCode (manual install)
+# For OpenCode (manual install)
 git clone https://github.com/detrin/brow.git
-ln -s "$(pwd)/brow/skills/brow" ~/.claude/skills/brow     # Claude Code
 ln -s "$(pwd)/brow/skills/brow" ~/.opencode/skills/brow   # OpenCode
 ```
 
