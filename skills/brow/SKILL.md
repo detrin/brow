@@ -1,3 +1,8 @@
+---
+name: brow
+description: Browser automation CLI for agents — control Chromium with simple commands
+---
+
 # brow — Browser Automation for Agents
 
 Control a real Chromium browser from Claude Code. Navigate pages, click buttons, fill forms, take screenshots, and read page content — all through simple CLI commands.
