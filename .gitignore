@@ -13,4 +13,3 @@ venv/
 .coverage
 htmlcov/
 *.png
-docs/
