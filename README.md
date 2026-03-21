@@ -6,8 +6,7 @@ Standalone Playwright CLI for agent browser automation. Launches a real Chromium
 
 **Homebrew:**
 ```bash
-brew tap detrin/brow
-brew install brow
+brew install https://raw.githubusercontent.com/detrin/brow/main/formula/brow.rb
 ```
 
 **pip:**
