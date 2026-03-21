@@ -46,7 +46,49 @@ brow/
 3. Each session is an isolated browser instance
 4. Daemon auto-starts on first CLI command if not running
 
-## Publishing to PyPI
+## Release Process
+
+### 1. Bump Version
+
+Update version in `brow/pyproject.toml`:
+
+```toml
+[project]
+version = "0.1.X"  # Update this
+```
+
+### 2. Commit and Push
+
+```bash
+git add brow/pyproject.toml
+git commit -m "chore: bump version to 0.1.X"
+git push
+```
+
+### 3. Create GitHub Release
+
+Use browser automation with personal profile:
+
+```bash
+# Navigate to new release page
+brow navigate --session 1 "https://github.com/detrin/brow/releases/new"
+
+# Create tag (e.g., v0.1.2)
+# Fill release notes
+# Publish release
+```
+
+Or manually at https://github.com/detrin/brow/releases/new
+
+GitHub Actions will automatically build and publish to PyPI when a new release tag is created.
+
+### 4. Verify PyPI Upload
+
+Check that the new version appears at https://pypi.org/project/brow-cli/
+
+### Publishing to PyPI (Manual)
+
+If GitHub Actions fails, you can publish manually:
 
 ```bash
 cd brow
