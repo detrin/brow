@@ -4,7 +4,7 @@ class Brow < Formula
   desc "Standalone Playwright CLI for agent browser automation"
   homepage "https://github.com/detrin/brow"
   url "https://files.pythonhosted.org/packages/source/b/brow-cli/brow_cli-0.1.3.tar.gz"
-  sha256 "UPDATE_AFTER_PYPI_RELEASE"
+  sha256 "78279b18f48ee6560c3fbb08300bf76a8c95c177ebbc30bf38f098d66458f173"
   license "MIT"
 
   depends_on "python@3.12"
