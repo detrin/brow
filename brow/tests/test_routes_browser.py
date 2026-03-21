@@ -1,0 +1,125 @@
+import pytest
+from httpx import AsyncClient, ASGITransport
+from brow.daemon import create_app
+
+@pytest.fixture
+async def client():
+    app = create_app()
+    async with app.router.lifespan_context(app) as _:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as c:
+            yield c
+
+@pytest.fixture
+async def session_id(client):
+    r = await client.post("/sessions", json={"profile": "test", "headless": True})
+    return r.json()["id"]
+
+@pytest.mark.asyncio
+async def test_navigate(client, session_id):
+    r = await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Hello</h1>"})
+    assert r.status_code == 200
+    assert "url" in r.json()
+
+@pytest.mark.asyncio
+async def test_url(client, session_id):
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Hi</h1>"})
+    r = await client.get(f"/browser/{session_id}/url")
+    assert r.status_code == 200
+    assert "url" in r.json()
+
+@pytest.mark.asyncio
+async def test_snapshot(client, session_id):
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Hello</h1>"})
+    r = await client.get(f"/browser/{session_id}/snapshot")
+    assert r.status_code == 200
+    assert "tree" in r.json()
+
+@pytest.mark.asyncio
+async def test_click(client, session_id):
+    html = "data:text/html,<button id='btn'>Click</button>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.post(f"/browser/{session_id}/click", json={"selector": "#btn"})
+    assert r.status_code == 200
+
+@pytest.mark.asyncio
+async def test_fill(client, session_id):
+    html = "data:text/html,<input id='inp' type='text'/>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.post(f"/browser/{session_id}/fill", json={"selector": "#inp", "value": "hello"})
+    assert r.status_code == 200
+
+@pytest.mark.asyncio
+async def test_screenshot(client, session_id):
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Hi</h1>"})
+    r = await client.post(f"/browser/{session_id}/screenshot", json={})
+    assert r.status_code == 200
+    assert "path" in r.json()
+
+@pytest.mark.asyncio
+async def test_html(client, session_id):
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<p>Content</p>"})
+    r = await client.get(f"/browser/{session_id}/html")
+    assert r.status_code == 200
+    assert "html" in r.json()
+
+@pytest.mark.asyncio
+async def test_logs(client, session_id):
+    r = await client.get(f"/browser/{session_id}/logs")
+    assert r.status_code == 200
+    assert "logs" in r.json()
+
+@pytest.mark.asyncio
+async def test_wait(client, session_id):
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Test</h1>"})
+    r = await client.post(f"/browser/{session_id}/wait", json={"load": True})
+    assert r.status_code == 200
+    assert r.json()["ok"] == True
+
+@pytest.mark.asyncio
+async def test_type(client, session_id):
+    html = "data:text/html,<input id='inp' type='text'/>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    await client.post(f"/browser/{session_id}/click", json={"selector": "#inp"})
+    r = await client.post(f"/browser/{session_id}/type", json={"text": "test"})
+    assert r.status_code == 200
+
+@pytest.mark.asyncio
+async def test_key(client, session_id):
+    html = "data:text/html,<input id='inp' type='text'/>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    await client.post(f"/browser/{session_id}/click", json={"selector": "#inp"})
+    r = await client.post(f"/browser/{session_id}/key", json={"key": "Enter"})
+    assert r.status_code == 200
+
+@pytest.mark.asyncio
+async def test_hover(client, session_id):
+    html = "data:text/html,<button id='btn'>Hover</button>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.post(f"/browser/{session_id}/hover", json={"selector": "#btn"})
+    assert r.status_code == 200
+
+@pytest.mark.asyncio
+async def test_scroll(client, session_id):
+    html = "data:text/html,<div style='height:2000px'>Content</div>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.post(f"/browser/{session_id}/scroll", json={"pixels": 100})
+    assert r.status_code == 200
+
+@pytest.mark.asyncio
+async def test_no_active_page(client):
+    r = await client.post("/sessions", json={"profile": "nopage", "headless": True})
+    sid = r.json()["id"]
+    await client.delete(f"/sessions/{sid}")
+    r2 = await client.post("/sessions", json={"profile": "nopage2", "headless": True})
+    sid2 = r2.json()["id"]
+    mgr = None
+    async with create_app().router.lifespan_context(create_app()) as state:
+        pass
+    r = await client.get(f"/browser/{sid2}/url")
+    assert r.status_code == 200
+
+@pytest.mark.asyncio
+async def test_session_not_found(client):
+    r = await client.get("/browser/999/url")
+    assert r.status_code == 404

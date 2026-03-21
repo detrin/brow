@@ -1,0 +1,15 @@
+name: brow
+description: Browser automation CLI for agents — control Chromium with simple commands
+version: 0.1.0
+author: Daniel Herman
+tags:
+  - browser
+  - automation
+  - playwright
+  - web
+requirements:
+  - brow-cli
+  - playwright
+setup: |
+  pip install brow-cli
+  playwright install chromium
