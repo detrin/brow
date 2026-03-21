@@ -25,26 +25,26 @@ A real use case: use your Google account to search Maps in a city you've never v
 Open a headed browser with a persistent profile and sign in manually:
 
 ```bash
-brow session new --profile google --headed
+brow session new --profile personal --headed
 brow navigate -s 1 "https://accounts.google.com"
 # Sign in manually in the browser window...
 brow session delete 1
 ```
 
-Your login is saved in `~/.brow/profiles/google/` -you won't need to sign in again.
+Your login is saved in `~/.brow/profiles/personal/` -you won't need to sign in again.
 
 ### Step 2: Ask Claude Code to search
 
 Paste this into Claude Code:
 
-> Open a brow session with my google profile, go to Google Maps, and search for
+> Open a brow session with my personal profile, go to Google Maps, and search for
 > bars near Times Square in New York. Return the names, Google Maps URLs, ratings,
 > and number of reviews in a markdown table.
 
 Claude Code runs:
 
 ```bash
-brow session new --profile google --headed    # → 1 (already logged in)
+brow session new --profile personal --headed    # → 1 (already logged in)
 brow navigate -s 1 "https://www.google.com/maps/search/bars+near+Times+Square+New+York"
 brow screenshot -s 1
 brow eval -s 1 "
