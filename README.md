@@ -16,6 +16,11 @@ pip install brow-cli
 playwright install chromium
 ```
 
+**Agent skill:**
+```bash
+npx -y skills add detrin/brow
+```
+
 ## Example: Find Bars Near Times Square with Google Maps
 
 A real use case: use your Google account to search Maps in a city you've never visited, and extract structured results.
