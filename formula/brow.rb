@@ -2,12 +2,12 @@ class Brow < Formula
   include Language::Python::Virtualenv
 
   desc "Standalone Playwright CLI for agent browser automation"
-  homepage "https://github.com/danherma/brow"
-  url "https://files.pythonhosted.org/packages/source/b/brow-cli/brow_cli-0.1.0.tar.gz"
-  sha256 ""
+  homepage "https://github.com/detrin/brow"
+  url "https://files.pythonhosted.org/packages/source/b/brow-cli/brow_cli-0.1.3.tar.gz"
+  sha256 "UPDATE_AFTER_PYPI_RELEASE"
   license "MIT"
 
-  depends_on "python@3.11"
+  depends_on "python@3.12"
 
   def install
     virtualenv_install_with_resources
