@@ -14,3 +14,4 @@ venv/
 htmlcov/
 *.png
 .pypirc
+.playwright-mcp/
