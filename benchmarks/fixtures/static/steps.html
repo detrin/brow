@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><title>Multi-Step Wizard</title></head>
+<body>
+<h1>Registration Wizard</h1>
+<div id="wizard">
+  <div class="step" data-step="1"><h2>Step 1: Personal Info</h2><input id="first-name" placeholder="First Name"><input id="last-name" placeholder="Last Name"><button id="next-1">Next</button></div>
+  <div class="step" data-step="2" style="display:none"><h2>Step 2: Contact</h2><input id="phone" placeholder="Phone"><input id="city" placeholder="City"><button id="next-2">Next</button></div>
+  <div class="step" data-step="3" style="display:none"><h2>Step 3: Preferences</h2><select id="color"><option>Red</option><option>Blue</option><option>Green</option></select><input type="checkbox" id="newsletter"><label for="newsletter">Subscribe</label><button id="next-3">Next</button></div>
+  <div class="step" data-step="4" style="display:none"><h2>Step 4: Review</h2><div id="review-data"></div><button id="submit-wizard">Submit</button></div>
+  <div class="step" data-step="5" style="display:none"><h2>Registration Complete</h2><p id="confirmation">Thank you for registering!</p></div>
+</div>
+<script>
+document.querySelectorAll('[id^="next-"]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const current = btn.closest('.step');
+    const next = current.nextElementSibling;
+    if (next) { current.style.display='none'; next.style.display='block'; }
+    if (next && next.dataset.step === '4') {
+      document.getElementById('review-data').textContent =
+        'Name: ' + document.getElementById('first-name').value + ' ' + document.getElementById('last-name').value;
+    }
+  });
+});
+document.getElementById('submit-wizard').addEventListener('click', () => {
+  document.querySelector('[data-step="4"]').style.display='none';
+  document.querySelector('[data-step="5"]').style.display='block';
+});
+</script>
+</body></html>
