@@ -1,0 +1,13 @@
+id: search-extract
+name: "Search and Extract Results"
+category: practical
+url: "FIXTURE_URL/static/search.html"
+requires_fixture: true
+description: "Navigate to FIXTURE_URL/static/search.html and extract the top 5 search results. For each result, extract the title text and the href URL. Return as a list of objects with 'title' and 'url' fields."
+max_steps: 10
+timeout_seconds: 60
+success_criteria:
+  - type: structured_output
+    min_fields: ["title", "url"]
+    min_results: 5
+tags: [search, extraction, single-page]

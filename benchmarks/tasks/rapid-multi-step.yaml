@@ -1,0 +1,13 @@
+id: rapid-multi-step
+name: "Rapid Multi-Step Wizard"
+category: stress
+url: "FIXTURE_URL/static/steps.html"
+requires_fixture: true
+description: "Navigate to FIXTURE_URL/static/steps.html. Complete the 4-step registration wizard: Step 1 - fill first-name='Jane', last-name='Smith', click Next. Step 2 - fill phone='555-1234', city='New York', click Next. Step 3 - select color='Blue', check newsletter checkbox, click Next. Step 4 - click Submit. Extract the confirmation message from step 5. Return as object with field 'confirmation'."
+max_steps: 25
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["confirmation"]
+    min_results: 1
+tags: [stress, multi-step, interaction]

@@ -1,0 +1,13 @@
+id: dynamic-content
+name: "Dynamic Content Extraction"
+category: practical
+url: "FIXTURE_URL/dynamic"
+requires_fixture: true
+description: "Navigate to FIXTURE_URL/dynamic. Wait for the dynamic content to load (it appears after ~2 seconds, replacing the 'Loading...' text). Extract all items with their name and value. Return as list of objects with 'name' and 'value' fields."
+max_steps: 12
+timeout_seconds: 60
+success_criteria:
+  - type: structured_output
+    min_fields: ["name", "value"]
+    min_results: 3
+tags: [dynamic, wait, extraction]

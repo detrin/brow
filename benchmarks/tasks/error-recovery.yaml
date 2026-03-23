@@ -1,0 +1,13 @@
+id: error-recovery
+name: "Error Recovery"
+category: stress
+url: "FIXTURE_URL/flaky"
+requires_fixture: true
+description: "Navigate to FIXTURE_URL/flaky. The page randomly shows or hides an element with id 'flaky-element'. Keep refreshing the page (navigate again) until you find the element, then extract its text. Return as object with field 'text'."
+max_steps: 20
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["text"]
+    min_results: 1
+tags: [stress, error-recovery, retry]

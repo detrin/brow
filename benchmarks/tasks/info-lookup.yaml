@@ -1,0 +1,13 @@
+id: info-lookup
+name: "Information Lookup"
+category: academic
+url: "FIXTURE_URL/static/wiki/index.html"
+requires_fixture: true
+description: "Navigate to FIXTURE_URL/static/wiki/index.html. Find the topic 'Photosynthesis' and click through to its page. Extract the discovery year and discoverer. Return as object with fields 'discovery_year' and 'discoverer'."
+max_steps: 15
+timeout_seconds: 90
+success_criteria:
+  - type: structured_output
+    min_fields: ["discovery_year", "discoverer"]
+    min_results: 1
+tags: [wiki, lookup, multi-page]

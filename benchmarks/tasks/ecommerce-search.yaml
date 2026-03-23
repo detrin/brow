@@ -1,0 +1,13 @@
+id: ecommerce-search
+name: "E-commerce Product Search"
+category: academic
+url: "FIXTURE_URL/static/catalog.html"
+requires_fixture: true
+description: "Navigate to FIXTURE_URL/static/catalog.html. Find the laptop with the highest rating. Return its name, price, and rating as an object with fields 'name', 'price', 'rating'."
+max_steps: 12
+timeout_seconds: 60
+success_criteria:
+  - type: structured_output
+    min_fields: ["name", "price", "rating"]
+    min_results: 1
+tags: [ecommerce, search, extraction]

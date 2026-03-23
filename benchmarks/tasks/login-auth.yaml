@@ -1,0 +1,13 @@
+id: login-auth
+name: "Login and Authenticated Action"
+category: practical
+url: "FIXTURE_URL/login"
+requires_fixture: true
+description: "Navigate to FIXTURE_URL/login. Submit the login form with username='admin', password='password123'. After login, navigate to FIXTURE_URL/dashboard. Extract the username and role from the dashboard. Return as object with 'username' and 'role' fields."
+max_steps: 20
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["username", "role"]
+    min_results: 1
+tags: [auth, login, session]

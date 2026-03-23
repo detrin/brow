@@ -1,0 +1,13 @@
+id: multi-page-nav
+name: "Multi-Page Navigation"
+category: practical
+url: "FIXTURE_URL/static/multipage/page1.html"
+requires_fixture: true
+description: "Starting at FIXTURE_URL/static/multipage/page1.html, visit all 3 pages (About, Team, Contact). Extract: founded year from page 1, team member count from page 2, email from page 3. Return as object with fields 'founded', 'team_size', 'email'."
+max_steps: 20
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["founded", "team_size", "email"]
+    min_results: 1
+tags: [navigation, multi-page, extraction]

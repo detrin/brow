@@ -1,0 +1,13 @@
+id: large-snapshot
+name: "Large Page Snapshot"
+category: stress
+url: "FIXTURE_URL/large"
+requires_fixture: true
+description: "Navigate to FIXTURE_URL/large. The page has 550 items. Extract the value of item 100 and item 500. Return as object with fields 'item_100_value' and 'item_500_value'."
+max_steps: 10
+timeout_seconds: 90
+success_criteria:
+  - type: structured_output
+    min_fields: ["item_100_value", "item_500_value"]
+    min_results: 1
+tags: [stress, large-page, snapshot]

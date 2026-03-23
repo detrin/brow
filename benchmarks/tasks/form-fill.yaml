@@ -1,0 +1,13 @@
+id: form-fill
+name: "Fill and Submit Form"
+category: practical
+url: "FIXTURE_URL/static/form.html"
+requires_fixture: true
+description: "Navigate to FIXTURE_URL/static/form.html. Fill the form: name='John Doe', email='john@example.com', select subject='Support', message='Need help with account'. Submit the form. Return the confirmation message text."
+max_steps: 15
+timeout_seconds: 90
+success_criteria:
+  - type: structured_output
+    min_fields: ["confirmation"]
+    min_results: 1
+tags: [form, interaction]
