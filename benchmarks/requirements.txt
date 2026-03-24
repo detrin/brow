@@ -3,5 +3,6 @@ pyyaml>=6.0
 fastapi>=0.104
 uvicorn>=0.24
 httpx>=0.25
+python-multipart>=0.0.12
 pytest>=7.0
 pytest-asyncio>=0.23

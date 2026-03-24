@@ -62,9 +62,7 @@ class AgentLoop:
 
     def _get_tools(self):
         base = BROW_TOOLS if self.backend == "brow" else MCP_TOOLS
-        return [{"name": t["name"], "description": t["description"], "input_schema": t["input_schema"]} for t in base] + [
-            {"name": SUBMIT_ANSWER_TOOL["name"], "description": SUBMIT_ANSWER_TOOL["description"], "input_schema": SUBMIT_ANSWER_TOOL["input_schema"]}
-        ]
+        return base + [SUBMIT_ANSWER_TOOL]
 
     async def run(self, max_steps=15, timeout_seconds=120):
         client = anthropic.Anthropic(api_key=self.config.api_key)

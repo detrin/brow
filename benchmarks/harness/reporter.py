@@ -19,35 +19,29 @@ def generate_report(results: list[RunResult], config: BenchmarkConfig) -> str:
     aggs = {b: aggregate_results(rs) for b, rs in by_backend.items()}
     backends = list(aggs.keys())
 
+    def _fmt(a, key, std_key, fmt, scale=1):
+        v = a[key] / scale
+        s = fmt.format(v)
+        if std_key:
+            s += f"+/-{fmt.format(a[std_key] / scale)}"
+        return s
+
+    def _delta(key):
+        if len(backends) != 2:
+            return ""
+        v0, v1 = aggs[backends[0]][key], aggs[backends[1]][key]
+        return f"{(v0 - v1) / v1 * 100:+.0f}%" if v1 != 0 else ""
+
     metrics = [
-        ("Avg tokens/task", "mean_tokens", "stddev_tokens", "{:.0f}"),
-        ("Avg tool calls/task", "mean_tool_calls", "stddev_tool_calls", "{:.1f}"),
-        ("Success rate", "success_rate", None, "{:.0%}"),
-        ("Avg wall-clock (s)", "mean_wall_clock_ms", "stddev_wall_clock_ms", None),
+        ("Avg tokens/task", "mean_tokens", "stddev_tokens", "{:.0f}", 1),
+        ("Avg tool calls/task", "mean_tool_calls", "stddev_tool_calls", "{:.1f}", 1),
+        ("Success rate", "success_rate", None, "{:.0%}", 1),
+        ("Avg wall-clock (s)", "mean_wall_clock_ms", "stddev_wall_clock_ms", "{:.1f}", 1000),
     ]
 
-    for label, key, std_key, fmt in metrics:
-        vals = []
-        for b in backends:
-            v = aggs[b][key]
-            if key == "mean_wall_clock_ms":
-                v_display = f"{v / 1000:.1f}"
-                if std_key:
-                    v_display += f"+/-{aggs[b][std_key] / 1000:.1f}"
-            elif std_key:
-                v_display = fmt.format(v) + f"+/-{fmt.format(aggs[b][std_key])}"
-            else:
-                v_display = fmt.format(v)
-            vals.append(v_display)
-
-        delta = ""
-        if len(backends) == 2:
-            v0, v1 = aggs[backends[0]][key], aggs[backends[1]][key]
-            if v1 != 0:
-                pct = (v0 - v1) / v1 * 100
-                delta = f"{pct:+.0f}%"
-
-        lines.append(f"| {label} | " + " | ".join(vals) + f" | {delta} |")
+    for label, key, std_key, fmt, scale in metrics:
+        vals = [_fmt(aggs[b], key, std_key, fmt, scale) for b in backends]
+        lines.append(f"| {label} | " + " | ".join(vals) + f" | {_delta(key)} |")
 
     cost_line_vals = []
     for b in backends:
@@ -82,26 +76,8 @@ def generate_report(results: list[RunResult], config: BenchmarkConfig) -> str:
 
 def save_results_json(results: list[RunResult], path: Path):
     path.parent.mkdir(parents=True, exist_ok=True)
-    data = []
-    for r in results:
-        d = {
-            "task_id": r.task_id, "backend": r.backend, "model": r.model,
-            "success": r.success, "total_input_tokens": r.total_input_tokens,
-            "total_output_tokens": r.total_output_tokens, "tool_calls": r.tool_calls,
-            "wall_clock_ms": r.wall_clock_ms, "errors": r.errors,
-            "error_recoveries": r.error_recoveries, "run_id": r.run_id,
-            "timestamp": r.timestamp, "brow_version": r.brow_version,
-            "conversation_turns": r.conversation_turns,
-            "tool_call_log": [
-                {"name": t.name, "input_tokens": t.input_tokens, "output_tokens": t.output_tokens,
-                 "latency_ms": t.latency_ms, "response_bytes": t.response_bytes,
-                 "success": t.success, "error": t.error}
-                for t in r.tool_call_log
-            ],
-        }
-        data.append(d)
     with open(path, "w") as f:
-        json.dump(data, f, indent=2)
+        json.dump([asdict(r) for r in results], f, indent=2, default=str)
 
 
 def save_report(results: list[RunResult], config: BenchmarkConfig):

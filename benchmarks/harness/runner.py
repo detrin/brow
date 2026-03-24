@@ -38,16 +38,7 @@ def build_run_plan(tasks, backends, runs):
         for task in shuffled:
             for backend in backends:
                 plan.append({"task": task, "backend": backend, "run_idx": run_idx})
-    interleaved = []
-    for run_idx in range(runs):
-        run_items = [p for p in plan if p["run_idx"] == run_idx]
-        by_task = {}
-        for item in run_items:
-            by_task.setdefault(item["task"]["id"], []).append(item)
-        for items in by_task.values():
-            random.shuffle(items)
-            interleaved.extend(items)
-    return interleaved
+    return plan
 
 async def _get_browser_state(agent):
     state = {"url": ""}
