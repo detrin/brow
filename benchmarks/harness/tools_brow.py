@@ -173,21 +173,24 @@ BROW_TOOLS = [
 ]
 
 def execute_brow_tool(name, params):
+    def _cmd(subcmd, p, *args):
+        return ["brow", subcmd, "-s", p["session"]] + list(args)
+
     cmd_map = {
         "brow_session_new": lambda p: ["brow", "session", "new"] + (["--headed"] if p.get("headed") else []) + (["--profile", p.get("profile", "benchmark")]),
-        "brow_navigate": lambda p: ["brow", "-s", p["session"], "navigate", p["url"]],
-        "brow_snapshot": lambda p: ["brow", "-s", p["session"], "snapshot"] + (["--search", p["search"]] if p.get("search") else []),
-        "brow_click": lambda p: ["brow", "-s", p["session"], "click", p["selector"]],
-        "brow_fill": lambda p: ["brow", "-s", p["session"], "fill", p["selector"], p["value"]],
-        "brow_type": lambda p: ["brow", "-s", p["session"], "type", p["text"]],
-        "brow_key": lambda p: ["brow", "-s", p["session"], "key", p["key"]],
-        "brow_screenshot": lambda p: ["brow", "-s", p["session"], "screenshot"] + (["--quality", p["quality"]] if p.get("quality") else []),
-        "brow_wait": lambda p: ["brow", "-s", p["session"], "wait"] + ([p["selector"]] if p.get("selector") else []) + (["--load"] if p.get("load") else []),
-        "brow_url": lambda p: ["brow", "-s", p["session"], "url"],
-        "brow_html": lambda p: ["brow", "-s", p["session"], "html"] + (["--locator", p["locator"]] if p.get("locator") else []),
-        "brow_select": lambda p: ["brow", "-s", p["session"], "eval", "await page.select_option(" + json.dumps(p["selector"]) + ", " + json.dumps(p["value"]) + ")"],
-        "brow_scroll": lambda p: (["brow", "-s", p["session"], "scroll-to", p["selector"]] if p.get("selector") else ["brow", "-s", p["session"], "scroll", str(p.get("pixels", 0))]),
-        "brow_hover": lambda p: ["brow", "-s", p["session"], "hover", p["selector"]],
+        "brow_navigate": lambda p: _cmd("navigate", p, p["url"]),
+        "brow_snapshot": lambda p: _cmd("snapshot", p) + (["--search", p["search"]] if p.get("search") else []),
+        "brow_click": lambda p: _cmd("click", p, p["selector"]),
+        "brow_fill": lambda p: _cmd("fill", p, p["selector"], p["value"]),
+        "brow_type": lambda p: _cmd("type", p, p["text"]),
+        "brow_key": lambda p: _cmd("key", p, p["key"]),
+        "brow_screenshot": lambda p: _cmd("screenshot", p) + (["--quality", p["quality"]] if p.get("quality") else []),
+        "brow_wait": lambda p: _cmd("wait", p) + ([p["selector"]] if p.get("selector") else []) + (["--load"] if p.get("load") else []),
+        "brow_url": lambda p: _cmd("url", p),
+        "brow_html": lambda p: _cmd("html", p) + (["--locator", p["locator"]] if p.get("locator") else []),
+        "brow_select": lambda p: ["brow", "eval", "-s", p["session"], "await page.select_option(" + json.dumps(p["selector"]) + ", " + json.dumps(p["value"]) + ")"],
+        "brow_scroll": lambda p: (["brow", "scroll-to", "-s", p["session"], p["selector"]] if p.get("selector") else ["brow", "scroll", "-s", p["session"], str(p.get("pixels", 0))]),
+        "brow_hover": lambda p: _cmd("hover", p, p["selector"]),
     }
     builder = cmd_map.get(name)
     if not builder:

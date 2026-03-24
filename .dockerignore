@@ -1,0 +1,9 @@
+**/__pycache__
+**/.venv
+**/venv
+**/.pytest_cache
+**/dist
+**/node_modules
+.git
+.playwright-mcp
+benchmarks/results
