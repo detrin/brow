@@ -240,6 +240,31 @@ async def test_snapshot_list_compression(client, session_id):
 
 
 @pytest.mark.asyncio
+async def test_adaptive_cap_simple_page(client, session_id):
+    """Simple page with few interactive elements gets lower node cap (200)."""
+    html = "data:text/html,<body><h1>Title</h1><p>Paragraph</p><a href='/'>Link</a></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.get(f"/browser/{session_id}/snapshot")
+    assert r.status_code == 200
+    assert "Title" in r.json()["tree"]
+
+
+@pytest.mark.asyncio
+async def test_adaptive_cap_many_interactive(client, session_id):
+    """Page with many interactive elements gets higher cap and prioritizes them."""
+    # Use distinct elements to avoid repetition-dedup (different classes)
+    buttons = "".join(f'<button class="b{i}">Btn {i}</button>' for i in range(60))
+    paragraphs = "".join(f'<p>Filler paragraph {i}</p>' for i in range(200))
+    html = f"data:text/html,<body>{buttons}{paragraphs}</body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.get(f"/browser/{session_id}/snapshot")
+    assert r.status_code == 200
+    tree = r.json()["tree"]
+    # All 60 buttons should have refs (interactive elements prioritized)
+    assert "[60]" in tree
+
+
+@pytest.mark.asyncio
 async def test_session_not_found(client):
     r = await client.get("/browser/999/url")
     assert r.status_code == 404

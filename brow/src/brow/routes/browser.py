@@ -33,9 +33,28 @@ SNAPSHOT_JS = """
         'br','hr','iframe',
     ]);
 
+    // Pre-scan: count interactive elements to set adaptive cap
+    const allElements = document.body.querySelectorAll('*');
+    let interactiveCount = 0;
+    for (const el of allElements) {
+        const t = el.tagName.toLowerCase();
+        if (INTERACTIVE.has(t) || INTERACTIVE_ROLES.has(el.getAttribute('role'))) {
+            interactiveCount++;
+        }
+    }
+
+    let NODE_LIMIT;
+    if (interactiveCount < 50) {
+        NODE_LIMIT = 200;
+    } else if (interactiveCount <= 150) {
+        NODE_LIMIT = 400;
+    } else {
+        NODE_LIMIT = 300;
+    }
+
     let nodeCount = 0;
     let refCounter = 0;
-    const NODE_LIMIT = 300;
+    const skipNonInteractive = interactiveCount > 150;
 
     function sig(node) {
         if (node.nodeType !== Node.ELEMENT_NODE) return '';
@@ -121,6 +140,12 @@ SNAPSHOT_JS = """
             return { role: 'group', children };
         }
 
+        // When interactive-dense, skip non-interactive non-semantic nodes sooner
+        if (skipNonInteractive && !isInteractive && nodeCount > NODE_LIMIT * 0.7) {
+            if (children.length === 0) return null;
+            return { role: 'group', children };
+        }
+
         nodeCount++;
         const obj = { role };
         if (isInteractive) {
@@ -162,7 +187,7 @@ SNAPSHOT_JS = """
     }
 
     const tree = buildTree(document.body, 0);
-    return { tree, truncated: nodeCount >= NODE_LIMIT, nodeCount, refCount: refCounter };
+    return { tree, truncated: nodeCount >= NODE_LIMIT, nodeCount, refCount: refCounter, interactiveCount };
 }
 """
 
