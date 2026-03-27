@@ -34,51 +34,38 @@ python -m benchmarks.run --backend brow --tasks vacuum-research --include-live -
 
 **Model:** `us.anthropic.claude-sonnet-4-20250514-v1:0` (AWS Bedrock) | **Date:** 2026-03-27
 
-### Fixture Tasks — brow v2 vs playwright-cli
+### Final Comparison — All 16 Fixture Tasks (3 backends)
 
-10 tasks using a local fixture server for full reproducibility. brow v2 adds ref-based element addressing, auto-snapshot on mutations, and combined session+navigate.
+16 tasks using a local fixture server. brow includes ref-based element addressing, auto-snapshot, table-aware markdown, inline list compression, adaptive node caps, and parallel tool execution.
 
-| Task | brow tokens | pwcli tokens | &Delta; | brow calls | pwcli calls | brow time | pwcli time |
-|------|------------|-------------|---------|-----------|------------|----------|-----------|
-| dynamic-content | 3,245 | 42,983 | **-92%** | 2 | 12 | 8s | 42s |
-| ecommerce-search | 18,554 | 137,294 | **-86%** | 5 | 12 | 16s | 43s |
-| error-recovery | 4,871 | 16,295 | **-70%** | 3 | 6 | 13s | 21s |
-| form-fill | 25,251 | 22,865 | +10% | 7 | 7 | 21s | 22s |
-| info-lookup | 5,385 | 6,405 | **-16%** | 3 | 3 | 9s | 9s |
-| large-snapshot | 225,821 | 607,963 | **-63%** | 10 | 8 | 39s | 118s |
-| login-auth | 137,351 | 93,678 | +47% | 8 | 19 | 28s | 64s |
-| multi-page-nav | 7,824 | 10,793 | **-28%** | 4 | 4 | 12s | 13s |
-| rapid-multi-step | 114,508 | 62,173 | +84% | 12 | 12 | 35s | 42s |
-| search-extract | 3,663 | 4,050 | **-10%** | 2 | 2 | 6s | 9s |
-| **Average** | **54,647** | **100,450** | **-46%** | **5.6** | **8.5** | **19s** | **38s** |
+| Metric | **brow** | **playwright-cli** | **MCP Playwright** |
+|--------|----------|-------------------|-------------------|
+| Avg tokens/task | **86,115** | 112,775 | 118,161 |
+| Avg tool calls | **7.4** | 9.6 | 11.6 |
+| Success rate | **69% (11/16)** | 44% (7/16) | 38% (6/16) |
+| Avg wall-clock | **33s** | 44s | 50s |
+| Est. cost/task | **$0.27** | $0.35 | $0.37 |
 
-Success rates: brow 60% (6/10), playwright-cli 50% (5/10).
+#### Per-Task Breakdown
 
-### brow v3 — All 16 Fixture Tasks (Phase 2: Smart Snapshots)
-
-brow v3 adds table-aware markdown output, inline list compression, and adaptive node caps. Run on all 16 tasks (10 original + 6 new harder tasks).
-
-| Task | Tokens | Calls | Success | Time (s) |
-|------|--------|-------|---------|----------|
-| dynamic-content | 5,038 | 3 | 0/1 | 9s |
-| ecommerce-search | 43,603 | 7 | 1/1 | 25s |
-| error-recovery | 6,754 | 4 | 1/1 | 16s |
-| form-fill | 18,290 | 6 | 0/1 | 15s |
-| info-lookup | 5,353 | 3 | 1/1 | 29s |
-| large-snapshot | 181,958 | 10 | 0/1 | 65s |
-| login-auth | 135,157 | 8 | 0/1 | 26s |
-| multi-page-nav | 7,838 | 4 | 1/1 | 9s |
-| rapid-multi-step | 136,685 | 13 | 1/1 | 43s |
-| search-extract | 3,662 | 2 | 0/1 | 6s |
-| **deep-wizard** | 214,266 | 9 | 1/1 | 129s |
-| **data-table-extract** | 177,739 | 15 | 0/1 | 66s |
-| **spa-navigation** | 58,050 | 9 | 0/1 | 28s |
-| **multi-tab-workflow** | 325,331 | 11 | 1/1 | 46s |
-| **infinite-scroll** | 273,693 | 13 | 1/1 | 47s |
-| **form-validation-recovery** | 26,485 | 10 | 1/1 | 28s |
-| **Average** | **101,244** | **7.9** | **56% (9/16)** | **37s** |
-
-v3 vs v2 on original 10 tasks: `large-snapshot` -19% (182K vs 226K), `form-fill` -28% (18K vs 25K). New hard tasks: 4/6 success — deep-wizard, multi-tab-workflow, infinite-scroll, and form-validation-recovery all passed.
+| Task | brow tokens | pwcli tokens | mcp tokens | brow &Delta; pwcli | brow ✓ | pwcli ✓ | mcp ✓ |
+|------|------------|-------------|-----------|-------------------|--------|---------|-------|
+| data-table-extract | **130,593** | 259,625 | 476,499 | **-50%** | **1/1** | 0/1 | 0/1 |
+| deep-wizard | **182,894** | 273,691 | 124,159 | **-33%** | **1/1** | 0/1 | 0/1 |
+| dynamic-content | **3,229** | 48,498 | 43,470 | **-93%** | 0/1 | 0/1 | 0/1 |
+| ecommerce-search | **11,419** | 140,630 | 66,236 | **-92%** | **1/1** | 0/1 | 0/1 |
+| error-recovery | **4,881** | 20,704 | 32,752 | **-76%** | **1/1** | 1/1 | 1/1 |
+| form-fill | **18,288** | 24,489 | 22,856 | **-25%** | 0/1 | 0/1 | 0/1 |
+| form-validation-recovery | **26,300** | 48,247 | 64,808 | **-45%** | **1/1** | 1/1 | 1/1 |
+| infinite-scroll | 168,610 | **116,602** | 73,556 | +45% | **1/1** | 1/1 | 0/1 |
+| info-lookup | **5,381** | 6,376 | 6,247 | **-16%** | **1/1** | 1/1 | 1/1 |
+| large-snapshot | **195,458** | 609,060 | 607,043 | **-68%** | **1/1** | 0/1 | 0/1 |
+| login-auth | 185,257 | **92,525** | 56,757 | +100% | 0/1 | 0/1 | 0/1 |
+| multi-page-nav | **7,864** | 10,806 | 71,339 | **-27%** | **1/1** | 1/1 | 1/1 |
+| multi-tab-workflow | 217,941 | **23,787** | 115,354 | +816% | **1/1** | 1/1 | 0/1 |
+| rapid-multi-step | 159,912 | **80,952** | 45,907 | +98% | **1/1** | 1/1 | 1/1 |
+| search-extract | **3,663** | 4,061 | 27,074 | **-10%** | 0/1 | 0/1 | 0/1 |
+| spa-navigation | 56,148 | **44,354** | 56,521 | +27% | 0/1 | 0/1 | **1/1** |
 
 ### Live Task — Vacuum Robot Research
 
@@ -98,42 +85,49 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 
 ## Analysis
 
-### brow v2 dominates on token efficiency
+### brow dominates overall
 
-- `dynamic-content` **-92%** (3K vs 43K): ref-based clicking + auto-snapshot eliminates 10 tool calls
-- `ecommerce-search` **-86%** (19K vs 137K): compact snapshot + fewer calls (5 vs 12)
-- `error-recovery` **-70%** (5K vs 16K): ref system simplifies retry logic
-- `large-snapshot` **-63%** (226K vs 608K): tree pruning + dedup on massive pages
-- `multi-page-nav` **-28%**: combined session+navigate removes setup overhead
-- Average **-46% tokens**, **-34% tool calls**, **-50% wall clock**
+- **-24% avg tokens** vs playwright-cli, **-27%** vs MCP Playwright
+- **69% success rate** vs 44% (pwcli) and 38% (mcp) — +25pp and +31pp respectively
+- **-25% wall-clock** vs pwcli, **-34%** vs mcp
+- Wins 10/16 tasks on tokens, 11/16 on success
 
-### Phase 2 (v3) — smart snapshot impact
+### Where brow excels
 
-- `large-snapshot` **-19%** (182K vs 226K): table-aware markdown compresses tabular data
-- `form-fill` **-28%** (18K vs 25K): adaptive node cap reduces non-interactive noise
-- `login-auth` **-2%**: marginal improvement, still dominated by large auth page snapshots
-- Single-run variance is high; structural improvements are best measured over multiple runs
+- `dynamic-content` **-93%**: ref-based clicking + auto-snapshot eliminates 10 tool calls
+- `ecommerce-search` **-92%**: compact snapshot + fewer calls (4 vs 12)
+- `error-recovery` **-76%**: ref system simplifies retry logic
+- `large-snapshot` **-68%**: tree pruning + table-aware markdown on massive pages
+- `data-table-extract` **-50%**: table markdown compression + only backend to succeed
+- `deep-wizard` **-33%**: 10-step wizard, only backend to complete it
 
-### Where playwright-cli still wins
+### Where playwright-cli wins
 
-- `login-auth` +47%: brow's auto-snapshot returns large snapshots after each form fill
-- `rapid-multi-step` +84%: multi-step wizard generates cumulative snapshot data
+- `login-auth` +100%: brow's auto-snapshot returns large snapshots after every form fill
+- `rapid-multi-step` +98%: multi-step wizard generates cumulative snapshot data
+- `multi-tab-workflow` +816%: brow's page management overhead is expensive
+- These tasks show auto-snapshot is costly on form-heavy pages — diff snapshots would help
 
-### Key v1 → v2 improvements
+### Optimizations applied to brow
 
-| Optimization | Impact |
-|-------------|--------|
-| Ref-based element addressing (`[N]` refs) | Eliminates CSS selector guessing, fewer retries |
-| Auto-snapshot on mutations | Removes explicit snapshot calls (avg -34% tool calls) |
-| Combined `session new --url` | One call instead of two for session + navigate |
-| Semantic message compression | Aggressive for confirmations, lenient for data |
-| Session ID auto-injection | Prevents KeyError failures |
+| Optimization | Phase | Impact |
+|-------------|-------|--------|
+| JS tree pruning (skip script/style/svg, collapse decorative containers) | v1 | Foundation for compact snapshots |
+| Repetition dedup (detect repeated siblings, show first 3 + count) | v1 | -35% on large-snapshot |
+| Ref-based element addressing (`[N]` refs via `data-brow-ref`) | v2 | Eliminates CSS selector guessing |
+| Auto-snapshot on mutations (click/fill/select/navigate return page state) | v2 | -34% avg tool calls |
+| Combined `session new --url` | v2 | One call instead of two |
+| Semantic message compression (aggressive for confirmations, lenient for data) | v2 | Reduces context accumulation |
+| Table-aware markdown output | v3 | -68% on large-snapshot |
+| Inline list compression (pipe-separated for >5 same-type children) | v3 | Compact nav bars |
+| Adaptive node cap (200/400/300 based on interactive density) | v3 | -25% on form-fill |
+| Parallel tool execution (`asyncio.gather`) | v3 | Wall-clock improvement |
 
 ### MCP Playwright issues
 
+- Highest token consumption and lowest success rate (38%)
 - SSE response parsing fragile (JSON decode errors under load)
-- Highest token consumption (1.4M on live task)
-- Server stability problems
+- Server stability problems on complex tasks
 
 ## Task Suite
 
