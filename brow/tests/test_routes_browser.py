@@ -120,6 +120,18 @@ async def test_no_active_page(client):
     assert r.status_code == 200
 
 @pytest.mark.asyncio
+async def test_snapshot_has_refs(client, session_id):
+    html = "data:text/html,<body><a href='/'>Home</a><h1>Title</h1><button>Click</button></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.get(f"/browser/{session_id}/snapshot")
+    assert r.status_code == 200
+    tree = r.json()["tree"]
+    assert "[1]" in tree
+    assert "[2]" in tree
+    heading_line = [l for l in tree.strip().split("\n") if "Title" in l][0]
+    assert "[" not in heading_line
+
+@pytest.mark.asyncio
 async def test_session_not_found(client):
     r = await client.get("/browser/999/url")
     assert r.status_code == 404

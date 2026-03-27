@@ -33,6 +33,33 @@ def test_filter_lines_regex():
     assert "apricot" in result
     assert "banana" not in result
 
+def test_format_tree_with_ref():
+    tree = {"role": "heading", "name": "Title", "level": 1}
+    result = format_tree(tree)
+    assert "[" not in result
+
+    interactive_tree = {"role": "button", "name": "Submit", "ref": 1}
+    result = format_tree(interactive_tree)
+    assert "[1]" in result
+    assert 'button "Submit"' in result
+
+def test_format_tree_multiple_refs():
+    tree = {
+        "role": "WebArea", "name": "Page",
+        "children": [
+            {"role": "link", "name": "Home", "href": "/", "ref": 1},
+            {"role": "heading", "name": "Welcome", "level": 1},
+            {"role": "textbox", "name": "Email", "ref": 2},
+            {"role": "button", "name": "Submit", "ref": 3},
+        ],
+    }
+    result = format_tree(tree)
+    lines = result.strip().split("\n")
+    assert "[1]" in lines[1]
+    assert "[" not in lines[2]
+    assert "[2]" in lines[3]
+    assert "[3]" in lines[4]
+
 def test_filter_lines_limit():
     text = "\n".join(f"match {i}" for i in range(20))
     result = filter_lines(text, "match", limit=10)

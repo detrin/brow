@@ -13,7 +13,11 @@ def format_tree(tree, indent=0):
             lines.append(format_tree(child, indent))
         return "\n".join(lines)
 
-    parts = [role]
+    ref = tree.get("ref")
+    parts = []
+    if ref is not None:
+        parts.append(f"[{ref}]")
+    parts.append(role)
     if name:
         parts.append(f'"{name}"')
     for key in ("value", "checked", "disabled", "href", "level"):

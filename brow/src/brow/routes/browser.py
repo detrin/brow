@@ -108,9 +108,16 @@ async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator
 
     js_code = """
     () => {
+        document.querySelectorAll('[data-brow-ref]').forEach(el => el.removeAttribute('data-brow-ref'));
+
         const INTERACTIVE = new Set([
             'a', 'button', 'input', 'select', 'textarea', 'option',
             'details', 'summary', 'dialog', 'menu', 'menuitem',
+        ]);
+        const INTERACTIVE_ROLES = new Set([
+            'button', 'tab', 'link', 'menuitem', 'option', 'switch',
+            'checkbox', 'radio', 'slider', 'spinbutton', 'combobox',
+            'searchbox', 'textbox',
         ]);
         const SEMANTIC = new Set([
             'h1','h2','h3','h4','h5','h6','img','video','audio',
@@ -123,6 +130,7 @@ async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator
         ]);
 
         let nodeCount = 0;
+        let refCounter = 0;
         const NODE_LIMIT = 300;
 
         function sig(node) {
@@ -153,7 +161,7 @@ async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator
             const alt = node.getAttribute('alt');
             const placeholder = node.getAttribute('placeholder');
             const name = ariaLabel || alt || node.getAttribute('title') || '';
-            const isInteractive = INTERACTIVE.has(tag) || node.getAttribute('role');
+            const isInteractive = INTERACTIVE.has(tag) || INTERACTIVE_ROLES.has(node.getAttribute('role'));
             const isSemantic = SEMANTIC.has(tag);
 
             const childNodes = Array.from(node.childNodes);
@@ -189,6 +197,11 @@ async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator
 
             nodeCount++;
             const obj = { role };
+            if (isInteractive) {
+                refCounter++;
+                node.setAttribute('data-brow-ref', String(refCounter));
+                obj.ref = refCounter;
+            }
             if (name) obj.name = name.substring(0, 80);
             else if (isInteractive && !name) {
                 const txt = node.textContent?.trim()?.substring(0, 50);
@@ -212,7 +225,7 @@ async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator
         }
 
         const tree = buildTree(document.body, 0);
-        return { tree, truncated: nodeCount >= NODE_LIMIT, nodeCount };
+        return { tree, truncated: nodeCount >= NODE_LIMIT, nodeCount, refCount: refCounter };
     }
     """
 
