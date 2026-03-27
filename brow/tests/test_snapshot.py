@@ -101,6 +101,46 @@ def test_format_tree_table_no_headers():
     assert "C" in result
 
 
+def test_format_tree_inline_list():
+    tree = {
+        "role": "inline-list",
+        "itemRole": "link",
+        "items": [
+            {"role": "link", "name": "Home", "href": "/", "ref": 1},
+            {"role": "link", "name": "About", "href": "/about", "ref": 2},
+            {"role": "link", "name": "Products", "href": "/products", "ref": 3},
+            {"role": "link", "name": "Blog", "href": "/blog", "ref": 4},
+            {"role": "link", "name": "Contact", "href": "/contact", "ref": 5},
+            {"role": "link", "name": "Help", "href": "/help", "ref": 6},
+        ],
+    }
+    result = format_tree(tree)
+    assert "[1]" in result
+    assert "[6]" in result
+    assert "|" in result
+    lines = result.strip().split("\n")
+    assert len(lines) == 1
+
+
+def test_format_tree_inline_list_no_refs():
+    tree = {
+        "role": "inline-list",
+        "itemRole": "li",
+        "items": [
+            {"role": "li", "name": "Item A"},
+            {"role": "li", "name": "Item B"},
+            {"role": "li", "name": "Item C"},
+            {"role": "li", "name": "Item D"},
+            {"role": "li", "name": "Item E"},
+            {"role": "li", "name": "Item F"},
+        ],
+    }
+    result = format_tree(tree)
+    assert "Item A" in result
+    assert "Item F" in result
+    assert "|" in result
+
+
 def test_filter_lines_limit():
     text = "\n".join(f"match {i}" for i in range(20))
     result = filter_lines(text, "match", limit=10)

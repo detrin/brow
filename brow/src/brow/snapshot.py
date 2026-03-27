@@ -20,6 +20,18 @@ def _format_table(tree, indent=0):
     return "\n".join(lines)
 
 
+def _format_inline_list(tree, indent=0):
+    prefix = "  " * indent
+    parts = []
+    for item in tree.get("items", []):
+        ref = item.get("ref")
+        name = item.get("name", "")
+        piece = f'[{ref}] "{name}"' if ref is not None else f'"{name}"'
+        parts.append(piece)
+    item_role = tree.get("itemRole", "item")
+    return prefix + item_role + ": " + " | ".join(parts)
+
+
 def format_tree(tree, indent=0):
     if not tree:
         return ""
@@ -31,6 +43,10 @@ def format_tree(tree, indent=0):
     # Table-aware: render as markdown table
     if role == "table" and "headers" in tree:
         return _format_table(tree, indent)
+
+    # Inline list: render same-type simple children on one line
+    if role == "inline-list" and "items" in tree:
+        return _format_inline_list(tree, indent)
 
     if role == "group" and not name:
         for child in children:
