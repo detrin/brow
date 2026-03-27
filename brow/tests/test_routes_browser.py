@@ -150,6 +150,23 @@ async def test_fill_by_ref(client, session_id):
     assert r.json()["ok"] is True
 
 @pytest.mark.asyncio
+async def test_select(client, session_id):
+    html = "data:text/html,<body><select id='sel'><option value='a'>A</option><option value='b'>B</option></select></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.post(f"/browser/{session_id}/select", json={"selector": "#sel", "value": "b"})
+    assert r.status_code == 200
+    assert r.json()["ok"] is True
+
+@pytest.mark.asyncio
+async def test_select_by_ref(client, session_id):
+    html = "data:text/html,<body><select id='sel'><option value='a'>A</option><option value='b'>B</option></select></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    await client.get(f"/browser/{session_id}/snapshot")
+    r = await client.post(f"/browser/{session_id}/select", json={"ref": 3, "value": "b"})
+    assert r.status_code == 200
+    assert r.json()["ok"] is True
+
+@pytest.mark.asyncio
 async def test_session_not_found(client):
     r = await client.get("/browser/999/url")
     assert r.status_code == 404

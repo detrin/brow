@@ -75,6 +75,12 @@ class UploadReq(BaseModel):
     selector: str
     filepath: str
 
+class SelectReq(BaseModel):
+    selector: Optional[str] = None
+    ref: Optional[int] = None
+    value: str
+    timeout: int = DEFAULT_TIMEOUT
+
 class ScreenshotReq(BaseModel):
     full: bool = False
     path: Optional[str] = None
@@ -400,6 +406,14 @@ async def drag(req: Request, sid: str, body: DragReq):
     session = _get_session(req, sid)
     page = _get_page(session)
     await page.drag_and_drop(body.source, body.target)
+    return {"ok": True}
+
+@router.post("/select")
+async def select_option(req: Request, sid: str, body: SelectReq):
+    session = _get_session(req, sid)
+    page = _get_page(session)
+    selector = _resolve_selector(body)
+    await page.select_option(selector, body.value, timeout=body.timeout)
     return {"ok": True}
 
 @router.post("/upload")

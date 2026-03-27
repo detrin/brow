@@ -217,6 +217,26 @@ def fill_cmd(
     }
     run_async(c.post(f"/browser/{s}/fill", json=payload))
 
+@app.command("select")
+def select_cmd(
+    selector: Optional[str] = typer.Argument(None),
+    value: str = typer.Argument(...),
+    ref: Optional[int] = typer.Option(None, "--ref", help="Element ref from snapshot"),
+    s: Optional[str] = session_opt,
+    timeout: int = 30000,
+):
+    ensure_daemon()
+    c = _client()
+    payload = {"value": value, "timeout": timeout}
+    if ref is not None:
+        payload["ref"] = ref
+    elif selector is not None:
+        payload["selector"] = selector
+    else:
+        typer.echo("Either selector or --ref required", err=True)
+        raise typer.Exit(1)
+    run_async(c.post(f"/browser/{s}/select", json=payload))
+
 @app.command("type")
 def type_cmd(text: str, s: Optional[str] = session_opt):
     ensure_daemon()
