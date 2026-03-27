@@ -200,6 +200,25 @@ async def test_navigate_returns_snapshot(client, session_id):
     assert "[1]" in body["snapshot"]
 
 @pytest.mark.asyncio
+async def test_snapshot_table_compact(client, session_id):
+    html = """data:text/html,<body><table>
+        <thead><tr><th>Name</th><th>Price</th></tr></thead>
+        <tbody>
+            <tr><td>Widget A</td><td>$10</td></tr>
+            <tr><td>Widget B</td><td>$20</td></tr>
+            <tr><td>Widget C</td><td>$30</td></tr>
+        </tbody>
+    </table></body>"""
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.get(f"/browser/{session_id}/snapshot")
+    assert r.status_code == 200
+    tree = r.json()["tree"]
+    assert "| Name | Price |" in tree
+    assert "Widget A" in tree
+    assert "Widget C" in tree
+
+
+@pytest.mark.asyncio
 async def test_session_not_found(client):
     r = await client.get("/browser/999/url")
     assert r.status_code == 404

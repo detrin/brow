@@ -58,6 +58,28 @@ SNAPSHOT_JS = """
 
         const tag = node.tagName.toLowerCase();
         if (SKIP.has(tag)) return null;
+
+        // Table-aware: emit compact table node instead of deep tree
+        if (tag === 'table') {
+            nodeCount++;
+            const headers = [];
+            const rows = [];
+            const ths = node.querySelectorAll('thead th, thead td, tr:first-child th');
+            ths.forEach(th => headers.push(th.textContent?.trim()?.substring(0, 60) || ''));
+            const trs = node.querySelectorAll('tbody tr, tr');
+            const startIdx = headers.length > 0 && trs.length > 0 && trs[0].querySelector('th') ? 1 : 0;
+            const MAX_TABLE_ROWS = 10;
+            for (let i = startIdx; i < trs.length && rows.length < MAX_TABLE_ROWS; i++) {
+                const cells = [];
+                trs[i].querySelectorAll('td, th').forEach(td => {
+                    cells.push(td.textContent?.trim()?.substring(0, 60) || '');
+                });
+                if (cells.length > 0) rows.push(cells);
+            }
+            const totalRows = trs.length - startIdx;
+            return { role: 'table', headers, rows, totalRows };
+        }
+
         if (node.hidden || node.getAttribute('aria-hidden') === 'true') return null;
 
         const role = node.getAttribute('role') || tag;
