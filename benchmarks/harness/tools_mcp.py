@@ -133,59 +133,85 @@ class McpPlaywrightClient:
     def __init__(self):
         self._proc = None
         self._request_id = 0
+        self._session_id = None
+        self._base_url = None
 
     async def start(self):
+        import socket
+        sock = socket.socket()
+        sock.bind(("127.0.0.1", 0))
+        port = sock.getsockname()[1]
+        sock.close()
+
+        self._base_url = f"http://localhost:{port}"
         self._proc = await asyncio.create_subprocess_exec(
-            "npx", "@anthropic-ai/mcp-playwright",
-            stdin=asyncio.subprocess.PIPE,
+            "npx", "@playwright/mcp@latest", "--headless", "--port", str(port),
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
-        await self._send({"jsonrpc": "2.0", "id": 0, "method": "initialize", "params": {
-            "protocolVersion": "2024-11-05",
-            "capabilities": {},
-            "clientInfo": {"name": "benchmark", "version": "1.0"},
-        }})
-        await self._read_response()
-        await self._send({"jsonrpc": "2.0", "method": "notifications/initialized"})
+        import httpx
+        self._http = httpx.AsyncClient(timeout=60)
+        for _ in range(30):
+            await asyncio.sleep(0.5)
+            try:
+                resp = await self._http.post(
+                    f"{self._base_url}/mcp",
+                    json={"jsonrpc": "2.0", "id": 0, "method": "initialize", "params": {
+                        "protocolVersion": "2024-11-05",
+                        "capabilities": {},
+                        "clientInfo": {"name": "benchmark", "version": "1.0"},
+                    }},
+                    headers={"Content-Type": "application/json", "Accept": "application/json, text/event-stream"},
+                )
+                if resp.status_code == 200:
+                    self._session_id = resp.headers.get("mcp-session-id") or resp.headers.get("Mcp-Session-Id")
+                    await self._http.post(
+                        f"{self._base_url}/mcp",
+                        json={"jsonrpc": "2.0", "method": "notifications/initialized"},
+                        headers=self._headers(),
+                    )
+                    return
+            except httpx.ConnectError:
+                continue
+        stderr = b""
+        try:
+            stderr = self._proc.stderr._buffer
+        except Exception:
+            pass
+        raise RuntimeError(f"MCP Playwright server failed to start. stderr: {stderr.decode()[:500]}")
+
+    def _headers(self):
+        h = {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}
+        if self._session_id:
+            h["Mcp-Session-Id"] = self._session_id
+        return h
+
+    def _parse_sse(self, text):
+        for line in text.strip().splitlines():
+            if line.startswith("data: "):
+                return json.loads(line[6:])
+        return json.loads(text)
 
     async def call_tool(self, mcp_method, params):
         self._request_id += 1
-        await self._send({
-            "jsonrpc": "2.0",
-            "id": self._request_id,
-            "method": "tools/call",
-            "params": {"name": mcp_method, "arguments": params},
-        })
-        return await self._read_response()
+        resp = await self._http.post(
+            f"{self._base_url}/mcp",
+            json={
+                "jsonrpc": "2.0",
+                "id": self._request_id,
+                "method": "tools/call",
+                "params": {"name": mcp_method, "arguments": params},
+            },
+            headers=self._headers(),
+        )
+        return self._parse_sse(resp.text)
 
     async def stop(self):
+        if hasattr(self, "_http"):
+            await self._http.aclose()
         if self._proc:
             self._proc.terminate()
             await self._proc.wait()
-
-    async def _send(self, msg):
-        data = json.dumps(msg)
-        content = f"Content-Length: {len(data)}\r\n\r\n{data}"
-        self._proc.stdin.write(content.encode())
-        await self._proc.stdin.drain()
-
-    async def _read_response(self):
-        content_length = 0
-        while True:
-            line = await self._proc.stdout.readline()
-            decoded = line.decode().strip()
-            if not decoded:
-                break
-            if decoded.startswith("Content-Length:"):
-                content_length = int(decoded.split(":")[1].strip())
-        if content_length == 0:
-            return {"error": "No Content-Length in MCP response"}
-        raw = await self._proc.stdout.readexactly(content_length)
-        try:
-            return json.loads(raw)
-        except json.JSONDecodeError:
-            return {"error": "Failed to parse MCP response"}
 
 
 async def execute_mcp_tool(client: McpPlaywrightClient, name: str, params: dict):

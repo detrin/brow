@@ -1,0 +1,1006 @@
+[
+  {
+    "task_id": "login-auth",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 69962,
+    "total_output_tokens": 2047,
+    "tool_calls": 20,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1393,
+        "output_tokens": 93,
+        "latency_ms": 1096,
+        "response_bytes": 518,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 1709,
+        "output_tokens": 51,
+        "latency_ms": 92,
+        "response_bytes": 182,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_reload",
+        "input_tokens": 1845,
+        "output_tokens": 67,
+        "latency_ms": 97,
+        "response_bytes": 333,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_goto",
+        "input_tokens": 2057,
+        "output_tokens": 85,
+        "latency_ms": 110,
+        "response_bytes": 361,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_goto",
+        "input_tokens": 2302,
+        "output_tokens": 95,
+        "latency_ms": 96,
+        "response_bytes": 342,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_screenshot",
+        "input_tokens": 2552,
+        "output_tokens": 53,
+        "latency_ms": 126,
+        "response_bytes": 351,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_goto",
+        "input_tokens": 2760,
+        "output_tokens": 96,
+        "latency_ms": 102,
+        "response_bytes": 361,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 3016,
+        "output_tokens": 85,
+        "latency_ms": 1090,
+        "response_bytes": 157,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 3165,
+        "output_tokens": 71,
+        "latency_ms": 1072,
+        "response_bytes": 167,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 3305,
+        "output_tokens": 95,
+        "latency_ms": 1086,
+        "response_bytes": 137,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_goto",
+        "input_tokens": 3456,
+        "output_tokens": 107,
+        "latency_ms": 94,
+        "response_bytes": 341,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 3718,
+        "output_tokens": 180,
+        "latency_ms": 69,
+        "response_bytes": 196,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 3969,
+        "output_tokens": 154,
+        "latency_ms": 67,
+        "response_bytes": 196,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 4196,
+        "output_tokens": 166,
+        "latency_ms": 87,
+        "response_bytes": 196,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 4435,
+        "output_tokens": 158,
+        "latency_ms": 85,
+        "response_bytes": 196,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 4664,
+        "output_tokens": 125,
+        "latency_ms": 1087,
+        "response_bytes": 682,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 5035,
+        "output_tokens": 61,
+        "latency_ms": 75,
+        "response_bytes": 224,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 5205,
+        "output_tokens": 71,
+        "latency_ms": 1152,
+        "response_bytes": 432,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 5454,
+        "output_tokens": 99,
+        "latency_ms": 1150,
+        "response_bytes": 417,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 5726,
+        "output_tokens": 135,
+        "latency_ms": 1090,
+        "response_bytes": 191,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 61129,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "635328db",
+    "timestamp": "2026-03-27T08:30:17.360063+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 20
+  },
+  {
+    "task_id": "rapid-multi-step",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 33653,
+    "total_output_tokens": 1054,
+    "tool_calls": 12,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1433,
+        "output_tokens": 101,
+        "latency_ms": 1404,
+        "response_bytes": 783,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_fill",
+        "input_tokens": 1864,
+        "output_tokens": 109,
+        "latency_ms": 1109,
+        "response_bytes": 120,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_fill",
+        "input_tokens": 2028,
+        "output_tokens": 73,
+        "latency_ms": 1081,
+        "response_bytes": 120,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 2156,
+        "output_tokens": 56,
+        "latency_ms": 1105,
+        "response_bytes": 522,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_fill",
+        "input_tokens": 2433,
+        "output_tokens": 104,
+        "latency_ms": 1098,
+        "response_bytes": 119,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_fill",
+        "input_tokens": 2594,
+        "output_tokens": 74,
+        "latency_ms": 1102,
+        "response_bytes": 118,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 2723,
+        "output_tokens": 56,
+        "latency_ms": 1118,
+        "response_bytes": 634,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_select",
+        "input_tokens": 3032,
+        "output_tokens": 117,
+        "latency_ms": 1100,
+        "response_bytes": 629,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 3396,
+        "output_tokens": 56,
+        "latency_ms": 1114,
+        "response_bytes": 651,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 3708,
+        "output_tokens": 80,
+        "latency_ms": 1109,
+        "response_bytes": 502,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 3998,
+        "output_tokens": 101,
+        "latency_ms": 1108,
+        "response_bytes": 482,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 4288,
+        "output_tokens": 127,
+        "latency_ms": 0,
+        "response_bytes": 94,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 40887,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "confirmation": "Thank you for registering!"
+    },
+    "run_id": "5e58c4c3",
+    "timestamp": "2026-03-27T08:30:58.255513+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 12
+  },
+  {
+    "task_id": "search-extract",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 6150,
+    "total_output_tokens": 541,
+    "tool_calls": 3,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1379,
+        "output_tokens": 104,
+        "latency_ms": 1094,
+        "response_bytes": 2032,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_screenshot",
+        "input_tokens": 2266,
+        "output_tokens": 84,
+        "latency_ms": 121,
+        "response_bytes": 351,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 2505,
+        "output_tokens": 353,
+        "latency_ms": 0,
+        "response_bytes": 409,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 9436,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": "[\n  {\n    \"title\": \"Blue Bottle Coffee\",\n    \"url\": \"/r/1\"\n  },\n  {\n    \"title\": \"Stumptown Coffee Roasters\", \n    \"url\": \"/r/2\"\n  },\n  {\n    \"title\": \"Joe Coffee Company\",\n    \"url\": \"/r/3\"\n  },\n  {\n    \"title\": \"Devocion\",\n    \"url\": \"/r/4\"\n  },\n  {\n    \"title\": \"Abraco\",\n    \"url\": \"/r/5\"\n  }\n]",
+    "run_id": "60b30a1c",
+    "timestamp": "2026-03-27T08:31:07.704123+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 3
+  },
+  {
+    "task_id": "multi-page-nav",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 8349,
+    "total_output_tokens": 481,
+    "tool_calls": 4,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1398,
+        "output_tokens": 99,
+        "latency_ms": 1019,
+        "response_bytes": 1006,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 1905,
+        "output_tokens": 89,
+        "latency_ms": 1153,
+        "response_bytes": 758,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 2307,
+        "output_tokens": 112,
+        "latency_ms": 1131,
+        "response_bytes": 791,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 2739,
+        "output_tokens": 181,
+        "latency_ms": 0,
+        "response_bytes": 111,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 13930,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "founded": 2020,
+      "team_size": 3,
+      "email": "hello@example.com"
+    },
+    "run_id": "b0727a37",
+    "timestamp": "2026-03-27T08:31:21.642492+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 4
+  },
+  {
+    "task_id": "large-snapshot",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 215339,
+    "total_output_tokens": 1823,
+    "tool_calls": 10,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1378,
+        "output_tokens": 106,
+        "latency_ms": 984,
+        "response_bytes": 50437,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 20510,
+        "output_tokens": 380,
+        "latency_ms": 89,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 20925,
+        "output_tokens": 247,
+        "latency_ms": 87,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 21207,
+        "output_tokens": 300,
+        "latency_ms": 76,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 21543,
+        "output_tokens": 77,
+        "latency_ms": 1098,
+        "response_bytes": 10423,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 25510,
+        "output_tokens": 262,
+        "latency_ms": 71,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 25808,
+        "output_tokens": 120,
+        "latency_ms": 1108,
+        "response_bytes": 156,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 25993,
+        "output_tokens": 69,
+        "latency_ms": 1115,
+        "response_bytes": 156,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 26127,
+        "output_tokens": 173,
+        "latency_ms": 77,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 26338,
+        "output_tokens": 89,
+        "latency_ms": 1100,
+        "response_bytes": 125,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 45649,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "2770a741",
+    "timestamp": "2026-03-27T08:32:07.300166+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 10
+  },
+  {
+    "task_id": "error-recovery",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 12129,
+    "total_output_tokens": 570,
+    "tool_calls": 6,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1383,
+        "output_tokens": 99,
+        "latency_ms": 983,
+        "response_bytes": 598,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 1738,
+        "output_tokens": 78,
+        "latency_ms": 83,
+        "response_bytes": 265,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_goto",
+        "input_tokens": 1936,
+        "output_tokens": 93,
+        "latency_ms": 115,
+        "response_bytes": 318,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 2173,
+        "output_tokens": 81,
+        "latency_ms": 85,
+        "response_bytes": 231,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 2360,
+        "output_tokens": 114,
+        "latency_ms": 1091,
+        "response_bytes": 167,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 2539,
+        "output_tokens": 105,
+        "latency_ms": 0,
+        "response_bytes": 69,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 14937,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "text": "Found me!"
+    },
+    "run_id": "7e3c13a3",
+    "timestamp": "2026-03-27T08:32:22.245648+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 6
+  },
+  {
+    "task_id": "info-lookup",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 5617,
+    "total_output_tokens": 331,
+    "tool_calls": 3,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1384,
+        "output_tokens": 97,
+        "latency_ms": 1072,
+        "response_bytes": 1018,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 1907,
+        "output_tokens": 96,
+        "latency_ms": 1172,
+        "response_bytes": 828,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 2326,
+        "output_tokens": 138,
+        "latency_ms": 0,
+        "response_bytes": 106,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 9284,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "discovery_year": "1779",
+      "discoverer": "Jan Ingenhousz"
+    },
+    "run_id": "ece14f12",
+    "timestamp": "2026-03-27T08:32:31.538908+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 3
+  },
+  {
+    "task_id": "ecommerce-search",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 51660,
+    "total_output_tokens": 1632,
+    "tool_calls": 12,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1372,
+        "output_tokens": 106,
+        "latency_ms": 958,
+        "response_bytes": 1670,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_screenshot",
+        "input_tokens": 2159,
+        "output_tokens": 117,
+        "latency_ms": 117,
+        "response_bytes": 351,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 2431,
+        "output_tokens": 94,
+        "latency_ms": 1126,
+        "response_bytes": 1402,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_select",
+        "input_tokens": 3092,
+        "output_tokens": 95,
+        "latency_ms": 1090,
+        "response_bytes": 1420,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_select",
+        "input_tokens": 3759,
+        "output_tokens": 131,
+        "latency_ms": 1095,
+        "response_bytes": 1428,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 4464,
+        "output_tokens": 300,
+        "latency_ms": 117,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 4799,
+        "output_tokens": 186,
+        "latency_ms": 78,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 5020,
+        "output_tokens": 68,
+        "latency_ms": 1077,
+        "response_bytes": 1734,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 5782,
+        "output_tokens": 290,
+        "latency_ms": 84,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 6107,
+        "output_tokens": 81,
+        "latency_ms": 1087,
+        "response_bytes": 189,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 6262,
+        "output_tokens": 92,
+        "latency_ms": 1094,
+        "response_bytes": 137,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 6413,
+        "output_tokens": 72,
+        "latency_ms": 1074,
+        "response_bytes": 173,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 45724,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "184b4c82",
+    "timestamp": "2026-03-27T08:33:17.272083+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 12
+  },
+  {
+    "task_id": "form-fill",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 15383,
+    "total_output_tokens": 619,
+    "tool_calls": 7,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1379,
+        "output_tokens": 87,
+        "latency_ms": 1160,
+        "response_bytes": 947,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_fill",
+        "input_tokens": 1849,
+        "output_tokens": 102,
+        "latency_ms": 1116,
+        "response_bytes": 118,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_fill",
+        "input_tokens": 2007,
+        "output_tokens": 77,
+        "latency_ms": 1110,
+        "response_bytes": 127,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_select",
+        "input_tokens": 2142,
+        "output_tokens": 73,
+        "latency_ms": 1092,
+        "response_bytes": 729,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_fill",
+        "input_tokens": 2497,
+        "output_tokens": 76,
+        "latency_ms": 1088,
+        "response_bytes": 135,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 2630,
+        "output_tokens": 72,
+        "latency_ms": 1145,
+        "response_bytes": 455,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 2879,
+        "output_tokens": 132,
+        "latency_ms": 0,
+        "response_bytes": 185,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 33778,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "confirmation_message": "Thank you, John Doe! Your message about 'support' has been received. We'll reply to john@example.com shortly."
+    },
+    "run_id": "3c3065e8",
+    "timestamp": "2026-03-27T08:33:51.068195+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 7
+  },
+  {
+    "task_id": "dynamic-content",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 30783,
+    "total_output_tokens": 1171,
+    "tool_calls": 12,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1386,
+        "output_tokens": 105,
+        "latency_ms": 1116,
+        "response_bytes": 594,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 1740,
+        "output_tokens": 119,
+        "latency_ms": 79,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_screenshot",
+        "input_tokens": 1897,
+        "output_tokens": 67,
+        "latency_ms": 100,
+        "response_bytes": 351,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 2119,
+        "output_tokens": 86,
+        "latency_ms": 88,
+        "response_bytes": 196,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 2278,
+        "output_tokens": 81,
+        "latency_ms": 83,
+        "response_bytes": 256,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 2456,
+        "output_tokens": 57,
+        "latency_ms": 75,
+        "response_bytes": 349,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 2663,
+        "output_tokens": 253,
+        "latency_ms": 85,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 2951,
+        "output_tokens": 88,
+        "latency_ms": 66,
+        "response_bytes": 196,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 3112,
+        "output_tokens": 73,
+        "latency_ms": 1090,
+        "response_bytes": 158,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 3247,
+        "output_tokens": 89,
+        "latency_ms": 1095,
+        "response_bytes": 167,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 3401,
+        "output_tokens": 67,
+        "latency_ms": 1094,
+        "response_bytes": 165,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 3533,
+        "output_tokens": 86,
+        "latency_ms": 1089,
+        "response_bytes": 151,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 40354,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "72cbd034",
+    "timestamp": "2026-03-27T08:34:31.439578+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 12
+  }
+]

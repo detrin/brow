@@ -1,0 +1,59 @@
+[
+  {
+    "task_id": "vacuum-research",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 237890,
+    "total_output_tokens": 400,
+    "tool_calls": 4,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1615,
+        "output_tokens": 102,
+        "latency_ms": 1739,
+        "response_bytes": 92543,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_goto",
+        "input_tokens": 34356,
+        "output_tokens": 110,
+        "latency_ms": 813,
+        "response_bytes": 1336,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_goto",
+        "input_tokens": 67693,
+        "output_tokens": 96,
+        "latency_ms": 273,
+        "response_bytes": 1329,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 134226,
+        "output_tokens": 92,
+        "latency_ms": 71,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 56365,
+    "errors": [
+      "Input too long after compression"
+    ],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "44c5c5a0",
+    "timestamp": "2026-03-27T10:38:43.167140+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 5
+  }
+]

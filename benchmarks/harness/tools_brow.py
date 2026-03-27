@@ -1,5 +1,6 @@
 import subprocess
 import json
+import uuid
 
 BROW_TOOLS = [
     {
@@ -172,12 +173,12 @@ BROW_TOOLS = [
     },
 ]
 
-def execute_brow_tool(name, params):
+def _build_brow_cmd(name, params):
     def _cmd(subcmd, p, *args):
         return ["brow", subcmd, "-s", p["session"]] + list(args)
 
     cmd_map = {
-        "brow_session_new": lambda p: ["brow", "session", "new"] + (["--headed"] if p.get("headed") else []) + (["--profile", p.get("profile", "benchmark")]),
+        "brow_session_new": lambda p: ["brow", "session", "new"] + (["--headed"] if p.get("headed") else []) + (["--profile", f"bench-{uuid.uuid4().hex[:8]}"]),
         "brow_navigate": lambda p: _cmd("navigate", p, p["url"]),
         "brow_snapshot": lambda p: _cmd("snapshot", p) + (["--search", p["search"]] if p.get("search") else []),
         "brow_click": lambda p: _cmd("click", p, p["selector"]),
@@ -194,14 +195,27 @@ def execute_brow_tool(name, params):
     }
     builder = cmd_map.get(name)
     if not builder:
+        return None
+    return builder(params)
+
+
+async def execute_brow_tool(name, params):
+    import asyncio
+    cmd = _build_brow_cmd(name, params)
+    if cmd is None:
         return {"error": f"Unknown tool: {name}"}
-    cmd = builder(params)
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
-        if result.returncode != 0:
-            return {"error": result.stderr.strip() or f"Exit code {result.returncode}"}
-        return {"output": result.stdout.strip()}
-    except subprocess.TimeoutExpired:
+        proc = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=60)
+        if proc.returncode != 0:
+            return {"error": stderr.decode().strip() or f"Exit code {proc.returncode}"}
+        return {"output": stdout.decode().strip()}
+    except asyncio.TimeoutError:
+        proc.kill()
         return {"error": "Command timed out after 60s"}
     except Exception as e:
         return {"error": str(e)}

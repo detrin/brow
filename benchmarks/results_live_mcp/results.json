@@ -1,0 +1,121 @@
+[
+  {
+    "task_id": "vacuum-research",
+    "backend": "mcp-playwright",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 1423219,
+    "total_output_tokens": 1062,
+    "tool_calls": 10,
+    "tool_call_log": [
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 1534,
+        "output_tokens": 107,
+        "latency_ms": 1289,
+        "response_bytes": 92404,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 34224,
+        "output_tokens": 291,
+        "latency_ms": 4,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 67130,
+        "output_tokens": 86,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 132413,
+        "output_tokens": 83,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 197693,
+        "output_tokens": 68,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 197794,
+        "output_tokens": 109,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 197936,
+        "output_tokens": 72,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 198041,
+        "output_tokens": 101,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 198175,
+        "output_tokens": 71,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_wait",
+        "input_tokens": 198279,
+        "output_tokens": 74,
+        "latency_ms": 4,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      }
+    ],
+    "wall_clock_ms": 393039,
+    "errors": [
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "f16798bf",
+    "timestamp": "2026-03-27T10:45:23.043866+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 10
+  }
+]

@@ -1,0 +1,1153 @@
+[
+  {
+    "task_id": "rapid-multi-step",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 98705,
+    "total_output_tokens": 1214,
+    "tool_calls": 13,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2360,
+        "output_tokens": 66,
+        "latency_ms": 348,
+        "response_bytes": 15,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2444,
+        "output_tokens": 88,
+        "latency_ms": 277,
+        "response_bytes": 60,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2570,
+        "output_tokens": 54,
+        "latency_ms": 268,
+        "response_bytes": 737,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_fill",
+        "input_tokens": 2897,
+        "output_tokens": 125,
+        "latency_ms": 311,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_fill",
+        "input_tokens": 3311,
+        "output_tokens": 94,
+        "latency_ms": 251,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 3967,
+        "output_tokens": 73,
+        "latency_ms": 281,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_fill",
+        "input_tokens": 4602,
+        "output_tokens": 115,
+        "latency_ms": 253,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_fill",
+        "input_tokens": 4733,
+        "output_tokens": 94,
+        "latency_ms": 256,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 4843,
+        "output_tokens": 73,
+        "latency_ms": 30374,
+        "response_bytes": 8113,
+        "success": false,
+        "error": "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:198 in click_cmd \u2502\n\u2502                                                                              \u2502\n\u2502   195 \u2502   \u2502   \"retry\": retry,                                                \u2502\n\u2502   196 \u2502   \u2502   \"wait_for_selector\": not no_wait                               \u2502\n\u2502   197 \u2502   }                                                                  \u2502\n\u2502 \u2771 198 \u2502   run_async(c.post(f\"/browser/{s}/click\", json=payload))             \u2502\n\u2502   199                                                                        \u2502\n\u2502   200 @app.command(\"fill\")                                                   \u2502\n\u2502   201 def fill_cmd(                                                          \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:29 in run_async  \u2502\n\u2502                                                                              \u2502\n\u2502    26 session_opt = typer.Option(None, \"-s\", \"--session\")                    \u2502\n\u2502    27                                                                        \u2502\n\u2502    28 def run_async(coro):                                                   \u2502\n\u2502 \u2771  29 \u2502   return asyncio.run(coro)                                           \u2502\n\u2502    30                                                                        \u2502\n\u2502    31 def _client():                                                         \u2502\n\u2502    32 \u2502   return BrowClient()                                                \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:195 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   192 \u2502   \u2502   \u2502   \"asyncio.run() cannot be called from a running event loop\" \u2502\n\u2502   193 \u2502                                                                      \u2502\n\u2502   194 \u2502   with Runner(debug=debug, loop_factory=loop_factory) as runner:     \u2502\n\u2502 \u2771 195 \u2502   \u2502   return runner.run(main)                                        \u2502\n\u2502   196                                                                        \u2502\n\u2502   197                                                                        \u2502\n\u2502   198 def _cancel_all_tasks(loop):                                           \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:118 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   115 \u2502   \u2502                                                                  \u2502\n\u2502   116 \u2502   \u2502   self._interrupt_count = 0                                      \u2502\n\u2502   117 \u2502   \u2502   try:                                                           \u2502\n\u2502 \u2771 118 \u2502   \u2502   \u2502   return self._loop.run_until_complete(task)                 \u2502\n\u2502   119 \u2502   \u2502   except exceptions.CancelledError:                              \u2502\n\u2502   120 \u2502   \u2502   \u2502   if self._interrupt_count > 0:                              \u2502\n\u2502   121 \u2502   \u2502   \u2502   \u2502   uncancel = getattr(task, \"uncancel\", None)             \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/base_events.py:691 in run_until_complete       \u2502\n\u2502                                                                              \u2502\n\u2502    688 \u2502   \u2502   if not future.done():                                         \u2502\n\u2502    689 \u2502   \u2502   \u2502   raise RuntimeError('Event loop stopped before Future comp \u2502\n\u2502    690 \u2502   \u2502                                                                 \u2502\n\u2502 \u2771  691 \u2502   \u2502   return future.result()                                        \u2502\n\u2502    692 \u2502                                                                     \u2502\n\u2502    693 \u2502   def stop(self):                                                   \u2502\n\u2502    694 \u2502   \u2502   \"\"\"Stop running the event loop.                               \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/client.py:18 in post    \u2502\n\u2502                                                                              \u2502\n\u2502   15 \u2502                                                                       \u2502\n\u2502   16 \u2502   async def post(self, path, **kwargs):                               \u2502\n\u2502   17 \u2502   \u2502   r = await self._client.post(path, **kwargs)                     \u2502\n\u2502 \u2771 18 \u2502   \u2502   r.raise_for_status()                                            \u2502\n\u2502   19 \u2502   \u2502   return r.json()                                                 \u2502\n\u2502   20 \u2502                                                                       \u2502\n\u2502   21 \u2502   async def delete(self, path, **kwargs):                             \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/.local/pipx/venvs/brow-cli/lib/python3.12/site-packages/http \u2502\n\u2502 x/_models.py:829 in raise_for_status                                         \u2502\n\u2502                                                                              \u2502\n\u2502    826 \u2502   \u2502   }                                                             \u2502\n\u2502    827 \u2502   \u2502   error_type = error_types.get(status_class, \"Invalid status co \u2502\n\u2502    828 \u2502   \u2502   message = message.format(self, error_type=error_type)         \u2502\n\u2502 \u2771  829 \u2502   \u2502   raise HTTPStatusError(message, request=request, response=self \u2502\n\u2502    830 \u2502                                                                     \u2502\n\u2502    831 \u2502   def json(self, **kwargs: typing.Any) -> typing.Any:               \u2502\n\u2502    832 \u2502   \u2502   return jsonlib.loads(self.content, **kwargs)                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nHTTPStatusError: Server error '500 Internal Server Error' for url \n'http://127.0.0.1:19987/browser/4/click'\nFor more information check: \nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500"
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 7671,
+        "output_tokens": 85,
+        "latency_ms": 239,
+        "response_bytes": 806,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 10803,
+        "output_tokens": 103,
+        "latency_ms": 30345,
+        "response_bytes": 8113,
+        "success": false,
+        "error": "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:198 in click_cmd \u2502\n\u2502                                                                              \u2502\n\u2502   195 \u2502   \u2502   \"retry\": retry,                                                \u2502\n\u2502   196 \u2502   \u2502   \"wait_for_selector\": not no_wait                               \u2502\n\u2502   197 \u2502   }                                                                  \u2502\n\u2502 \u2771 198 \u2502   run_async(c.post(f\"/browser/{s}/click\", json=payload))             \u2502\n\u2502   199                                                                        \u2502\n\u2502   200 @app.command(\"fill\")                                                   \u2502\n\u2502   201 def fill_cmd(                                                          \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:29 in run_async  \u2502\n\u2502                                                                              \u2502\n\u2502    26 session_opt = typer.Option(None, \"-s\", \"--session\")                    \u2502\n\u2502    27                                                                        \u2502\n\u2502    28 def run_async(coro):                                                   \u2502\n\u2502 \u2771  29 \u2502   return asyncio.run(coro)                                           \u2502\n\u2502    30                                                                        \u2502\n\u2502    31 def _client():                                                         \u2502\n\u2502    32 \u2502   return BrowClient()                                                \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:195 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   192 \u2502   \u2502   \u2502   \"asyncio.run() cannot be called from a running event loop\" \u2502\n\u2502   193 \u2502                                                                      \u2502\n\u2502   194 \u2502   with Runner(debug=debug, loop_factory=loop_factory) as runner:     \u2502\n\u2502 \u2771 195 \u2502   \u2502   return runner.run(main)                                        \u2502\n\u2502   196                                                                        \u2502\n\u2502   197                                                                        \u2502\n\u2502   198 def _cancel_all_tasks(loop):                                           \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:118 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   115 \u2502   \u2502                                                                  \u2502\n\u2502   116 \u2502   \u2502   self._interrupt_count = 0                                      \u2502\n\u2502   117 \u2502   \u2502   try:                                                           \u2502\n\u2502 \u2771 118 \u2502   \u2502   \u2502   return self._loop.run_until_complete(task)                 \u2502\n\u2502   119 \u2502   \u2502   except exceptions.CancelledError:                              \u2502\n\u2502   120 \u2502   \u2502   \u2502   if self._interrupt_count > 0:                              \u2502\n\u2502   121 \u2502   \u2502   \u2502   \u2502   uncancel = getattr(task, \"uncancel\", None)             \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/base_events.py:691 in run_until_complete       \u2502\n\u2502                                                                              \u2502\n\u2502    688 \u2502   \u2502   if not future.done():                                         \u2502\n\u2502    689 \u2502   \u2502   \u2502   raise RuntimeError('Event loop stopped before Future comp \u2502\n\u2502    690 \u2502   \u2502                                                                 \u2502\n\u2502 \u2771  691 \u2502   \u2502   return future.result()                                        \u2502\n\u2502    692 \u2502                                                                     \u2502\n\u2502    693 \u2502   def stop(self):                                                   \u2502\n\u2502    694 \u2502   \u2502   \"\"\"Stop running the event loop.                               \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/client.py:18 in post    \u2502\n\u2502                                                                              \u2502\n\u2502   15 \u2502                                                                       \u2502\n\u2502   16 \u2502   async def post(self, path, **kwargs):                               \u2502\n\u2502   17 \u2502   \u2502   r = await self._client.post(path, **kwargs)                     \u2502\n\u2502 \u2771 18 \u2502   \u2502   r.raise_for_status()                                            \u2502\n\u2502   19 \u2502   \u2502   return r.json()                                                 \u2502\n\u2502   20 \u2502                                                                       \u2502\n\u2502   21 \u2502   async def delete(self, path, **kwargs):                             \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/.local/pipx/venvs/brow-cli/lib/python3.12/site-packages/http \u2502\n\u2502 x/_models.py:829 in raise_for_status                                         \u2502\n\u2502                                                                              \u2502\n\u2502    826 \u2502   \u2502   }                                                             \u2502\n\u2502    827 \u2502   \u2502   error_type = error_types.get(status_class, \"Invalid status co \u2502\n\u2502    828 \u2502   \u2502   message = message.format(self, error_type=error_type)         \u2502\n\u2502 \u2771  829 \u2502   \u2502   raise HTTPStatusError(message, request=request, response=self \u2502\n\u2502    830 \u2502                                                                     \u2502\n\u2502    831 \u2502   def json(self, **kwargs: typing.Any) -> typing.Any:               \u2502\n\u2502    832 \u2502   \u2502   return jsonlib.loads(self.content, **kwargs)                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nHTTPStatusError: Server error '500 Internal Server Error' for url \n'http://127.0.0.1:19987/browser/4/click'\nFor more information check: \nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500"
+      },
+      {
+        "name": "brow_html",
+        "input_tokens": 19462,
+        "output_tokens": 94,
+        "latency_ms": 249,
+        "response_bytes": 1997,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 29042,
+        "output_tokens": 150,
+        "latency_ms": 267,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 131300,
+    "errors": [
+      "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:198 in click_cmd \u2502\n\u2502                                                                              \u2502\n\u2502   195 \u2502   \u2502   \"retry\": retry,                                                \u2502\n\u2502   196 \u2502   \u2502   \"wait_for_selector\": not no_wait                               \u2502\n\u2502   197 \u2502   }                                                                  \u2502\n\u2502 \u2771 198 \u2502   run_async(c.post(f\"/browser/{s}/click\", json=payload))             \u2502\n\u2502   199                                                                        \u2502\n\u2502   200 @app.command(\"fill\")                                                   \u2502\n\u2502   201 def fill_cmd(                                                          \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:29 in run_async  \u2502\n\u2502                                                                              \u2502\n\u2502    26 session_opt = typer.Option(None, \"-s\", \"--session\")                    \u2502\n\u2502    27                                                                        \u2502\n\u2502    28 def run_async(coro):                                                   \u2502\n\u2502 \u2771  29 \u2502   return asyncio.run(coro)                                           \u2502\n\u2502    30                                                                        \u2502\n\u2502    31 def _client():                                                         \u2502\n\u2502    32 \u2502   return BrowClient()                                                \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:195 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   192 \u2502   \u2502   \u2502   \"asyncio.run() cannot be called from a running event loop\" \u2502\n\u2502   193 \u2502                                                                      \u2502\n\u2502   194 \u2502   with Runner(debug=debug, loop_factory=loop_factory) as runner:     \u2502\n\u2502 \u2771 195 \u2502   \u2502   return runner.run(main)                                        \u2502\n\u2502   196                                                                        \u2502\n\u2502   197                                                                        \u2502\n\u2502   198 def _cancel_all_tasks(loop):                                           \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:118 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   115 \u2502   \u2502                                                                  \u2502\n\u2502   116 \u2502   \u2502   self._interrupt_count = 0                                      \u2502\n\u2502   117 \u2502   \u2502   try:                                                           \u2502\n\u2502 \u2771 118 \u2502   \u2502   \u2502   return self._loop.run_until_complete(task)                 \u2502\n\u2502   119 \u2502   \u2502   except exceptions.CancelledError:                              \u2502\n\u2502   120 \u2502   \u2502   \u2502   if self._interrupt_count > 0:                              \u2502\n\u2502   121 \u2502   \u2502   \u2502   \u2502   uncancel = getattr(task, \"uncancel\", None)             \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/base_events.py:691 in run_until_complete       \u2502\n\u2502                                                                              \u2502\n\u2502    688 \u2502   \u2502   if not future.done():                                         \u2502\n\u2502    689 \u2502   \u2502   \u2502   raise RuntimeError('Event loop stopped before Future comp \u2502\n\u2502    690 \u2502   \u2502                                                                 \u2502\n\u2502 \u2771  691 \u2502   \u2502   return future.result()                                        \u2502\n\u2502    692 \u2502                                                                     \u2502\n\u2502    693 \u2502   def stop(self):                                                   \u2502\n\u2502    694 \u2502   \u2502   \"\"\"Stop running the event loop.                               \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/client.py:18 in post    \u2502\n\u2502                                                                              \u2502\n\u2502   15 \u2502                                                                       \u2502\n\u2502   16 \u2502   async def post(self, path, **kwargs):                               \u2502\n\u2502   17 \u2502   \u2502   r = await self._client.post(path, **kwargs)                     \u2502\n\u2502 \u2771 18 \u2502   \u2502   r.raise_for_status()                                            \u2502\n\u2502   19 \u2502   \u2502   return r.json()                                                 \u2502\n\u2502   20 \u2502                                                                       \u2502\n\u2502   21 \u2502   async def delete(self, path, **kwargs):                             \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/.local/pipx/venvs/brow-cli/lib/python3.12/site-packages/http \u2502\n\u2502 x/_models.py:829 in raise_for_status                                         \u2502\n\u2502                                                                              \u2502\n\u2502    826 \u2502   \u2502   }                                                             \u2502\n\u2502    827 \u2502   \u2502   error_type = error_types.get(status_class, \"Invalid status co \u2502\n\u2502    828 \u2502   \u2502   message = message.format(self, error_type=error_type)         \u2502\n\u2502 \u2771  829 \u2502   \u2502   raise HTTPStatusError(message, request=request, response=self \u2502\n\u2502    830 \u2502                                                                     \u2502\n\u2502    831 \u2502   def json(self, **kwargs: typing.Any) -> typing.Any:               \u2502\n\u2502    832 \u2502   \u2502   return jsonlib.loads(self.content, **kwargs)                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nHTTPStatusError: Server error '500 Internal Server Error' for url \n'http://127.0.0.1:19987/browser/4/click'\nFor more information check: \nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+      "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:198 in click_cmd \u2502\n\u2502                                                                              \u2502\n\u2502   195 \u2502   \u2502   \"retry\": retry,                                                \u2502\n\u2502   196 \u2502   \u2502   \"wait_for_selector\": not no_wait                               \u2502\n\u2502   197 \u2502   }                                                                  \u2502\n\u2502 \u2771 198 \u2502   run_async(c.post(f\"/browser/{s}/click\", json=payload))             \u2502\n\u2502   199                                                                        \u2502\n\u2502   200 @app.command(\"fill\")                                                   \u2502\n\u2502   201 def fill_cmd(                                                          \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:29 in run_async  \u2502\n\u2502                                                                              \u2502\n\u2502    26 session_opt = typer.Option(None, \"-s\", \"--session\")                    \u2502\n\u2502    27                                                                        \u2502\n\u2502    28 def run_async(coro):                                                   \u2502\n\u2502 \u2771  29 \u2502   return asyncio.run(coro)                                           \u2502\n\u2502    30                                                                        \u2502\n\u2502    31 def _client():                                                         \u2502\n\u2502    32 \u2502   return BrowClient()                                                \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:195 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   192 \u2502   \u2502   \u2502   \"asyncio.run() cannot be called from a running event loop\" \u2502\n\u2502   193 \u2502                                                                      \u2502\n\u2502   194 \u2502   with Runner(debug=debug, loop_factory=loop_factory) as runner:     \u2502\n\u2502 \u2771 195 \u2502   \u2502   return runner.run(main)                                        \u2502\n\u2502   196                                                                        \u2502\n\u2502   197                                                                        \u2502\n\u2502   198 def _cancel_all_tasks(loop):                                           \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:118 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   115 \u2502   \u2502                                                                  \u2502\n\u2502   116 \u2502   \u2502   self._interrupt_count = 0                                      \u2502\n\u2502   117 \u2502   \u2502   try:                                                           \u2502\n\u2502 \u2771 118 \u2502   \u2502   \u2502   return self._loop.run_until_complete(task)                 \u2502\n\u2502   119 \u2502   \u2502   except exceptions.CancelledError:                              \u2502\n\u2502   120 \u2502   \u2502   \u2502   if self._interrupt_count > 0:                              \u2502\n\u2502   121 \u2502   \u2502   \u2502   \u2502   uncancel = getattr(task, \"uncancel\", None)             \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/base_events.py:691 in run_until_complete       \u2502\n\u2502                                                                              \u2502\n\u2502    688 \u2502   \u2502   if not future.done():                                         \u2502\n\u2502    689 \u2502   \u2502   \u2502   raise RuntimeError('Event loop stopped before Future comp \u2502\n\u2502    690 \u2502   \u2502                                                                 \u2502\n\u2502 \u2771  691 \u2502   \u2502   return future.result()                                        \u2502\n\u2502    692 \u2502                                                                     \u2502\n\u2502    693 \u2502   def stop(self):                                                   \u2502\n\u2502    694 \u2502   \u2502   \"\"\"Stop running the event loop.                               \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/client.py:18 in post    \u2502\n\u2502                                                                              \u2502\n\u2502   15 \u2502                                                                       \u2502\n\u2502   16 \u2502   async def post(self, path, **kwargs):                               \u2502\n\u2502   17 \u2502   \u2502   r = await self._client.post(path, **kwargs)                     \u2502\n\u2502 \u2771 18 \u2502   \u2502   r.raise_for_status()                                            \u2502\n\u2502   19 \u2502   \u2502   return r.json()                                                 \u2502\n\u2502   20 \u2502                                                                       \u2502\n\u2502   21 \u2502   async def delete(self, path, **kwargs):                             \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/.local/pipx/venvs/brow-cli/lib/python3.12/site-packages/http \u2502\n\u2502 x/_models.py:829 in raise_for_status                                         \u2502\n\u2502                                                                              \u2502\n\u2502    826 \u2502   \u2502   }                                                             \u2502\n\u2502    827 \u2502   \u2502   error_type = error_types.get(status_class, \"Invalid status co \u2502\n\u2502    828 \u2502   \u2502   message = message.format(self, error_type=error_type)         \u2502\n\u2502 \u2771  829 \u2502   \u2502   raise HTTPStatusError(message, request=request, response=self \u2502\n\u2502    830 \u2502                                                                     \u2502\n\u2502    831 \u2502   def json(self, **kwargs: typing.Any) -> typing.Any:               \u2502\n\u2502    832 \u2502   \u2502   return jsonlib.loads(self.content, **kwargs)                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nHTTPStatusError: Server error '500 Internal Server Error' for url \n'http://127.0.0.1:19987/browser/4/click'\nFor more information check: \nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500"
+    ],
+    "error_recoveries": 1,
+    "final_output": {},
+    "run_id": "e0dea87e",
+    "timestamp": "2026-03-27T10:04:25.449691+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 13
+  },
+  {
+    "task_id": "dynamic-content",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 28712,
+    "total_output_tokens": 928,
+    "tool_calls": 10,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2313,
+        "output_tokens": 70,
+        "latency_ms": 478,
+        "response_bytes": 15,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2401,
+        "output_tokens": 84,
+        "latency_ms": 258,
+        "response_bytes": 50,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2519,
+        "output_tokens": 70,
+        "latency_ms": 274,
+        "response_bytes": 146,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_wait",
+        "input_tokens": 2657,
+        "output_tokens": 135,
+        "latency_ms": 247,
+        "response_bytes": 18,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2810,
+        "output_tokens": 54,
+        "latency_ms": 278,
+        "response_bytes": 146,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_key",
+        "input_tokens": 2932,
+        "output_tokens": 103,
+        "latency_ms": 255,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_wait",
+        "input_tokens": 3051,
+        "output_tokens": 71,
+        "latency_ms": 247,
+        "response_bytes": 18,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3140,
+        "output_tokens": 68,
+        "latency_ms": 243,
+        "response_bytes": 146,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_html",
+        "input_tokens": 3276,
+        "output_tokens": 91,
+        "latency_ms": 288,
+        "response_bytes": 822,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 3613,
+        "output_tokens": 182,
+        "latency_ms": 0,
+        "response_bytes": 190,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 33370,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": "[\n  {\"name\": \"Alpha\", \"value\": \"100\"},\n  {\"name\": \"Beta\", \"value\": \"200\"},\n  {\"name\": \"Gamma\", \"value\": \"300\"}\n]",
+    "run_id": "ba0f1527",
+    "timestamp": "2026-03-27T10:04:59.144803+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 10
+  },
+  {
+    "task_id": "info-lookup",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 16076,
+    "total_output_tokens": 536,
+    "tool_calls": 6,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2311,
+        "output_tokens": 81,
+        "latency_ms": 488,
+        "response_bytes": 15,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2410,
+        "output_tokens": 90,
+        "latency_ms": 269,
+        "response_bytes": 65,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2540,
+        "output_tokens": 54,
+        "latency_ms": 256,
+        "response_bytes": 448,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 2788,
+        "output_tokens": 117,
+        "latency_ms": 305,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2921,
+        "output_tokens": 54,
+        "latency_ms": 263,
+        "response_bytes": 339,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 3106,
+        "output_tokens": 140,
+        "latency_ms": 0,
+        "response_bytes": 106,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 16692,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "discovery_year": "1779",
+      "discoverer": "Jan Ingenhousz"
+    },
+    "run_id": "eac5bb0b",
+    "timestamp": "2026-03-27T10:05:16.180316+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 6
+  },
+  {
+    "task_id": "multi-page-nav",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 22811,
+    "total_output_tokens": 732,
+    "tool_calls": 8,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2325,
+        "output_tokens": 66,
+        "latency_ms": 362,
+        "response_bytes": 15,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2409,
+        "output_tokens": 92,
+        "latency_ms": 306,
+        "response_bytes": 70,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2543,
+        "output_tokens": 54,
+        "latency_ms": 318,
+        "response_bytes": 391,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 2763,
+        "output_tokens": 106,
+        "latency_ms": 282,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2885,
+        "output_tokens": 54,
+        "latency_ms": 282,
+        "response_bytes": 433,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 3124,
+        "output_tokens": 123,
+        "latency_ms": 302,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3263,
+        "output_tokens": 54,
+        "latency_ms": 246,
+        "response_bytes": 421,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 3499,
+        "output_tokens": 183,
+        "latency_ms": 0,
+        "response_bytes": 111,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 19701,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "founded": 2020,
+      "team_size": 3,
+      "email": "hello@example.com"
+    },
+    "run_id": "b30ebc77",
+    "timestamp": "2026-03-27T10:05:36.218689+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 8
+  },
+  {
+    "task_id": "login-auth",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 68354,
+    "total_output_tokens": 1641,
+    "tool_calls": 20,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2320,
+        "output_tokens": 65,
+        "latency_ms": 351,
+        "response_bytes": 15,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2403,
+        "output_tokens": 84,
+        "latency_ms": 281,
+        "response_bytes": 48,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2521,
+        "output_tokens": 54,
+        "latency_ms": 259,
+        "response_bytes": 58,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_url",
+        "input_tokens": 2605,
+        "output_tokens": 71,
+        "latency_ms": 249,
+        "response_bytes": 42,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_html",
+        "input_tokens": 2707,
+        "output_tokens": 54,
+        "latency_ms": 260,
+        "response_bytes": 220,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2836,
+        "output_tokens": 121,
+        "latency_ms": 259,
+        "response_bytes": 43,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2990,
+        "output_tokens": 54,
+        "latency_ms": 262,
+        "response_bytes": 49,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 3072,
+        "output_tokens": 112,
+        "latency_ms": 251,
+        "response_bytes": 48,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_wait",
+        "input_tokens": 3218,
+        "output_tokens": 71,
+        "latency_ms": 245,
+        "response_bytes": 18,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3307,
+        "output_tokens": 54,
+        "latency_ms": 272,
+        "response_bytes": 58,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 3391,
+        "output_tokens": 145,
+        "latency_ms": 281,
+        "response_bytes": 52,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3570,
+        "output_tokens": 54,
+        "latency_ms": 262,
+        "response_bytes": 33,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 3648,
+        "output_tokens": 209,
+        "latency_ms": 280,
+        "response_bytes": 257,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3948,
+        "output_tokens": 54,
+        "latency_ms": 256,
+        "response_bytes": 142,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 4057,
+        "output_tokens": 85,
+        "latency_ms": 305,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_wait",
+        "input_tokens": 4158,
+        "output_tokens": 71,
+        "latency_ms": 262,
+        "response_bytes": 18,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_url",
+        "input_tokens": 4247,
+        "output_tokens": 54,
+        "latency_ms": 242,
+        "response_bytes": 42,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 4332,
+        "output_tokens": 54,
+        "latency_ms": 241,
+        "response_bytes": 156,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 4452,
+        "output_tokens": 104,
+        "latency_ms": 292,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_wait",
+        "input_tokens": 4572,
+        "output_tokens": 71,
+        "latency_ms": 258,
+        "response_bytes": 18,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 96082,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "9e72014f",
+    "timestamp": "2026-03-27T10:07:12.614152+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 20
+  },
+  {
+    "task_id": "error-recovery",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 50269,
+    "total_output_tokens": 1361,
+    "tool_calls": 16,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2310,
+        "output_tokens": 75,
+        "latency_ms": 360,
+        "response_bytes": 15,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2403,
+        "output_tokens": 96,
+        "latency_ms": 252,
+        "response_bytes": 48,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2534,
+        "output_tokens": 89,
+        "latency_ms": 268,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2639,
+        "output_tokens": 102,
+        "latency_ms": 251,
+        "response_bytes": 48,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2776,
+        "output_tokens": 72,
+        "latency_ms": 264,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2864,
+        "output_tokens": 96,
+        "latency_ms": 261,
+        "response_bytes": 48,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2995,
+        "output_tokens": 72,
+        "latency_ms": 256,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 3083,
+        "output_tokens": 91,
+        "latency_ms": 259,
+        "response_bytes": 48,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3209,
+        "output_tokens": 72,
+        "latency_ms": 240,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 3297,
+        "output_tokens": 91,
+        "latency_ms": 256,
+        "response_bytes": 48,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3423,
+        "output_tokens": 72,
+        "latency_ms": 255,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3511,
+        "output_tokens": 72,
+        "latency_ms": 243,
+        "response_bytes": 78,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 3623,
+        "output_tokens": 102,
+        "latency_ms": 263,
+        "response_bytes": 48,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3760,
+        "output_tokens": 54,
+        "latency_ms": 244,
+        "response_bytes": 77,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_html",
+        "input_tokens": 3854,
+        "output_tokens": 115,
+        "latency_ms": 261,
+        "response_bytes": 23,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 3988,
+        "output_tokens": 90,
+        "latency_ms": 0,
+        "response_bytes": 69,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 43978,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "text": "Found me!"
+    },
+    "run_id": "08d58dc8",
+    "timestamp": "2026-03-27T10:07:56.925416+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 16
+  },
+  {
+    "task_id": "large-snapshot",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 141134,
+    "total_output_tokens": 1036,
+    "tool_calls": 10,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2305,
+        "output_tokens": 69,
+        "latency_ms": 472,
+        "response_bytes": 16,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2392,
+        "output_tokens": 84,
+        "latency_ms": 271,
+        "response_bytes": 48,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2510,
+        "output_tokens": 54,
+        "latency_ms": 266,
+        "response_bytes": 5155,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 4675,
+        "output_tokens": 118,
+        "latency_ms": 276,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 6919,
+        "output_tokens": 86,
+        "latency_ms": 248,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_scroll",
+        "input_tokens": 11241,
+        "output_tokens": 107,
+        "latency_ms": 242,
+        "response_bytes": 1098,
+        "success": false,
+        "error": "Usage: brow scroll [OPTIONS]\nTry 'brow scroll --help' for help.\n\u256d\u2500 Error \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Got unexpected extra argument (2000)                                         \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f"
+      },
+      {
+        "name": "brow_scroll",
+        "input_tokens": 16246,
+        "output_tokens": 81,
+        "latency_ms": 227,
+        "response_bytes": 1098,
+        "success": false,
+        "error": "Usage: brow scroll [OPTIONS]\nTry 'brow scroll --help' for help.\n\u256d\u2500 Error \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Got unexpected extra argument (2000)                                         \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f"
+      },
+      {
+        "name": "brow_key",
+        "input_tokens": 17682,
+        "output_tokens": 92,
+        "latency_ms": 351,
+        "response_bytes": 8095,
+        "success": false,
+        "error": "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:230 in key_cmd   \u2502\n\u2502                                                                              \u2502\n\u2502   227 def key_cmd(key: str, s: Optional[str] = session_opt):                 \u2502\n\u2502   228 \u2502   ensure_daemon()                                                    \u2502\n\u2502   229 \u2502   c = _client()                                                      \u2502\n\u2502 \u2771 230 \u2502   run_async(c.post(f\"/browser/{s}/key\", json={\"key\": key}))          \u2502\n\u2502   231                                                                        \u2502\n\u2502   232 @app.command(\"hover\")                                                  \u2502\n\u2502   233 def hover_cmd(selector: str, s: Optional[str] = session_opt, timeout:  \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:29 in run_async  \u2502\n\u2502                                                                              \u2502\n\u2502    26 session_opt = typer.Option(None, \"-s\", \"--session\")                    \u2502\n\u2502    27                                                                        \u2502\n\u2502    28 def run_async(coro):                                                   \u2502\n\u2502 \u2771  29 \u2502   return asyncio.run(coro)                                           \u2502\n\u2502    30                                                                        \u2502\n\u2502    31 def _client():                                                         \u2502\n\u2502    32 \u2502   return BrowClient()                                                \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:195 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   192 \u2502   \u2502   \u2502   \"asyncio.run() cannot be called from a running event loop\" \u2502\n\u2502   193 \u2502                                                                      \u2502\n\u2502   194 \u2502   with Runner(debug=debug, loop_factory=loop_factory) as runner:     \u2502\n\u2502 \u2771 195 \u2502   \u2502   return runner.run(main)                                        \u2502\n\u2502   196                                                                        \u2502\n\u2502   197                                                                        \u2502\n\u2502   198 def _cancel_all_tasks(loop):                                           \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:118 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   115 \u2502   \u2502                                                                  \u2502\n\u2502   116 \u2502   \u2502   self._interrupt_count = 0                                      \u2502\n\u2502   117 \u2502   \u2502   try:                                                           \u2502\n\u2502 \u2771 118 \u2502   \u2502   \u2502   return self._loop.run_until_complete(task)                 \u2502\n\u2502   119 \u2502   \u2502   except exceptions.CancelledError:                              \u2502\n\u2502   120 \u2502   \u2502   \u2502   if self._interrupt_count > 0:                              \u2502\n\u2502   121 \u2502   \u2502   \u2502   \u2502   uncancel = getattr(task, \"uncancel\", None)             \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/base_events.py:691 in run_until_complete       \u2502\n\u2502                                                                              \u2502\n\u2502    688 \u2502   \u2502   if not future.done():                                         \u2502\n\u2502    689 \u2502   \u2502   \u2502   raise RuntimeError('Event loop stopped before Future comp \u2502\n\u2502    690 \u2502   \u2502                                                                 \u2502\n\u2502 \u2771  691 \u2502   \u2502   return future.result()                                        \u2502\n\u2502    692 \u2502                                                                     \u2502\n\u2502    693 \u2502   def stop(self):                                                   \u2502\n\u2502    694 \u2502   \u2502   \"\"\"Stop running the event loop.                               \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/client.py:18 in post    \u2502\n\u2502                                                                              \u2502\n\u2502   15 \u2502                                                                       \u2502\n\u2502   16 \u2502   async def post(self, path, **kwargs):                               \u2502\n\u2502   17 \u2502   \u2502   r = await self._client.post(path, **kwargs)                     \u2502\n\u2502 \u2771 18 \u2502   \u2502   r.raise_for_status()                                            \u2502\n\u2502   19 \u2502   \u2502   return r.json()                                                 \u2502\n\u2502   20 \u2502                                                                       \u2502\n\u2502   21 \u2502   async def delete(self, path, **kwargs):                             \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/.local/pipx/venvs/brow-cli/lib/python3.12/site-packages/http \u2502\n\u2502 x/_models.py:829 in raise_for_status                                         \u2502\n\u2502                                                                              \u2502\n\u2502    826 \u2502   \u2502   }                                                             \u2502\n\u2502    827 \u2502   \u2502   error_type = error_types.get(status_class, \"Invalid status co \u2502\n\u2502    828 \u2502   \u2502   message = message.format(self, error_type=error_type)         \u2502\n\u2502 \u2771  829 \u2502   \u2502   raise HTTPStatusError(message, request=request, response=self \u2502\n\u2502    830 \u2502                                                                     \u2502\n\u2502    831 \u2502   def json(self, **kwargs: typing.Any) -> typing.Any:               \u2502\n\u2502    832 \u2502   \u2502   return jsonlib.loads(self.content, **kwargs)                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nHTTPStatusError: Server error '500 Internal Server Error' for url \n'http://127.0.0.1:19987/browser/10/key'\nFor more information check: \nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500"
+      },
+      {
+        "name": "brow_html",
+        "input_tokens": 22575,
+        "output_tokens": 84,
+        "latency_ms": 265,
+        "response_bytes": 83455,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 54589,
+        "output_tokens": 261,
+        "latency_ms": 0,
+        "response_bytes": 94,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 40395,
+    "errors": [
+      "Usage: brow scroll [OPTIONS]\nTry 'brow scroll --help' for help.\n\u256d\u2500 Error \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Got unexpected extra argument (2000)                                         \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f",
+      "Usage: brow scroll [OPTIONS]\nTry 'brow scroll --help' for help.\n\u256d\u2500 Error \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Got unexpected extra argument (2000)                                         \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f",
+      "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:230 in key_cmd   \u2502\n\u2502                                                                              \u2502\n\u2502   227 def key_cmd(key: str, s: Optional[str] = session_opt):                 \u2502\n\u2502   228 \u2502   ensure_daemon()                                                    \u2502\n\u2502   229 \u2502   c = _client()                                                      \u2502\n\u2502 \u2771 230 \u2502   run_async(c.post(f\"/browser/{s}/key\", json={\"key\": key}))          \u2502\n\u2502   231                                                                        \u2502\n\u2502   232 @app.command(\"hover\")                                                  \u2502\n\u2502   233 def hover_cmd(selector: str, s: Optional[str] = session_opt, timeout:  \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/cli.py:29 in run_async  \u2502\n\u2502                                                                              \u2502\n\u2502    26 session_opt = typer.Option(None, \"-s\", \"--session\")                    \u2502\n\u2502    27                                                                        \u2502\n\u2502    28 def run_async(coro):                                                   \u2502\n\u2502 \u2771  29 \u2502   return asyncio.run(coro)                                           \u2502\n\u2502    30                                                                        \u2502\n\u2502    31 def _client():                                                         \u2502\n\u2502    32 \u2502   return BrowClient()                                                \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:195 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   192 \u2502   \u2502   \u2502   \"asyncio.run() cannot be called from a running event loop\" \u2502\n\u2502   193 \u2502                                                                      \u2502\n\u2502   194 \u2502   with Runner(debug=debug, loop_factory=loop_factory) as runner:     \u2502\n\u2502 \u2771 195 \u2502   \u2502   return runner.run(main)                                        \u2502\n\u2502   196                                                                        \u2502\n\u2502   197                                                                        \u2502\n\u2502   198 def _cancel_all_tasks(loop):                                           \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/runners.py:118 in run                          \u2502\n\u2502                                                                              \u2502\n\u2502   115 \u2502   \u2502                                                                  \u2502\n\u2502   116 \u2502   \u2502   self._interrupt_count = 0                                      \u2502\n\u2502   117 \u2502   \u2502   try:                                                           \u2502\n\u2502 \u2771 118 \u2502   \u2502   \u2502   return self._loop.run_until_complete(task)                 \u2502\n\u2502   119 \u2502   \u2502   except exceptions.CancelledError:                              \u2502\n\u2502   120 \u2502   \u2502   \u2502   if self._interrupt_count > 0:                              \u2502\n\u2502   121 \u2502   \u2502   \u2502   \u2502   uncancel = getattr(task, \"uncancel\", None)             \u2502\n\u2502                                                                              \u2502\n\u2502 /opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Version \u2502\n\u2502 s/3.12/lib/python3.12/asyncio/base_events.py:691 in run_until_complete       \u2502\n\u2502                                                                              \u2502\n\u2502    688 \u2502   \u2502   if not future.done():                                         \u2502\n\u2502    689 \u2502   \u2502   \u2502   raise RuntimeError('Event loop stopped before Future comp \u2502\n\u2502    690 \u2502   \u2502                                                                 \u2502\n\u2502 \u2771  691 \u2502   \u2502   return future.result()                                        \u2502\n\u2502    692 \u2502                                                                     \u2502\n\u2502    693 \u2502   def stop(self):                                                   \u2502\n\u2502    694 \u2502   \u2502   \"\"\"Stop running the event loop.                               \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/projects-personal/brow/brow/src/brow/client.py:18 in post    \u2502\n\u2502                                                                              \u2502\n\u2502   15 \u2502                                                                       \u2502\n\u2502   16 \u2502   async def post(self, path, **kwargs):                               \u2502\n\u2502   17 \u2502   \u2502   r = await self._client.post(path, **kwargs)                     \u2502\n\u2502 \u2771 18 \u2502   \u2502   r.raise_for_status()                                            \u2502\n\u2502   19 \u2502   \u2502   return r.json()                                                 \u2502\n\u2502   20 \u2502                                                                       \u2502\n\u2502   21 \u2502   async def delete(self, path, **kwargs):                             \u2502\n\u2502                                                                              \u2502\n\u2502 /Users/danherma/.local/pipx/venvs/brow-cli/lib/python3.12/site-packages/http \u2502\n\u2502 x/_models.py:829 in raise_for_status                                         \u2502\n\u2502                                                                              \u2502\n\u2502    826 \u2502   \u2502   }                                                             \u2502\n\u2502    827 \u2502   \u2502   error_type = error_types.get(status_class, \"Invalid status co \u2502\n\u2502    828 \u2502   \u2502   message = message.format(self, error_type=error_type)         \u2502\n\u2502 \u2771  829 \u2502   \u2502   raise HTTPStatusError(message, request=request, response=self \u2502\n\u2502    830 \u2502                                                                     \u2502\n\u2502    831 \u2502   def json(self, **kwargs: typing.Any) -> typing.Any:               \u2502\n\u2502    832 \u2502   \u2502   return jsonlib.loads(self.content, **kwargs)                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nHTTPStatusError: Server error '500 Internal Server Error' for url \n'http://127.0.0.1:19987/browser/10/key'\nFor more information check: \nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500"
+    ],
+    "error_recoveries": 0,
+    "final_output": {
+      "item_100_value": "0",
+      "item_500_value": "0"
+    },
+    "run_id": "549f891f",
+    "timestamp": "2026-03-27T10:08:37.630291+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 10
+  },
+  {
+    "task_id": "search-extract",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 10207,
+    "total_output_tokens": 509,
+    "tool_calls": 4,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2306,
+        "output_tokens": 62,
+        "latency_ms": 451,
+        "response_bytes": 16,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2386,
+        "output_tokens": 88,
+        "latency_ms": 257,
+        "response_bytes": 61,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2512,
+        "output_tokens": 54,
+        "latency_ms": 257,
+        "response_bytes": 1087,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 3003,
+        "output_tokens": 305,
+        "latency_ms": 0,
+        "response_bytes": 518,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 15969,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": "[\n  {\n    \"title\": \"Blue Bottle Coffee\",\n    \"url\": \"http://127.0.0.1:59018/r/1\"\n  },\n  {\n    \"title\": \"Stumptown Coffee Roasters\",\n    \"url\": \"http://127.0.0.1:59018/r/2\"\n  },\n  {\n    \"title\": \"Joe Coffee Company\",\n    \"url\": \"http://127.0.0.1:59018/r/3\"\n  },\n  {\n    \"title\": \"Devocion\",\n    \"url\": \"http://127.0.0.1:59018/r/4\"\n  },\n  {\n    \"title\": \"Abraco\",\n    \"url\": \"http://127.0.0.1:59018/r/5\"\n  }\n]",
+    "run_id": "511d4db9",
+    "timestamp": "2026-03-27T10:08:53.907710+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 4
+  },
+  {
+    "task_id": "form-fill",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 32131,
+    "total_output_tokens": 897,
+    "tool_calls": 11,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2306,
+        "output_tokens": 66,
+        "latency_ms": 337,
+        "response_bytes": 16,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2390,
+        "output_tokens": 88,
+        "latency_ms": 268,
+        "response_bytes": 59,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2516,
+        "output_tokens": 54,
+        "latency_ms": 267,
+        "response_bytes": 476,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_fill",
+        "input_tokens": 2732,
+        "output_tokens": 108,
+        "latency_ms": 277,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_fill",
+        "input_tokens": 2856,
+        "output_tokens": 97,
+        "latency_ms": 256,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_select",
+        "input_tokens": 2969,
+        "output_tokens": 88,
+        "latency_ms": 246,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_fill",
+        "input_tokens": 3073,
+        "output_tokens": 91,
+        "latency_ms": 262,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 3180,
+        "output_tokens": 76,
+        "latency_ms": 292,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_wait",
+        "input_tokens": 3272,
+        "output_tokens": 71,
+        "latency_ms": 274,
+        "response_bytes": 18,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3361,
+        "output_tokens": 54,
+        "latency_ms": 260,
+        "response_bytes": 163,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 3476,
+        "output_tokens": 104,
+        "latency_ms": 0,
+        "response_bytes": 185,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 40831,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "confirmation_message": "Thank you, John Doe! Your message about 'support' has been received. We'll reply to john@example.com shortly."
+    },
+    "run_id": "d27991f1",
+    "timestamp": "2026-03-27T10:09:35.049606+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 11
+  },
+  {
+    "task_id": "ecommerce-search",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 18444,
+    "total_output_tokens": 762,
+    "tool_calls": 6,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2299,
+        "output_tokens": 74,
+        "latency_ms": 443,
+        "response_bytes": 16,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_navigate",
+        "input_tokens": 2391,
+        "output_tokens": 88,
+        "latency_ms": 259,
+        "response_bytes": 62,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2517,
+        "output_tokens": 75,
+        "latency_ms": 251,
+        "response_bytes": 935,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_select",
+        "input_tokens": 2985,
+        "output_tokens": 117,
+        "latency_ms": 255,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3510,
+        "output_tokens": 54,
+        "latency_ms": 256,
+        "response_bytes": 939,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 4742,
+        "output_tokens": 354,
+        "latency_ms": 0,
+        "response_bytes": 110,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 22848,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "name": "GameStation Pro",
+      "price": "$1899",
+      "rating": "4.8"
+    },
+    "run_id": "337fb205",
+    "timestamp": "2026-03-27T10:09:58.226030+00:00",
+    "brow_version": "f41d1cd",
+    "conversation_turns": 6
+  }
+]

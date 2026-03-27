@@ -1,0 +1,28 @@
+id: vacuum-research
+name: "Vacuum Robot Research — alza.cz + Valetudo"
+category: live
+url: "https://valetudo.cloud/pages/general/supported-robots.html"
+requires_fixture: false
+description: |
+  Research which vacuum robots supported by Valetudo are available on alza.cz.
+
+  The main Valetudo-supported brands to search for on alza.cz are:
+  Roborock (S5, S6, S7, S5 Max, S4 Max, Q7 Max), Dreame (D9, L10 Pro, L10s Ultra, L20 Ultra, X40 Ultra), Xiaomi.
+
+  Steps:
+  1. Go to https://valetudo.cloud/pages/general/supported-robots.html and note the supported brands/models.
+  2. Search alza.cz for each major brand. Use search URLs like https://www.alza.cz/search.htm?exps=roborock
+     Use the snapshot search parameter to filter results (e.g. search="roborock" or search="dreame").
+  3. For each Valetudo-supported model found on alza.cz, extract: brand, model, price (CZK), rating, review count.
+
+  IMPORTANT: Use snapshot with search= filter to keep responses small. Do not try to read full page snapshots.
+
+  Return a JSON object with field "robots" containing an array of objects, each with fields:
+  brand, model, price_czk, rating, review_count.
+max_steps: 25
+timeout_seconds: 300
+success_criteria:
+  - type: structured_output
+    min_fields: ["robots"]
+    min_results: 1
+tags: [live, research, cross-reference, ecommerce]

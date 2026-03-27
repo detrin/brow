@@ -44,7 +44,7 @@ async def _get_browser_state(agent):
     state = {"url": ""}
     if agent.backend == "brow" and agent._brow_session_id:
         try:
-            result = execute_brow_tool("brow_url", {"session": agent._brow_session_id})
+            result = await execute_brow_tool("brow_url", {"session": agent._brow_session_id})
             state["url"] = result.get("output", "").strip()
         except Exception:
             pass

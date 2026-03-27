@@ -3,12 +3,14 @@ import json
 from dataclasses import dataclass, field
 
 import anthropic
+import boto3
 
 from benchmarks.harness.config import BenchmarkConfig
 from benchmarks.harness.metrics import ToolCallRecord
 from benchmarks.harness.tools_common import SUBMIT_ANSWER_TOOL, execute_submit_answer
 from benchmarks.harness.tools_brow import BROW_TOOLS, execute_brow_tool
 from benchmarks.harness.tools_mcp import MCP_TOOLS, MCP_TOOL_NAME_MAP, McpPlaywrightClient, execute_mcp_tool
+from benchmarks.harness.tools_playwright_cli import PLAYWRIGHT_CLI_TOOLS, execute_playwright_cli_tool, cleanup_playwright_cli
 
 def _load_brow_skill():
     from pathlib import Path
@@ -20,6 +22,7 @@ def _load_brow_skill():
 BROW_INSTRUCTIONS = f"""You have access to brow CLI tools for browser automation.
 Use brow_session_new to start a session, then use the session ID with other tools.
 Use brow_snapshot to read page content (fast, token-efficient).
+If a snapshot is truncated, re-call brow_snapshot with search="pattern" to filter for specific content.
 Selectors: CSS (#id, .class), text (text=Click Me), role (role=button[name='Save']).
 When done, call submit_answer with your structured result."""
 
@@ -28,10 +31,18 @@ Use mcp_navigate to go to URLs. Use mcp_snapshot to read the page.
 Use element references from snapshots when clicking or filling.
 When done, call submit_answer with your structured result."""
 
+PWCLI_INSTRUCTIONS = """You have access to playwright-cli tools for browser automation.
+Use pwcli_open to start a headless browser (optionally with a URL).
+Use pwcli_snapshot to get element references, then use those refs with pwcli_click, pwcli_fill, etc.
+Use pwcli_goto to navigate to URLs.
+When done, call submit_answer with your structured result."""
+
 def build_system_prompt(backend, task_description):
     if backend == "brow":
         skill_content = _load_brow_skill()
         instructions = BROW_INSTRUCTIONS + ("\n\n" + skill_content if skill_content else "")
+    elif backend == "playwright-cli":
+        instructions = PWCLI_INSTRUCTIONS
     else:
         instructions = MCP_INSTRUCTIONS
     return f"""You are a browser automation agent. Complete the given task using the provided tools.
@@ -61,11 +72,26 @@ class AgentLoop:
         self._brow_session_id = None
 
     def _get_tools(self):
-        base = BROW_TOOLS if self.backend == "brow" else MCP_TOOLS
+        if self.backend == "brow":
+            base = BROW_TOOLS
+        elif self.backend == "playwright-cli":
+            base = PLAYWRIGHT_CLI_TOOLS
+        else:
+            base = MCP_TOOLS
         return base + [SUBMIT_ANSWER_TOOL]
 
     async def run(self, max_steps=15, timeout_seconds=120):
-        client = anthropic.Anthropic(api_key=self.config.api_key)
+        if self.config.api_key:
+            client = anthropic.Anthropic(api_key=self.config.api_key)
+        else:
+            session = boto3.Session(profile_name=self.config.aws_profile)
+            creds = session.get_credentials().get_frozen_credentials()
+            client = anthropic.AnthropicBedrock(
+                aws_access_key=creds.access_key,
+                aws_secret_key=creds.secret_key,
+                aws_session_token=creds.token,
+                aws_region=self.config.aws_region,
+            )
         if self.backend == "mcp-playwright":
             self._mcp_client = McpPlaywrightClient()
             await self._mcp_client.start()
@@ -73,6 +99,7 @@ class AgentLoop:
         start = time.time()
         self.messages = [{"role": "user", "content": "Begin the task."}]
         final_output = {}
+        COMPRESS_THRESHOLD = 500
 
         try:
             for step in range(max_steps):
@@ -80,13 +107,30 @@ class AgentLoop:
                     break
 
                 self.conversation_turns += 1
-                response = client.messages.create(
-                    model=self.config.model,
-                    max_tokens=4096,
-                    system=self.system_prompt,
-                    tools=self.tools,
-                    messages=self.messages,
-                )
+                response = None
+                for attempt in range(3):
+                    try:
+                        response = client.messages.create(
+                            model=self.config.model,
+                            max_tokens=4096,
+                            system=self.system_prompt,
+                            tools=self.tools,
+                            messages=self.messages,
+                        )
+                        break
+                    except anthropic.RateLimitError:
+                        if attempt < 2:
+                            time.sleep(30 * (attempt + 1))
+                        else:
+                            raise
+                    except anthropic.BadRequestError as e:
+                        if "too long" in str(e).lower():
+                            self._compress_old_results(200 if attempt == 0 else 50)
+                        else:
+                            raise
+                if response is None:
+                    self.errors.append("Input too long after compression")
+                    break
 
                 self.total_input_tokens += response.usage.input_tokens
                 self.total_output_tokens += response.usage.output_tokens
@@ -141,6 +185,7 @@ class AgentLoop:
 
                 self.messages.append({"role": "assistant", "content": response.content})
                 if tool_results:
+                    self._compress_old_results(COMPRESS_THRESHOLD)
                     self.messages.append({"role": "user", "content": tool_results})
 
         finally:
@@ -153,12 +198,32 @@ class AgentLoop:
                                    capture_output=True, timeout=10)
                 except Exception:
                     pass
+            if self.backend == "playwright-cli":
+                cleanup_playwright_cli()
 
         return final_output
+
+    def _compress_old_results(self, threshold):
+        for msg in self.messages:
+            if msg["role"] != "user" or not isinstance(msg.get("content"), list):
+                continue
+            for item in msg["content"]:
+                if item.get("type") != "tool_result":
+                    continue
+                content = item.get("content", "")
+                if len(content) > threshold:
+                    lines = content.split("\n")
+                    item["content"] = (
+                        "\n".join(lines[:5])
+                        + f"\n... ({len(lines) - 10} lines omitted) ...\n"
+                        + "\n".join(lines[-5:])
+                    )
 
     async def _execute_tool(self, name, params):
         if name == "submit_answer":
             return execute_submit_answer(params)
         if self.backend == "brow":
-            return execute_brow_tool(name, params)
+            return await execute_brow_tool(name, params)
+        if self.backend == "playwright-cli":
+            return await execute_playwright_cli_tool(name, params)
         return await execute_mcp_tool(self._mcp_client, name, params)

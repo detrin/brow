@@ -4,23 +4,26 @@ def format_tree(tree, indent=0):
     if not tree:
         return ""
     lines = []
-    prefix = "  " * indent
     role = tree.get("role", "")
     name = tree.get("name", "")
-    extras = ""
-    if "level" in tree:
-        extras += f" level={tree['level']}"
-    if "value" in tree:
-        extras += f" value=\"{tree['value']}\""
-    if "checked" in tree:
-        extras += f" checked={tree['checked']}"
-    line = f"{prefix}{role}"
+    children = tree.get("children", [])
+
+    if role == "group" and not name:
+        for child in children:
+            lines.append(format_tree(child, indent))
+        return "\n".join(lines)
+
+    parts = [role]
     if name:
-        line += f" \"{name}\""
-    if extras:
-        line += extras
-    lines.append(line)
-    for child in tree.get("children", []):
+        parts.append(f'"{name}"')
+    for key in ("value", "checked", "disabled", "href", "level"):
+        if key in tree:
+            v = tree[key]
+            parts.append(f"{key}={v}" if not isinstance(v, str) else f'{key}="{v}"')
+
+    prefix = "  " * indent
+    lines.append(f"{prefix}{' '.join(parts)}")
+    for child in children:
         lines.append(format_tree(child, indent + 1))
     return "\n".join(lines)
 

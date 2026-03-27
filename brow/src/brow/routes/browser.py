@@ -75,9 +75,14 @@ class ScreenshotReq(BaseModel):
 
 @router.post("/navigate")
 async def navigate(req: Request, sid: str, body: NavigateReq):
+    import logging
     session = _get_session(req, sid)
     page = _get_page(session)
-    r = await page.goto(body.url, timeout=body.timeout)
+    try:
+        r = await page.goto(body.url, timeout=body.timeout)
+    except Exception as e:
+        logging.error(f"Navigate to {body.url} failed: {e}")
+        raise HTTPException(502, f"Navigation failed: {e}")
     return {"url": page.url, "status": r.status if r else None}
 
 @router.post("/wait")
@@ -103,58 +108,126 @@ async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator
 
     js_code = """
     () => {
-        function buildTree(node, depth = 0) {
-            if (!node || depth > 20) return null;
+        const INTERACTIVE = new Set([
+            'a', 'button', 'input', 'select', 'textarea', 'option',
+            'details', 'summary', 'dialog', 'menu', 'menuitem',
+        ]);
+        const SEMANTIC = new Set([
+            'h1','h2','h3','h4','h5','h6','img','video','audio',
+            'table','thead','tbody','tr','th','td','ul','ol','li',
+            'form','label','fieldset','legend','nav','main',
+        ]);
+        const SKIP = new Set([
+            'script','style','noscript','svg','path','link','meta',
+            'br','hr','iframe',
+        ]);
 
-            const obj = { role: node.tagName?.toLowerCase() || 'text' };
+        let nodeCount = 0;
+        const NODE_LIMIT = 300;
+
+        function sig(node) {
+            if (node.nodeType !== Node.ELEMENT_NODE) return '';
+            const tag = node.tagName;
+            const cls = node.className ? '.' + node.className.split(' ')[0] : '';
+            const ch = node.children.length;
+            return tag + cls + ch;
+        }
+
+        function buildTree(node, depth) {
+            if (!node || depth > 15 || nodeCount >= NODE_LIMIT) return null;
 
             if (node.nodeType === Node.TEXT_NODE) {
-                const text = node.textContent?.trim();
-                if (text) obj.name = text;
-                return text ? obj : null;
+                const t = node.textContent?.trim();
+                if (!t || !t.length) return null;
+                nodeCount++;
+                return { role: 'text', name: t.substring(0, 80) };
             }
-
             if (node.nodeType !== Node.ELEMENT_NODE) return null;
 
-            const role = node.getAttribute('role') || node.tagName.toLowerCase();
-            obj.role = role;
+            const tag = node.tagName.toLowerCase();
+            if (SKIP.has(tag)) return null;
+            if (node.hidden || node.getAttribute('aria-hidden') === 'true') return null;
 
+            const role = node.getAttribute('role') || tag;
             const ariaLabel = node.getAttribute('aria-label');
             const alt = node.getAttribute('alt');
-            const title = node.getAttribute('title');
-            const value = node.value;
+            const placeholder = node.getAttribute('placeholder');
+            const name = ariaLabel || alt || node.getAttribute('title') || '';
+            const isInteractive = INTERACTIVE.has(tag) || node.getAttribute('role');
+            const isSemantic = SEMANTIC.has(tag);
 
-            if (ariaLabel) obj.name = ariaLabel;
-            else if (alt) obj.name = alt;
-            else if (title) obj.name = title;
-            else if (value) obj.value = value;
-            else if (['input', 'button', 'a'].includes(role)) {
-                obj.name = node.textContent?.trim()?.substring(0, 50) || '';
+            const childNodes = Array.from(node.childNodes);
+            let children = [];
+            let lastSig = '', repeatCount = 0;
+            for (const child of childNodes) {
+                if (nodeCount >= NODE_LIMIT) break;
+                const s = sig(child);
+                if (s && s === lastSig) {
+                    repeatCount++;
+                    if (repeatCount > 3) continue;
+                } else {
+                    if (repeatCount > 3) {
+                        children.push({ role: 'text', name: '... ' + (repeatCount - 3) + ' similar items omitted' });
+                        nodeCount++;
+                    }
+                    lastSig = s;
+                    repeatCount = 0;
+                }
+                const c = buildTree(child, depth + 1);
+                if (c) children.push(c);
+            }
+            if (repeatCount > 3) {
+                children.push({ role: 'text', name: '... ' + (repeatCount - 3) + ' similar items omitted' });
+                nodeCount++;
             }
 
-            const checked = node.checked;
-            if (checked !== undefined) obj.checked = checked;
-
-            const children = [];
-            for (const child of node.childNodes) {
-                const childObj = buildTree(child, depth + 1);
-                if (childObj) children.push(childObj);
+            if (!isInteractive && !isSemantic && !name) {
+                if (children.length === 0) return null;
+                if (children.length === 1) return children[0];
+                return { role: 'group', children };
             }
 
-            if (children.length > 0) obj.children = children;
+            nodeCount++;
+            const obj = { role };
+            if (name) obj.name = name.substring(0, 80);
+            else if (isInteractive && !name) {
+                const txt = node.textContent?.trim()?.substring(0, 50);
+                if (txt) obj.name = txt;
+            }
+            if (placeholder && !obj.name) obj.name = placeholder;
+            if (node.value !== undefined && node.value !== '') obj.value = String(node.value).substring(0, 80);
+            if (node.checked !== undefined) obj.checked = node.checked;
+            if (node.disabled) obj.disabled = true;
+            if (tag === 'a' && node.href) obj.href = node.href;
+
+            if (children.length > 0) {
+                if (children.length === 1 && children[0].role === 'text' && !obj.name) {
+                    obj.name = children[0].name;
+                } else {
+                    obj.children = children;
+                }
+            }
 
             return obj;
         }
 
-        return buildTree(document.body);
+        const tree = buildTree(document.body, 0);
+        return { tree, truncated: nodeCount >= NODE_LIMIT, nodeCount };
     }
     """
 
-    tree = await page.evaluate(js_code)
+    result = await page.evaluate(js_code)
+    tree = result.get("tree") if isinstance(result, dict) else result
+    truncated = result.get("truncated", False) if isinstance(result, dict) else False
+    node_count = result.get("nodeCount", 0) if isinstance(result, dict) else 0
     formatted = format_tree(tree) if tree else ""
     if search:
         formatted = filter_lines(formatted, search)
-    return {"tree": formatted}
+    resp = {"tree": formatted}
+    if truncated:
+        resp["truncated"] = True
+        resp["hint"] = f"Page has {node_count}+ nodes. Use search param to filter, e.g. search='Item 100'"
+    return resp
 
 @router.post("/screenshot")
 async def screenshot(req: Request, sid: str, body: ScreenshotReq):
