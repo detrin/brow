@@ -1,5 +1,25 @@
 import re
 
+def _format_table(tree, indent=0):
+    prefix = "  " * indent
+    headers = tree.get("headers", [])
+    rows = tree.get("rows", [])
+    total = tree.get("totalRows", len(rows))
+    lines = []
+
+    if headers:
+        lines.append(prefix + "| " + " | ".join(headers) + " |")
+        lines.append(prefix + "| " + " | ".join("---" for _ in headers) + " |")
+
+    for row in rows:
+        lines.append(prefix + "| " + " | ".join(row) + " |")
+
+    if total > len(rows):
+        lines.append(prefix + f"... ({total - len(rows)} more rows)")
+
+    return "\n".join(lines)
+
+
 def format_tree(tree, indent=0):
     if not tree:
         return ""
@@ -7,6 +27,10 @@ def format_tree(tree, indent=0):
     role = tree.get("role", "")
     name = tree.get("name", "")
     children = tree.get("children", [])
+
+    # Table-aware: render as markdown table
+    if role == "table" and "headers" in tree:
+        return _format_table(tree, indent)
 
     if role == "group" and not name:
         for child in children:

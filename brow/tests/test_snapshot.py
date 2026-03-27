@@ -60,6 +60,47 @@ def test_format_tree_multiple_refs():
     assert "[2]" in lines[3]
     assert "[3]" in lines[4]
 
+def test_format_tree_table():
+    tree = {
+        "role": "table",
+        "headers": ["Name", "Price", "Rating"],
+        "rows": [
+            ["Widget A", "$10", "4.5"],
+            ["Widget B", "$20", "4.8"],
+            ["Widget C", "$30", "4.2"],
+        ],
+        "totalRows": 3,
+    }
+    result = format_tree(tree)
+    assert "| Name | Price | Rating |" in result
+    assert "| Widget A | $10 | 4.5 |" in result
+    assert "| Widget C | $30 | 4.2 |" in result
+
+
+def test_format_tree_table_truncated():
+    tree = {
+        "role": "table",
+        "headers": ["Name", "Price"],
+        "rows": [["Item " + str(i), "$" + str(i)] for i in range(10)],
+        "totalRows": 50,
+    }
+    result = format_tree(tree)
+    assert "| Name | Price |" in result
+    assert "40 more rows" in result
+
+
+def test_format_tree_table_no_headers():
+    tree = {
+        "role": "table",
+        "headers": [],
+        "rows": [["A", "B"], ["C", "D"]],
+        "totalRows": 2,
+    }
+    result = format_tree(tree)
+    assert "A" in result
+    assert "C" in result
+
+
 def test_filter_lines_limit():
     text = "\n".join(f"match {i}" for i in range(20))
     result = filter_lines(text, "match", limit=10)
