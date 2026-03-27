@@ -1,0 +1,19 @@
+id: form-validation-recovery
+name: "Form with Validation Errors"
+category: resilience
+url: "FIXTURE_URL/static/validation-form.html"
+requires_fixture: true
+description: |
+  Navigate to FIXTURE_URL/static/validation-form.html.
+  First, try submitting with incomplete data: username='ab' (too short), no email, password='short'.
+  Read the validation errors that appear.
+  Then fix the errors: username='alice', email='alice@example.com', password='securepass123', age='25'.
+  Submit again and verify success.
+  Return {"errors_seen": [...], "confirmation": "..."} where errors_seen lists the error messages from the first attempt.
+max_steps: 15
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["errors_seen", "confirmation"]
+    min_results: 1
+tags: [form, validation, resilience, error-recovery]

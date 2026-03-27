@@ -1,0 +1,27 @@
+id: deep-wizard
+name: "10-Step Registration Wizard"
+category: throughput
+url: "FIXTURE_URL/static/deep-wizard.html"
+requires_fixture: true
+description: |
+  Navigate to FIXTURE_URL/static/deep-wizard.html.
+  Complete all 10 steps of the registration wizard:
+  1. Name: first='Jane', last='Smith'
+  2. Email: email='jane@example.com', confirm='jane@example.com'
+  3. Phone: phone='555-0123', type='work'
+  4. Address: street='123 Main St', city='Prague', zip='11000'
+  5. Preferences: language='Czech', timezone='CET'
+  6. Notifications: check 'Email' and 'Push' (not SMS)
+  7. Security: question='Pet name', answer='Fluffy'
+  8. Bio: 'Software engineer from Prague'
+  9. Terms: check 'I agree'
+  10. Review and submit
+
+  Return the confirmation message text as {"confirmation": "..."}.
+max_steps: 25
+timeout_seconds: 180
+success_criteria:
+  - type: structured_output
+    min_fields: ["confirmation"]
+    min_results: 1
+tags: [wizard, multi-step, throughput]

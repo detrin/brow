@@ -1,0 +1,18 @@
+id: infinite-scroll
+name: "Find Article in Infinite Scroll"
+category: extraction
+url: "FIXTURE_URL/static/infinite-scroll.html"
+requires_fixture: true
+description: |
+  Navigate to FIXTURE_URL/static/infinite-scroll.html.
+  The page loads 10 articles at a time. Scroll down to load more articles.
+  Find Article 35 and extract its title, summary, author, and date.
+  Use brow_snapshot with search="Article 35" to check if it has loaded.
+  Return {"article": {title, summary, author, date}}.
+max_steps: 15
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["article"]
+    min_results: 1
+tags: [scroll, infinite, extraction]

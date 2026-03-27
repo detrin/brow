@@ -1,0 +1,18 @@
+id: multi-tab-workflow
+name: "Multi-Tab Product Comparison"
+category: interaction
+url: "FIXTURE_URL/static/products.html"
+requires_fixture: true
+description: |
+  Navigate to FIXTURE_URL/static/products.html.
+  Open the 'Wireless Headphones' detail page in a new tab (click the 'View Details' link).
+  From the detail page, extract: name, price, rating, specs, SKU.
+  Switch back to the catalog tab and extract the price and rating of 'USB-C Hub'.
+  Return {"headphones": {name, price, rating, specs, sku}, "usb_hub": {price, rating}}.
+max_steps: 20
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["headphones", "usb_hub"]
+    min_results: 1
+tags: [multi-tab, interaction, extraction]

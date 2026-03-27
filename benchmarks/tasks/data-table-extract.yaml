@@ -1,0 +1,17 @@
+id: data-table-extract
+name: "Extract from Large Data Table"
+category: extraction
+url: "FIXTURE_URL/static/data-table.html"
+requires_fixture: true
+description: |
+  Navigate to FIXTURE_URL/static/data-table.html.
+  Find all products in the 'Electronics' category with a rating of 4.5 or above.
+  Use the search/filter functionality or snapshot search to find relevant rows.
+  Return a JSON object {"products": [...]} where each product has: id, name, category, price, stock, rating.
+max_steps: 15
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["products"]
+    min_results: 1
+tags: [table, extraction, filtering]

@@ -1,0 +1,20 @@
+id: spa-navigation
+name: "SPA Dashboard Navigation"
+category: navigation
+url: "FIXTURE_URL/static/spa/index.html"
+requires_fixture: true
+description: |
+  Navigate to FIXTURE_URL/static/spa/index.html.
+  This is a single-page app with hash-based routing.
+  1. Read the Home view — note the active users count and revenue.
+  2. Navigate to Users — note how many users are listed and how many are admins.
+  3. Navigate to Stats — extract the table data (months, visitors, revenue).
+  4. Navigate to Settings — change the theme to 'Dark' and click Save.
+  Return {"home": {"active_users": ..., "revenue": ...}, "admin_count": ..., "stats": [...], "settings_saved": true/false}.
+max_steps: 20
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["home", "admin_count", "stats", "settings_saved"]
+    min_results: 1
+tags: [spa, navigation, extraction]
