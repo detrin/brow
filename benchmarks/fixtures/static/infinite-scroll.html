@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html><head><title>Infinite Feed</title></head>
+<body>
+<h1>News Feed</h1>
+<div id="feed"></div>
+<div id="loading" style="display:none">Loading more...</div>
+<script>
+let page = 0;
+const pageSize = 10;
+const totalItems = 50;
+function generateItem(i) {
+  const topics = ['Technology','Science','Sports','Business','Health','Culture'];
+  return {
+    id: i,
+    title: 'Article ' + i + ': ' + topics[i % topics.length] + ' News Update',
+    summary: 'This is the summary for article ' + i + '. It covers important developments in ' + topics[i % topics.length].toLowerCase() + '.',
+    author: ['Alice','Bob','Carol','Dave','Eve'][i % 5],
+    date: '2026-03-' + String(1 + (i % 28)).padStart(2, '0'),
+  };
+}
+function loadMore() {
+  const start = page * pageSize + 1;
+  const end = Math.min(start + pageSize - 1, totalItems);
+  if (start > totalItems) return;
+  const feed = document.getElementById('feed');
+  for (let i = start; i <= end; i++) {
+    const item = generateItem(i);
+    const div = document.createElement('div');
+    div.className = 'article';
+    div.setAttribute('data-id', item.id);
+    div.innerHTML = '<h2>' + item.title + '</h2><p>' + item.summary + '</p><span class="author">' + item.author + '</span> <span class="date">' + item.date + '</span>';
+    feed.appendChild(div);
+  }
+  page++;
+}
+loadMore();
+window.addEventListener('scroll', () => {
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+    document.getElementById('loading').style.display = 'block';
+    setTimeout(() => {
+      loadMore();
+      document.getElementById('loading').style.display = 'none';
+    }, 500);
+  }
+});
+</script>
+</body></html>

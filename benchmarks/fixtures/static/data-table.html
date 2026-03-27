@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html><head><title>Product Inventory</title></head>
+<body>
+<h1>Product Inventory</h1>
+<input id="search" placeholder="Filter products..." oninput="filterTable(this.value)">
+<table id="inventory">
+<thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Rating</th></tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+<script>
+const categories = ['Electronics','Clothing','Books','Home','Sports','Food'];
+const adjectives = ['Premium','Basic','Pro','Ultra','Mini','Mega','Classic','Modern','Vintage','Smart'];
+const nouns = ['Widget','Gadget','Tool','Device','Kit','Pack','Set','Bundle','Box','Unit'];
+const data = [];
+for (let i = 1; i <= 100; i++) {
+  data.push({
+    id: i,
+    name: adjectives[i % adjectives.length] + ' ' + nouns[i % nouns.length] + ' ' + i,
+    category: categories[i % categories.length],
+    price: (10 + (i * 7.3 % 990)).toFixed(2),
+    stock: (i * 13 % 500),
+    rating: (3 + (i * 0.02 % 2)).toFixed(1),
+  });
+}
+const tbody = document.getElementById('tbody');
+function renderTable(items) {
+  tbody.innerHTML = items.map(d =>
+    '<tr><td>' + d.id + '</td><td>' + d.name + '</td><td>' + d.category + '</td><td>$' + d.price + '</td><td>' + d.stock + '</td><td>' + d.rating + '</td></tr>'
+  ).join('');
+}
+renderTable(data);
+function filterTable(q) {
+  const filtered = data.filter(d => d.name.toLowerCase().includes(q.toLowerCase()) || d.category.toLowerCase().includes(q.toLowerCase()));
+  renderTable(filtered);
+}
+</script>
+</body></html>

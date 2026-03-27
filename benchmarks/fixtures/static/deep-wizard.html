@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html><head><title>10-Step Registration</title></head>
+<body>
+<h1>Extended Registration</h1>
+<div id="wizard">
+  <div class="step" data-step="1"><h2>Step 1: Name</h2><input id="first-name" placeholder="First Name"><input id="last-name" placeholder="Last Name"><button class="next">Next</button></div>
+  <div class="step" data-step="2" style="display:none"><h2>Step 2: Email</h2><input id="email" placeholder="Email" type="email"><input id="confirm-email" placeholder="Confirm Email" type="email"><button class="next">Next</button></div>
+  <div class="step" data-step="3" style="display:none"><h2>Step 3: Phone</h2><input id="phone" placeholder="Phone"><select id="phone-type"><option value="mobile">Mobile</option><option value="home">Home</option><option value="work">Work</option></select><button class="next">Next</button></div>
+  <div class="step" data-step="4" style="display:none"><h2>Step 4: Address</h2><input id="street" placeholder="Street"><input id="city" placeholder="City"><input id="zip" placeholder="ZIP"><button class="next">Next</button></div>
+  <div class="step" data-step="5" style="display:none"><h2>Step 5: Preferences</h2><select id="language"><option value="en">English</option><option value="cs">Czech</option><option value="de">German</option></select><select id="timezone"><option value="UTC">UTC</option><option value="CET">CET</option><option value="EST">EST</option></select><button class="next">Next</button></div>
+  <div class="step" data-step="6" style="display:none"><h2>Step 6: Notifications</h2><input type="checkbox" id="email-notif"><label for="email-notif">Email</label><input type="checkbox" id="sms-notif"><label for="sms-notif">SMS</label><input type="checkbox" id="push-notif"><label for="push-notif">Push</label><button class="next">Next</button></div>
+  <div class="step" data-step="7" style="display:none"><h2>Step 7: Security</h2><input id="security-q" placeholder="Security Question"><input id="security-a" placeholder="Answer"><button class="next">Next</button></div>
+  <div class="step" data-step="8" style="display:none"><h2>Step 8: Bio</h2><textarea id="bio" placeholder="Tell us about yourself" rows="3"></textarea><button class="next">Next</button></div>
+  <div class="step" data-step="9" style="display:none"><h2>Step 9: Terms</h2><p>By proceeding you agree to our Terms of Service.</p><input type="checkbox" id="agree-terms"><label for="agree-terms">I agree</label><button class="next">Next</button></div>
+  <div class="step" data-step="10" style="display:none"><h2>Step 10: Review</h2><div id="review-summary"></div><button id="submit-reg">Submit Registration</button></div>
+  <div class="step" data-step="done" style="display:none"><h2>Registration Complete</h2><p id="confirmation">Thank you for registering! Your ID is REG-2026-0042.</p></div>
+</div>
+<script>
+document.querySelectorAll('.next').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const current = btn.closest('.step');
+    const next = current.nextElementSibling;
+    if (next) { current.style.display='none'; next.style.display='block'; }
+    if (next && next.dataset.step === '10') {
+      document.getElementById('review-summary').innerHTML =
+        '<p>Name: ' + document.getElementById('first-name').value + ' ' + document.getElementById('last-name').value + '</p>' +
+        '<p>Email: ' + document.getElementById('email').value + '</p>' +
+        '<p>City: ' + document.getElementById('city').value + '</p>';
+    }
+  });
+});
+document.getElementById('submit-reg').addEventListener('click', () => {
+  document.querySelector('[data-step="10"]').style.display='none';
+  document.querySelector('[data-step="done"]').style.display='block';
+});
+</script>
+</body></html>

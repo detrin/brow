@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html><head><title>Product Catalog</title></head>
+<body>
+<h1>Product Catalog</h1>
+<div id="products">
+  <div class="product" data-id="1">
+    <h2>Wireless Headphones</h2>
+    <p class="price">$79.99</p>
+    <p class="rating">4.5/5 (234 reviews)</p>
+    <a href="/static/products.html?id=1" target="_blank" class="details-link">View Details</a>
+  </div>
+  <div class="product" data-id="2">
+    <h2>Bluetooth Speaker</h2>
+    <p class="price">$49.99</p>
+    <p class="rating">4.2/5 (189 reviews)</p>
+    <a href="/static/products.html?id=2" target="_blank" class="details-link">View Details</a>
+  </div>
+  <div class="product" data-id="3">
+    <h2>USB-C Hub</h2>
+    <p class="price">$34.99</p>
+    <p class="rating">4.7/5 (456 reviews)</p>
+    <a href="/static/products.html?id=3" target="_blank" class="details-link">View Details</a>
+  </div>
+</div>
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+if (id) {
+  const details = {
+    '1': {name:'Wireless Headphones',price:'$79.99',rating:'4.5/5',reviews:234,specs:'Bluetooth 5.0, 30hr battery, ANC',sku:'WH-001'},
+    '2': {name:'Bluetooth Speaker',price:'$49.99',rating:'4.2/5',reviews:189,specs:'20W output, IPX7, 12hr battery',sku:'BS-002'},
+    '3': {name:'USB-C Hub',price:'$34.99',rating:'4.7/5',reviews:456,specs:'7-in-1, 4K HDMI, PD 100W',sku:'UC-003'},
+  };
+  const d = details[id];
+  if (d) {
+    document.body.innerHTML = '<h1>' + d.name + '</h1><p class="price">' + d.price + '</p><p class="rating">' + d.rating + ' (' + d.reviews + ' reviews)</p><p class="specs">Specs: ' + d.specs + '</p><p class="sku">SKU: ' + d.sku + '</p><button id="add-cart">Add to Cart</button>';
+  }
+}
+</script>
+</body></html>

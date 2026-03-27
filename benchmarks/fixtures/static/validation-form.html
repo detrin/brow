@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html><head><title>Registration with Validation</title></head>
+<body>
+<h1>Create Account</h1>
+<form id="reg-form">
+  <div class="field"><label for="username">Username:</label><input id="username" required></div>
+  <div class="field"><label for="email">Email:</label><input id="email" type="email" required></div>
+  <div class="field"><label for="password">Password:</label><input id="password" type="password" required></div>
+  <div class="field"><label for="age">Age:</label><input id="age" type="number" min="18" max="120"></div>
+  <div id="errors" style="color:red"></div>
+  <div id="success" style="color:green;display:none"></div>
+  <button type="button" id="register">Register</button>
+</form>
+<script>
+document.getElementById('register').addEventListener('click', () => {
+  const errors = [];
+  const u = document.getElementById('username').value;
+  const e = document.getElementById('email').value;
+  const p = document.getElementById('password').value;
+  const a = document.getElementById('age').value;
+  if (!u || u.length < 3) errors.push('Username must be at least 3 characters');
+  if (!e || !e.includes('@')) errors.push('Valid email is required');
+  if (!p || p.length < 8) errors.push('Password must be at least 8 characters');
+  if (a && (parseInt(a) < 18 || parseInt(a) > 120)) errors.push('Age must be between 18 and 120');
+  const errDiv = document.getElementById('errors');
+  const successDiv = document.getElementById('success');
+  if (errors.length > 0) {
+    errDiv.innerHTML = errors.map(e => '<p class="error">' + e + '</p>').join('');
+    successDiv.style.display = 'none';
+  } else {
+    errDiv.innerHTML = '';
+    successDiv.style.display = 'block';
+    successDiv.innerHTML = '<p id="confirmation">Account created successfully for ' + u + '!</p>';
+  }
+});
+</script>
+</body></html>

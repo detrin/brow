@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html><head><title>SPA Dashboard</title></head>
+<body>
+<nav id="nav">
+  <a href="#/home" class="nav-link">Home</a>
+  <a href="#/users" class="nav-link">Users</a>
+  <a href="#/settings" class="nav-link">Settings</a>
+  <a href="#/stats" class="nav-link">Stats</a>
+</nav>
+<div id="app"></div>
+<script>
+const views = {
+  home: '<h1>Dashboard Home</h1><p>Welcome to the dashboard.</p><div class="stat">Active users: 1,234</div><div class="stat">Revenue: $56,789</div>',
+  users: '<h1>User Management</h1><ul><li>Alice — admin — active</li><li>Bob — editor — active</li><li>Carol — viewer — suspended</li><li>Dave — editor — active</li><li>Eve — admin — active</li></ul>',
+  settings: '<h1>Settings</h1><form id="settings-form"><label>Site Name: <input id="site-name" value="MyApp"></label><label>Theme: <select id="theme"><option value="light">Light</option><option value="dark">Dark</option></select></label><button type="button" id="save-settings">Save</button></form>',
+  stats: '<h1>Statistics</h1><table><thead><tr><th>Month</th><th>Visitors</th><th>Revenue</th></tr></thead><tbody><tr><td>Jan</td><td>10,500</td><td>$12,300</td></tr><tr><td>Feb</td><td>11,200</td><td>$13,100</td></tr><tr><td>Mar</td><td>12,800</td><td>$15,600</td></tr></tbody></table>',
+};
+function route() {
+  const hash = window.location.hash.replace('#/', '') || 'home';
+  document.getElementById('app').innerHTML = views[hash] || '<h1>404 Not Found</h1>';
+  if (hash === 'settings') {
+    document.getElementById('save-settings')?.addEventListener('click', () => {
+      document.getElementById('app').innerHTML = '<h1>Settings</h1><p id="save-confirm">Settings saved successfully!</p>';
+    });
+  }
+}
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body></html>
