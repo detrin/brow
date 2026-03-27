@@ -34,23 +34,25 @@ python -m benchmarks.run --backend brow --tasks vacuum-research --include-live -
 
 **Model:** `us.anthropic.claude-sonnet-4-20250514-v1:0` (AWS Bedrock) | **Date:** 2026-03-27
 
-### Fixture Tasks — brow vs playwright-cli
+### Fixture Tasks — brow v2 vs playwright-cli
 
-10 tasks using a local fixture server for full reproducibility.
+10 tasks using a local fixture server for full reproducibility. brow v2 adds ref-based element addressing, auto-snapshot on mutations, and combined session+navigate.
 
 | Task | brow tokens | pwcli tokens | &Delta; | brow calls | pwcli calls | brow time | pwcli time |
 |------|------------|-------------|---------|-----------|------------|----------|-----------|
-| dynamic-content | 29,640 | 31,954 | **-7%** | 10 | 12 | 33s | 40s |
-| ecommerce-search | 19,206 | 53,292 | **-64%** | 6 | 12 | 23s | 46s |
-| error-recovery | 51,630 | 12,699 | +307% | 16 | 6 | 44s | 15s |
-| form-fill | 33,028 | 16,002 | +106% | 11 | 7 | 41s | 34s |
-| info-lookup | 16,612 | 5,948 | +179% | 6 | 3 | 17s | 9s |
-| large-snapshot | 142,170 | 217,162 | **-35%** | 10 | 10 | 40s | 46s |
-| login-auth | 69,995 | 72,009 | **-3%** | 20 | 20 | 96s | 61s |
-| multi-page-nav | 23,543 | 8,830 | +167% | 8 | 4 | 20s | 14s |
-| rapid-multi-step | 99,919 | 34,707 | +188% | 13 | 12 | 131s | 41s |
-| search-extract | 10,716 | 6,691 | +60% | 4 | 3 | 16s | 9s |
-| **Average** | **49,646** | **45,929** | **+8%** | **10.4** | **8.9** | **46s** | **32s** |
+| dynamic-content | 3,245 | 42,983 | **-92%** | 2 | 12 | 8s | 42s |
+| ecommerce-search | 18,554 | 137,294 | **-86%** | 5 | 12 | 16s | 43s |
+| error-recovery | 4,871 | 16,295 | **-70%** | 3 | 6 | 13s | 21s |
+| form-fill | 25,251 | 22,865 | +10% | 7 | 7 | 21s | 22s |
+| info-lookup | 5,385 | 6,405 | **-16%** | 3 | 3 | 9s | 9s |
+| large-snapshot | 225,821 | 607,963 | **-63%** | 10 | 8 | 39s | 118s |
+| login-auth | 137,351 | 93,678 | +47% | 8 | 19 | 28s | 64s |
+| multi-page-nav | 7,824 | 10,793 | **-28%** | 4 | 4 | 12s | 13s |
+| rapid-multi-step | 114,508 | 62,173 | +84% | 12 | 12 | 35s | 42s |
+| search-extract | 3,663 | 4,050 | **-10%** | 2 | 2 | 6s | 9s |
+| **Average** | **54,647** | **100,450** | **-46%** | **5.6** | **8.5** | **19s** | **38s** |
+
+Success rates: brow 60% (6/10), playwright-cli 50% (5/10).
 
 ### Live Task — Vacuum Robot Research
 
@@ -70,34 +72,36 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 
 ## Analysis
 
-### brow wins on complex/large pages
+### brow v2 dominates on token efficiency
 
-- `ecommerce-search` **-64% tokens**: compact snapshot eliminates decorative DOM nodes
-- `large-snapshot` **-35% tokens** (142K vs 217K): repetition dedup collapses 550 items to 3 + count
-- `dynamic-content` **-7%**: fewer nodes from container pruning
-- Live task: only backend to return any data
+- `dynamic-content` **-92%** (3K vs 43K): ref-based clicking + auto-snapshot eliminates 10 tool calls
+- `ecommerce-search` **-86%** (19K vs 137K): compact snapshot + fewer calls (5 vs 12)
+- `error-recovery` **-70%** (5K vs 16K): ref system simplifies retry logic
+- `large-snapshot` **-63%** (226K vs 608K): tree pruning + dedup on massive pages
+- `multi-page-nav` **-28%**: combined session+navigate removes setup overhead
+- Average **-46% tokens**, **-34% tool calls**, **-50% wall clock**
 
-### playwright-cli wins on simple pages
+### Where playwright-cli still wins
 
-- `info-lookup` 3x fewer tokens: no session setup overhead, combined open+navigate+snapshot
-- `multi-page-nav`: 4 calls vs 8 -- brow needs explicit `session_new` + `navigate`
-- Zero errors on all fixture tasks
+- `login-auth` +47%: brow's auto-snapshot returns large snapshots after each form fill
+- `rapid-multi-step` +84%: multi-step wizard generates cumulative snapshot data
+- Both cases suggest Phase 2 optimization (smart snapshot compression) would help
+
+### Key v1 → v2 improvements
+
+| Optimization | Impact |
+|-------------|--------|
+| Ref-based element addressing (`[N]` refs) | Eliminates CSS selector guessing, fewer retries |
+| Auto-snapshot on mutations | Removes explicit snapshot calls (avg -34% tool calls) |
+| Combined `session new --url` | One call instead of two for session + navigate |
+| Semantic message compression | Aggressive for confirmations, lenient for data |
+| Session ID auto-injection | Prevents KeyError failures |
 
 ### MCP Playwright issues
 
 - SSE response parsing fragile (JSON decode errors under load)
 - Highest token consumption (1.4M on live task)
 - Server stability problems
-
-## Optimizations Applied to brow
-
-1. **JS tree pruning**: skip `script`, `style`, `svg`, hidden elements; collapse decorative containers
-2. **Repetition dedup**: detect repeated sibling structures, show first 3, emit count
-3. **Node count cap (300)**: prevent runaway snapshots
-4. **Truncation hints**: response includes `hint: "Use search param to filter"` when capped
-5. **Message history compression**: old tool results >500 chars get head/tail summarized
-6. **Async tool execution**: `subprocess.run` &rarr; `asyncio.create_subprocess_exec` (fixed event loop blocking)
-7. **Retry with backoff**: automatic handling of 429s and context overflow (400s)
 
 ## Task Suite
 
@@ -115,6 +119,12 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 | large-snapshot | stress | Page with 550 elements, measures snapshot handling |
 | error-recovery | resilience | Intermittent missing elements, measures retry |
 | rapid-multi-step | throughput | 5-step wizard with form fills and navigation |
+| deep-wizard | interaction | 10-step registration wizard with varied input types |
+| data-table-extract | extraction | Filter and extract from 100-row product table |
+| spa-navigation | navigation | Hash-based SPA with 4 views, cross-view data |
+| multi-tab-workflow | workflow | Product comparison across tabs with detail views |
+| infinite-scroll | extraction | Scroll-loaded news feed, extract from 50 items |
+| form-validation-recovery | resilience | Form with client-side validation error recovery |
 
 ### Live Tasks (real websites, `--include-live`)
 
