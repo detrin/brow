@@ -22,6 +22,13 @@ def _get_page(session):
         raise HTTPException(400, "No active page")
     return page
 
+def _resolve_selector(body):
+    if hasattr(body, 'ref') and body.ref is not None:
+        return f'[data-brow-ref="{body.ref}"]'
+    if hasattr(body, 'selector') and body.selector is not None:
+        return body.selector
+    raise HTTPException(400, "Either 'ref' or 'selector' must be provided")
+
 class NavigateReq(BaseModel):
     url: str
     timeout: int = DEFAULT_TIMEOUT
@@ -32,13 +39,15 @@ class WaitReq(BaseModel):
     timeout: int = DEFAULT_TIMEOUT
 
 class ClickReq(BaseModel):
-    selector: str
+    selector: Optional[str] = None
+    ref: Optional[int] = None
     timeout: int = DEFAULT_TIMEOUT
     retry: int = 0
     wait_for_selector: bool = True
 
 class FillReq(BaseModel):
-    selector: str
+    selector: Optional[str] = None
+    ref: Optional[int] = None
     value: str
     timeout: int = DEFAULT_TIMEOUT
     retry: int = 0
@@ -305,6 +314,7 @@ async def click(req: Request, sid: str, body: ClickReq):
 
     session = _get_session(req, sid)
     page = _get_page(session)
+    selector = _resolve_selector(body)
 
     attempts = body.retry + 1
     last_error = None
@@ -312,9 +322,9 @@ async def click(req: Request, sid: str, body: ClickReq):
     for attempt in range(attempts):
         try:
             if body.wait_for_selector:
-                await page.wait_for_selector(body.selector, timeout=body.timeout, state="visible")
+                await page.wait_for_selector(selector, timeout=body.timeout, state="visible")
 
-            await page.click(body.selector, timeout=body.timeout)
+            await page.click(selector, timeout=body.timeout)
             return {"ok": True}
         except Exception as e:
             last_error = e
@@ -323,7 +333,7 @@ async def click(req: Request, sid: str, body: ClickReq):
 
     raise HTTPException(
         500,
-        f"Failed to click selector '{body.selector}' after {attempts} attempts. Last error: {str(last_error)}"
+        f"Failed to click selector '{selector}' after {attempts} attempts. Last error: {str(last_error)}"
     )
 
 @router.post("/fill")
@@ -332,6 +342,7 @@ async def fill(req: Request, sid: str, body: FillReq):
 
     session = _get_session(req, sid)
     page = _get_page(session)
+    selector = _resolve_selector(body)
 
     attempts = body.retry + 1
     last_error = None
@@ -339,9 +350,9 @@ async def fill(req: Request, sid: str, body: FillReq):
     for attempt in range(attempts):
         try:
             if body.wait_for_selector:
-                await page.wait_for_selector(body.selector, timeout=body.timeout, state="visible")
+                await page.wait_for_selector(selector, timeout=body.timeout, state="visible")
 
-            await page.fill(body.selector, body.value, timeout=body.timeout)
+            await page.fill(selector, body.value, timeout=body.timeout)
             return {"ok": True}
         except Exception as e:
             last_error = e
@@ -350,7 +361,7 @@ async def fill(req: Request, sid: str, body: FillReq):
 
     raise HTTPException(
         500,
-        f"Failed to fill selector '{body.selector}' after {attempts} attempts. Last error: {str(last_error)}"
+        f"Failed to fill selector '{selector}' after {attempts} attempts. Last error: {str(last_error)}"
     )
 
 @router.post("/type")

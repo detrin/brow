@@ -132,6 +132,24 @@ async def test_snapshot_has_refs(client, session_id):
     assert "[" not in heading_line
 
 @pytest.mark.asyncio
+async def test_click_by_ref(client, session_id):
+    html = "data:text/html,<body><button id='btn' onclick='document.title=\"clicked\"'>Click</button></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    await client.get(f"/browser/{session_id}/snapshot")  # inject refs
+    r = await client.post(f"/browser/{session_id}/click", json={"ref": 1})
+    assert r.status_code == 200
+    assert r.json()["ok"] is True
+
+@pytest.mark.asyncio
+async def test_fill_by_ref(client, session_id):
+    html = "data:text/html,<body><input id='inp' type='text'/></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    await client.get(f"/browser/{session_id}/snapshot")  # inject refs
+    r = await client.post(f"/browser/{session_id}/fill", json={"ref": 1, "value": "hello"})
+    assert r.status_code == 200
+    assert r.json()["ok"] is True
+
+@pytest.mark.asyncio
 async def test_session_not_found(client):
     r = await client.get("/browser/999/url")
     assert r.status_code == 404
