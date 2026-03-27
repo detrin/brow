@@ -204,6 +204,12 @@ class AgentLoop:
         return final_output
 
     def _compress_old_results(self, threshold):
+        """Compress old tool results based on their type.
+
+        - confirmation results (click/fill/select ok): compress to 1 line immediately
+        - navigation results (navigate/session): compress after threshold
+        - data results (snapshot/html): keep longer, compress at higher threshold
+        """
         for msg in self.messages:
             if msg["role"] != "user" or not isinstance(msg.get("content"), list):
                 continue
@@ -211,7 +217,22 @@ class AgentLoop:
                 if item.get("type") != "tool_result":
                     continue
                 content = item.get("content", "")
-                if len(content) > threshold:
+                if not content or len(content) <= 50:
+                    continue
+
+                is_confirmation = content.startswith('{"ok"') or content.startswith('{"output": ""}')
+                is_snapshot = '"snapshot"' in content[:100] or '"tree"' in content[:100]
+
+                if is_confirmation and len(content) > 100:
+                    item["content"] = content.split("\n")[0][:100]
+                elif is_snapshot and len(content) > threshold * 2:
+                    lines = content.split("\n")
+                    item["content"] = (
+                        "\n".join(lines[:5])
+                        + f"\n... ({len(lines) - 10} lines omitted) ...\n"
+                        + "\n".join(lines[-5:])
+                    )
+                elif len(content) > threshold:
                     lines = content.split("\n")
                     item["content"] = (
                         "\n".join(lines[:5])
