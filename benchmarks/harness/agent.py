@@ -1,3 +1,4 @@
+import asyncio
 import time
 import json
 from dataclasses import dataclass, field
@@ -142,12 +143,37 @@ class AgentLoop:
                 turn_input = response.usage.input_tokens
                 turn_output = response.usage.output_tokens
 
-                tool_results = []
-                for block in tool_use_blocks:
-                    call_start = time.time()
-                    result = await self._execute_tool(block.name, block.input)
-                    call_ms = int((time.time() - call_start) * 1000)
+                # Execute tool calls in parallel when possible
+                SEQUENTIAL_TOOLS = {"submit_answer", "brow_session_new"}
+                sequential = [b for b in tool_use_blocks if b.name in SEQUENTIAL_TOOLS]
+                parallel = [b for b in tool_use_blocks if b.name not in SEQUENTIAL_TOOLS]
 
+                tool_results = []
+                results_map = {}
+
+                # Run parallelizable tools concurrently
+                if parallel:
+                    call_start = time.time()
+
+                    async def _run(block):
+                        t0 = time.time()
+                        r = await self._execute_tool(block.name, block.input)
+                        return block, r, int((time.time() - t0) * 1000)
+
+                    completed = await asyncio.gather(*[_run(b) for b in parallel])
+                    for block, result, call_ms in completed:
+                        results_map[block.id] = (block, result, call_ms)
+
+                # Run sequential tools one at a time
+                for block in sequential:
+                    t0 = time.time()
+                    result = await self._execute_tool(block.name, block.input)
+                    call_ms = int((time.time() - t0) * 1000)
+                    results_map[block.id] = (block, result, call_ms)
+
+                # Process results in original order
+                for block in tool_use_blocks:
+                    block, result, call_ms = results_map[block.id]
                     result_str = json.dumps(result) if isinstance(result, dict) else str(result)
                     is_error = "error" in result if isinstance(result, dict) else False
 
