@@ -10,6 +10,143 @@ from brow.snapshot import format_tree, filter_lines
 
 router = APIRouter(prefix="/browser/{sid}", tags=["browser"])
 
+SNAPSHOT_JS = """
+() => {
+    document.querySelectorAll('[data-brow-ref]').forEach(el => el.removeAttribute('data-brow-ref'));
+
+    const INTERACTIVE = new Set([
+        'a', 'button', 'input', 'select', 'textarea', 'option',
+        'details', 'summary', 'dialog', 'menu', 'menuitem',
+    ]);
+    const INTERACTIVE_ROLES = new Set([
+        'button', 'tab', 'link', 'menuitem', 'option', 'switch',
+        'checkbox', 'radio', 'slider', 'spinbutton', 'combobox',
+        'searchbox', 'textbox',
+    ]);
+    const SEMANTIC = new Set([
+        'h1','h2','h3','h4','h5','h6','img','video','audio',
+        'table','thead','tbody','tr','th','td','ul','ol','li',
+        'form','label','fieldset','legend','nav','main',
+    ]);
+    const SKIP = new Set([
+        'script','style','noscript','svg','path','link','meta',
+        'br','hr','iframe',
+    ]);
+
+    let nodeCount = 0;
+    let refCounter = 0;
+    const NODE_LIMIT = 300;
+
+    function sig(node) {
+        if (node.nodeType !== Node.ELEMENT_NODE) return '';
+        const tag = node.tagName;
+        const cls = node.className ? '.' + node.className.split(' ')[0] : '';
+        const ch = node.children.length;
+        return tag + cls + ch;
+    }
+
+    function buildTree(node, depth) {
+        if (!node || depth > 15 || nodeCount >= NODE_LIMIT) return null;
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            const t = node.textContent?.trim();
+            if (!t || !t.length) return null;
+            nodeCount++;
+            return { role: 'text', name: t.substring(0, 80) };
+        }
+        if (node.nodeType !== Node.ELEMENT_NODE) return null;
+
+        const tag = node.tagName.toLowerCase();
+        if (SKIP.has(tag)) return null;
+        if (node.hidden || node.getAttribute('aria-hidden') === 'true') return null;
+
+        const role = node.getAttribute('role') || tag;
+        const ariaLabel = node.getAttribute('aria-label');
+        const alt = node.getAttribute('alt');
+        const placeholder = node.getAttribute('placeholder');
+        const name = ariaLabel || alt || node.getAttribute('title') || '';
+        const isInteractive = INTERACTIVE.has(tag) || INTERACTIVE_ROLES.has(node.getAttribute('role'));
+        const isSemantic = SEMANTIC.has(tag);
+
+        const childNodes = Array.from(node.childNodes);
+        let children = [];
+        let lastSig = '', repeatCount = 0;
+        for (const child of childNodes) {
+            if (nodeCount >= NODE_LIMIT) break;
+            const s = sig(child);
+            if (s && s === lastSig) {
+                repeatCount++;
+                if (repeatCount > 3) continue;
+            } else {
+                if (repeatCount > 3) {
+                    children.push({ role: 'text', name: '... ' + (repeatCount - 3) + ' similar items omitted' });
+                    nodeCount++;
+                }
+                lastSig = s;
+                repeatCount = 0;
+            }
+            const c = buildTree(child, depth + 1);
+            if (c) children.push(c);
+        }
+        if (repeatCount > 3) {
+            children.push({ role: 'text', name: '... ' + (repeatCount - 3) + ' similar items omitted' });
+            nodeCount++;
+        }
+
+        if (!isInteractive && !isSemantic && !name) {
+            if (children.length === 0) return null;
+            if (children.length === 1) return children[0];
+            return { role: 'group', children };
+        }
+
+        nodeCount++;
+        const obj = { role };
+        if (isInteractive) {
+            refCounter++;
+            node.setAttribute('data-brow-ref', String(refCounter));
+            obj.ref = refCounter;
+        }
+        if (name) obj.name = name.substring(0, 80);
+        else if (isInteractive && !name) {
+            const txt = node.textContent?.trim()?.substring(0, 50);
+            if (txt) obj.name = txt;
+        }
+        if (placeholder && !obj.name) obj.name = placeholder;
+        if (node.value !== undefined && node.value !== '') obj.value = String(node.value).substring(0, 80);
+        if (node.checked !== undefined) obj.checked = node.checked;
+        if (node.disabled) obj.disabled = true;
+        if (tag === 'a' && node.href) obj.href = node.href;
+
+        if (children.length > 0) {
+            if (children.length === 1 && children[0].role === 'text' && !obj.name) {
+                obj.name = children[0].name;
+            } else {
+                obj.children = children;
+            }
+        }
+
+        return obj;
+    }
+
+    const tree = buildTree(document.body, 0);
+    return { tree, truncated: nodeCount >= NODE_LIMIT, nodeCount, refCount: refCounter };
+}
+"""
+
+async def _take_snapshot(page, search=None):
+    try:
+        await page.wait_for_load_state("domcontentloaded", timeout=5000)
+    except Exception:
+        pass
+    result = await page.evaluate(SNAPSHOT_JS)
+    tree = result.get("tree") if isinstance(result, dict) else result
+    truncated = result.get("truncated", False) if isinstance(result, dict) else False
+    node_count = result.get("nodeCount", 0) if isinstance(result, dict) else 0
+    formatted = format_tree(tree) if tree else ""
+    if search:
+        formatted = filter_lines(formatted, search)
+    return formatted, truncated, node_count
+
 def _get_session(req, sid):
     try:
         return req.app.state.manager.get(sid)
@@ -98,7 +235,12 @@ async def navigate(req: Request, sid: str, body: NavigateReq):
     except Exception as e:
         logging.error(f"Navigate to {body.url} failed: {e}")
         raise HTTPException(502, f"Navigation failed: {e}")
-    return {"url": page.url, "status": r.status if r else None}
+    formatted, truncated, node_count = await _take_snapshot(page)
+    resp = {"url": page.url, "status": r.status if r else None, "snapshot": formatted}
+    if truncated:
+        resp["truncated"] = True
+        resp["hint"] = f"Page has {node_count}+ nodes. Use search param to filter."
+    return resp
 
 @router.post("/wait")
 async def wait(req: Request, sid: str, body: WaitReq):
@@ -120,137 +262,7 @@ async def get_url(req: Request, sid: str):
 async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator: Optional[str] = None):
     session = _get_session(req, sid)
     page = _get_page(session)
-
-    js_code = """
-    () => {
-        document.querySelectorAll('[data-brow-ref]').forEach(el => el.removeAttribute('data-brow-ref'));
-
-        const INTERACTIVE = new Set([
-            'a', 'button', 'input', 'select', 'textarea', 'option',
-            'details', 'summary', 'dialog', 'menu', 'menuitem',
-        ]);
-        const INTERACTIVE_ROLES = new Set([
-            'button', 'tab', 'link', 'menuitem', 'option', 'switch',
-            'checkbox', 'radio', 'slider', 'spinbutton', 'combobox',
-            'searchbox', 'textbox',
-        ]);
-        const SEMANTIC = new Set([
-            'h1','h2','h3','h4','h5','h6','img','video','audio',
-            'table','thead','tbody','tr','th','td','ul','ol','li',
-            'form','label','fieldset','legend','nav','main',
-        ]);
-        const SKIP = new Set([
-            'script','style','noscript','svg','path','link','meta',
-            'br','hr','iframe',
-        ]);
-
-        let nodeCount = 0;
-        let refCounter = 0;
-        const NODE_LIMIT = 300;
-
-        function sig(node) {
-            if (node.nodeType !== Node.ELEMENT_NODE) return '';
-            const tag = node.tagName;
-            const cls = node.className ? '.' + node.className.split(' ')[0] : '';
-            const ch = node.children.length;
-            return tag + cls + ch;
-        }
-
-        function buildTree(node, depth) {
-            if (!node || depth > 15 || nodeCount >= NODE_LIMIT) return null;
-
-            if (node.nodeType === Node.TEXT_NODE) {
-                const t = node.textContent?.trim();
-                if (!t || !t.length) return null;
-                nodeCount++;
-                return { role: 'text', name: t.substring(0, 80) };
-            }
-            if (node.nodeType !== Node.ELEMENT_NODE) return null;
-
-            const tag = node.tagName.toLowerCase();
-            if (SKIP.has(tag)) return null;
-            if (node.hidden || node.getAttribute('aria-hidden') === 'true') return null;
-
-            const role = node.getAttribute('role') || tag;
-            const ariaLabel = node.getAttribute('aria-label');
-            const alt = node.getAttribute('alt');
-            const placeholder = node.getAttribute('placeholder');
-            const name = ariaLabel || alt || node.getAttribute('title') || '';
-            const isInteractive = INTERACTIVE.has(tag) || INTERACTIVE_ROLES.has(node.getAttribute('role'));
-            const isSemantic = SEMANTIC.has(tag);
-
-            const childNodes = Array.from(node.childNodes);
-            let children = [];
-            let lastSig = '', repeatCount = 0;
-            for (const child of childNodes) {
-                if (nodeCount >= NODE_LIMIT) break;
-                const s = sig(child);
-                if (s && s === lastSig) {
-                    repeatCount++;
-                    if (repeatCount > 3) continue;
-                } else {
-                    if (repeatCount > 3) {
-                        children.push({ role: 'text', name: '... ' + (repeatCount - 3) + ' similar items omitted' });
-                        nodeCount++;
-                    }
-                    lastSig = s;
-                    repeatCount = 0;
-                }
-                const c = buildTree(child, depth + 1);
-                if (c) children.push(c);
-            }
-            if (repeatCount > 3) {
-                children.push({ role: 'text', name: '... ' + (repeatCount - 3) + ' similar items omitted' });
-                nodeCount++;
-            }
-
-            if (!isInteractive && !isSemantic && !name) {
-                if (children.length === 0) return null;
-                if (children.length === 1) return children[0];
-                return { role: 'group', children };
-            }
-
-            nodeCount++;
-            const obj = { role };
-            if (isInteractive) {
-                refCounter++;
-                node.setAttribute('data-brow-ref', String(refCounter));
-                obj.ref = refCounter;
-            }
-            if (name) obj.name = name.substring(0, 80);
-            else if (isInteractive && !name) {
-                const txt = node.textContent?.trim()?.substring(0, 50);
-                if (txt) obj.name = txt;
-            }
-            if (placeholder && !obj.name) obj.name = placeholder;
-            if (node.value !== undefined && node.value !== '') obj.value = String(node.value).substring(0, 80);
-            if (node.checked !== undefined) obj.checked = node.checked;
-            if (node.disabled) obj.disabled = true;
-            if (tag === 'a' && node.href) obj.href = node.href;
-
-            if (children.length > 0) {
-                if (children.length === 1 && children[0].role === 'text' && !obj.name) {
-                    obj.name = children[0].name;
-                } else {
-                    obj.children = children;
-                }
-            }
-
-            return obj;
-        }
-
-        const tree = buildTree(document.body, 0);
-        return { tree, truncated: nodeCount >= NODE_LIMIT, nodeCount, refCount: refCounter };
-    }
-    """
-
-    result = await page.evaluate(js_code)
-    tree = result.get("tree") if isinstance(result, dict) else result
-    truncated = result.get("truncated", False) if isinstance(result, dict) else False
-    node_count = result.get("nodeCount", 0) if isinstance(result, dict) else 0
-    formatted = format_tree(tree) if tree else ""
-    if search:
-        formatted = filter_lines(formatted, search)
+    formatted, truncated, node_count = await _take_snapshot(page, search=search)
     resp = {"tree": formatted}
     if truncated:
         resp["truncated"] = True
@@ -331,7 +343,11 @@ async def click(req: Request, sid: str, body: ClickReq):
                 await page.wait_for_selector(selector, timeout=body.timeout, state="visible")
 
             await page.click(selector, timeout=body.timeout)
-            return {"ok": True}
+            formatted, truncated, _ = await _take_snapshot(page)
+            resp = {"ok": True, "snapshot": formatted}
+            if truncated:
+                resp["truncated"] = True
+            return resp
         except Exception as e:
             last_error = e
             if attempt < attempts - 1:
@@ -359,7 +375,11 @@ async def fill(req: Request, sid: str, body: FillReq):
                 await page.wait_for_selector(selector, timeout=body.timeout, state="visible")
 
             await page.fill(selector, body.value, timeout=body.timeout)
-            return {"ok": True}
+            formatted, truncated, _ = await _take_snapshot(page)
+            resp = {"ok": True, "snapshot": formatted}
+            if truncated:
+                resp["truncated"] = True
+            return resp
         except Exception as e:
             last_error = e
             if attempt < attempts - 1:
@@ -382,7 +402,11 @@ async def press_key(req: Request, sid: str, body: KeyReq):
     session = _get_session(req, sid)
     page = _get_page(session)
     await page.keyboard.press(body.key)
-    return {"ok": True}
+    formatted, truncated, _ = await _take_snapshot(page)
+    resp = {"ok": True, "snapshot": formatted}
+    if truncated:
+        resp["truncated"] = True
+    return resp
 
 @router.post("/hover")
 async def hover(req: Request, sid: str, body: HoverReq):
@@ -414,7 +438,11 @@ async def select_option(req: Request, sid: str, body: SelectReq):
     page = _get_page(session)
     selector = _resolve_selector(body)
     await page.select_option(selector, body.value, timeout=body.timeout)
-    return {"ok": True}
+    formatted, truncated, _ = await _take_snapshot(page)
+    resp = {"ok": True, "snapshot": formatted}
+    if truncated:
+        resp["truncated"] = True
+    return resp
 
 @router.post("/upload")
 async def upload(req: Request, sid: str, body: UploadReq):

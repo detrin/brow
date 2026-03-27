@@ -167,6 +167,39 @@ async def test_select_by_ref(client, session_id):
     assert r.json()["ok"] is True
 
 @pytest.mark.asyncio
+async def test_click_returns_snapshot(client, session_id):
+    html = "data:text/html,<body><a href='data:text/html,<h1>Page2</h1>'>Go</a></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.post(f"/browser/{session_id}/click", json={"selector": "a"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["ok"] is True
+    assert "snapshot" in body
+    assert "Page2" in body["snapshot"]
+
+@pytest.mark.asyncio
+async def test_fill_returns_snapshot(client, session_id):
+    html = "data:text/html,<body><input id='inp' type='text'/><p>Label</p></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.post(f"/browser/{session_id}/fill", json={"selector": "#inp", "value": "test"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["ok"] is True
+    assert "snapshot" in body
+
+@pytest.mark.asyncio
+async def test_navigate_returns_snapshot(client, session_id):
+    r = await client.post(
+        f"/browser/{session_id}/navigate",
+        json={"url": "data:text/html,<body><h1>Hello</h1><button>Click</button></body>"}
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert "snapshot" in body
+    assert "Hello" in body["snapshot"]
+    assert "[1]" in body["snapshot"]
+
+@pytest.mark.asyncio
 async def test_session_not_found(client):
     r = await client.get("/browser/999/url")
     assert r.status_code == 404
