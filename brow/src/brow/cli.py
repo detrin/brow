@@ -85,11 +85,16 @@ def daemon_status():
     typer.echo(f"Running — {result['sessions']} active sessions")
 
 @session_app.command("new")
-def session_new(profile: str = "default", headed: bool = False):
+def session_new(profile: str = "default", headed: bool = False, url: Optional[str] = None):
     ensure_daemon()
     c = _client()
-    result = run_async(c.post("/sessions", json={"profile": profile, "headless": not headed}))
+    payload = {"profile": profile, "headless": not headed}
+    if url:
+        payload["url"] = url
+    result = run_async(c.post("/sessions", json=payload))
     typer.echo(result["id"])
+    if result.get("snapshot"):
+        typer.echo(result["snapshot"])
 
 @session_app.command("list")
 def session_list():
@@ -181,41 +186,50 @@ def logs_cmd(search: Optional[str] = None, count: int = 50, s: Optional[str] = s
 
 @app.command("click")
 def click_cmd(
-    selector: str,
+    selector: Optional[str] = typer.Argument(None),
     s: Optional[str] = session_opt,
+    ref: Optional[int] = typer.Option(None, "--ref", help="Element ref from snapshot"),
     timeout: int = 30000,
     retry: int = 0,
     no_wait: bool = typer.Option(False, help="Skip waiting for selector to be visible")
 ):
     ensure_daemon()
     c = _client()
-    payload = {
-        "selector": selector,
-        "timeout": timeout,
-        "retry": retry,
-        "wait_for_selector": not no_wait
-    }
-    run_async(c.post(f"/browser/{s}/click", json=payload))
+    payload = {"timeout": timeout, "retry": retry, "wait_for_selector": not no_wait}
+    if ref is not None:
+        payload["ref"] = ref
+    elif selector is not None:
+        payload["selector"] = selector
+    else:
+        typer.echo("Either selector or --ref required", err=True)
+        raise typer.Exit(1)
+    result = run_async(c.post(f"/browser/{s}/click", json=payload))
+    if result.get("snapshot"):
+        typer.echo(result["snapshot"])
 
 @app.command("fill")
 def fill_cmd(
-    selector: str,
-    value: str,
+    selector: Optional[str] = typer.Argument(None),
+    value: str = typer.Argument(...),
     s: Optional[str] = session_opt,
+    ref: Optional[int] = typer.Option(None, "--ref", help="Element ref from snapshot"),
     timeout: int = 30000,
     retry: int = 0,
     no_wait: bool = typer.Option(False, help="Skip waiting for selector to be visible")
 ):
     ensure_daemon()
     c = _client()
-    payload = {
-        "selector": selector,
-        "value": value,
-        "timeout": timeout,
-        "retry": retry,
-        "wait_for_selector": not no_wait
-    }
-    run_async(c.post(f"/browser/{s}/fill", json=payload))
+    payload = {"value": value, "timeout": timeout, "retry": retry, "wait_for_selector": not no_wait}
+    if ref is not None:
+        payload["ref"] = ref
+    elif selector is not None:
+        payload["selector"] = selector
+    else:
+        typer.echo("Either selector or --ref required", err=True)
+        raise typer.Exit(1)
+    result = run_async(c.post(f"/browser/{s}/fill", json=payload))
+    if result.get("snapshot"):
+        typer.echo(result["snapshot"])
 
 @app.command("select")
 def select_cmd(

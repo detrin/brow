@@ -41,3 +41,17 @@ async def test_status(client):
     r = await client.get("/status")
     assert r.status_code == 200
     assert "sessions" in r.json()
+
+@pytest.mark.asyncio
+async def test_create_session_with_url(client):
+    r = await client.post("/sessions", json={
+        "profile": "test-url",
+        "headless": True,
+        "url": "data:text/html,<body><h1>Hello</h1><button>Click</button></body>"
+    })
+    assert r.status_code == 200
+    body = r.json()
+    assert "id" in body
+    assert "snapshot" in body
+    assert "Hello" in body["snapshot"]
+    assert "[1]" in body["snapshot"]

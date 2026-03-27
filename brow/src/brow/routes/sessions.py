@@ -1,3 +1,6 @@
+import logging
+from typing import Optional
+
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
@@ -6,6 +9,7 @@ router = APIRouter(prefix="/sessions", tags=["sessions"])
 class CreateSession(BaseModel):
     profile: str = "default"
     headless: bool = True
+    url: Optional[str] = None
 
 @router.post("")
 async def create(req: Request, body: CreateSession):
@@ -19,7 +23,28 @@ async def create(req: Request, body: CreateSession):
     session = mgr.get(sid)
     user_data_dir = profiles.get_profile_dir(body.profile)
     await session.launch(pw, user_data_dir)
-    return {"id": sid, "profile": body.profile}
+
+    resp = {"id": sid, "profile": body.profile}
+
+    if body.url:
+        page = session.page
+        if page:
+            from brow.routes.browser import _take_snapshot
+            try:
+                r = await page.goto(body.url, timeout=30000)
+                resp["url"] = page.url
+                resp["status"] = r.status if r else None
+            except Exception as e:
+                logging.error(f"Navigate to {body.url} failed: {e}")
+                resp["url"] = body.url
+                resp["status"] = None
+                resp["error"] = f"Navigation failed: {e}"
+            formatted, truncated, node_count = await _take_snapshot(page)
+            resp["snapshot"] = formatted
+            if truncated:
+                resp["truncated"] = True
+
+    return resp
 
 @router.get("")
 async def list_sessions(req: Request):
