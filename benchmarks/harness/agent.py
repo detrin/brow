@@ -12,19 +12,19 @@ from benchmarks.harness.tools_brow import BROW_TOOLS, execute_brow_tool
 from benchmarks.harness.tools_mcp import MCP_TOOLS, MCP_TOOL_NAME_MAP, McpPlaywrightClient, execute_mcp_tool
 from benchmarks.harness.tools_playwright_cli import PLAYWRIGHT_CLI_TOOLS, execute_playwright_cli_tool, cleanup_playwright_cli
 
-def _load_brow_skill():
-    from pathlib import Path
-    skill_path = Path(__file__).parent.parent.parent / "skills" / "brow" / "SKILL.md"
-    if skill_path.exists():
-        return skill_path.read_text()
-    return ""
+BROW_INSTRUCTIONS = """You have access to brow CLI tools for browser automation.
+Use brow_session_new with a url to start a session and get the initial page snapshot.
+Snapshots show numbered refs like [1], [2] for interactive elements.
+Use ref= to click, fill, or select elements (e.g. brow_click ref=3).
+Each action returns an updated snapshot — no need to call brow_snapshot after every action.
+Use brow_snapshot with search="pattern" to filter large pages.
+When done, call submit_answer with your structured result.
 
-BROW_INSTRUCTIONS = f"""You have access to brow CLI tools for browser automation.
-Use brow_session_new to start a session, then use the session ID with other tools.
-Use brow_snapshot to read page content (fast, token-efficient).
-If a snapshot is truncated, re-call brow_snapshot with search="pattern" to filter for specific content.
-Selectors: CSS (#id, .class), text (text=Click Me), role (role=button[name='Save']).
-When done, call submit_answer with your structured result."""
+Example workflow:
+  brow_session_new(url="https://shop.com") → snapshot shows [1] search box, [2] cart...
+  brow_fill(ref=1, value="headphones") → snapshot shows [3] "Sony WH-1000" [4] "AirPods Max"...
+  brow_click(ref=3) → snapshot shows product details...
+  submit_answer({name: "Sony WH-1000XM5", price: "$348"})"""
 
 MCP_INSTRUCTIONS = """You have access to MCP Playwright tools for browser automation.
 Use mcp_navigate to go to URLs. Use mcp_snapshot to read the page.
@@ -39,8 +39,7 @@ When done, call submit_answer with your structured result."""
 
 def build_system_prompt(backend, task_description):
     if backend == "brow":
-        skill_content = _load_brow_skill()
-        instructions = BROW_INSTRUCTIONS + ("\n\n" + skill_content if skill_content else "")
+        instructions = BROW_INSTRUCTIONS
     elif backend == "playwright-cli":
         instructions = PWCLI_INSTRUCTIONS
     else:

@@ -5,25 +5,13 @@ import uuid
 BROW_TOOLS = [
     {
         "name": "brow_session_new",
-        "description": "Start a new browser session. Returns session ID.",
+        "description": "Start a new browser session. Optionally navigate to a URL. Returns session ID and initial page snapshot.",
         "input_schema": {
             "type": "object",
             "properties": {
-                "profile": {"type": "string", "default": "benchmark"},
+                "url": {"type": "string", "description": "URL to navigate to after creating the session"},
                 "headed": {"type": "boolean", "default": False},
             },
-        },
-    },
-    {
-        "name": "brow_navigate",
-        "description": "Navigate to a URL.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "session": {"type": "string"},
-                "url": {"type": "string"},
-            },
-            "required": ["session", "url"],
         },
     },
     {
@@ -40,110 +28,43 @@ BROW_TOOLS = [
     },
     {
         "name": "brow_click",
-        "description": "Click an element. Selectors: CSS (#id, .class), text (text=Click Me), role (role=button[name='Save']).",
+        "description": "Click an element by ref number (from snapshot) or CSS/text selector. Returns updated snapshot.",
         "input_schema": {
             "type": "object",
             "properties": {
                 "session": {"type": "string"},
-                "selector": {"type": "string"},
+                "ref": {"type": "integer", "description": "Element ref number from snapshot (preferred)"},
+                "selector": {"type": "string", "description": "CSS or text selector (fallback)"},
             },
-            "required": ["session", "selector"],
+            "required": ["session"],
         },
     },
     {
         "name": "brow_fill",
-        "description": "Fill an input field with a value.",
+        "description": "Fill an input field by ref number or selector. Returns updated snapshot.",
         "input_schema": {
             "type": "object",
             "properties": {
                 "session": {"type": "string"},
-                "selector": {"type": "string"},
+                "ref": {"type": "integer", "description": "Element ref number from snapshot (preferred)"},
+                "selector": {"type": "string", "description": "CSS or text selector (fallback)"},
                 "value": {"type": "string"},
             },
-            "required": ["session", "selector", "value"],
-        },
-    },
-    {
-        "name": "brow_type",
-        "description": "Type text with keyboard.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "session": {"type": "string"},
-                "text": {"type": "string"},
-            },
-            "required": ["session", "text"],
-        },
-    },
-    {
-        "name": "brow_key",
-        "description": "Press a key (Enter, Tab, Escape, etc).",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "session": {"type": "string"},
-                "key": {"type": "string"},
-            },
-            "required": ["session", "key"],
-        },
-    },
-    {
-        "name": "brow_screenshot",
-        "description": "Take a screenshot of the current page.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "session": {"type": "string"},
-                "quality": {"type": "string", "enum": ["low", "medium", "high"]},
-            },
-            "required": ["session"],
-        },
-    },
-    {
-        "name": "brow_wait",
-        "description": "Wait for a selector to appear or page to load.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "session": {"type": "string"},
-                "selector": {"type": "string"},
-                "load": {"type": "boolean"},
-            },
-            "required": ["session"],
-        },
-    },
-    {
-        "name": "brow_url",
-        "description": "Get the current page URL.",
-        "input_schema": {
-            "type": "object",
-            "properties": {"session": {"type": "string"}},
-            "required": ["session"],
-        },
-    },
-    {
-        "name": "brow_html",
-        "description": "Get page HTML content.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "session": {"type": "string"},
-                "locator": {"type": "string"},
-            },
-            "required": ["session"],
+            "required": ["session", "value"],
         },
     },
     {
         "name": "brow_select",
-        "description": "Select an option from a dropdown.",
+        "description": "Select an option from a dropdown by ref number or selector. Returns updated snapshot.",
         "input_schema": {
             "type": "object",
             "properties": {
                 "session": {"type": "string"},
-                "selector": {"type": "string"},
+                "ref": {"type": "integer", "description": "Element ref number from snapshot (preferred)"},
+                "selector": {"type": "string", "description": "CSS or text selector (fallback)"},
                 "value": {"type": "string"},
             },
-            "required": ["session", "selector", "value"],
+            "required": ["session", "value"],
         },
     },
     {
@@ -159,39 +80,35 @@ BROW_TOOLS = [
             "required": ["session"],
         },
     },
-    {
-        "name": "brow_hover",
-        "description": "Hover over an element.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "session": {"type": "string"},
-                "selector": {"type": "string"},
-            },
-            "required": ["session", "selector"],
-        },
-    },
 ]
+
+
+def _ref_or_selector(p):
+    if p.get("ref") is not None:
+        return ["--ref", str(p["ref"])]
+    return [p["selector"]]
+
 
 def _build_brow_cmd(name, params):
     def _cmd(subcmd, p, *args):
         return ["brow", subcmd, "-s", p["session"]] + list(args)
 
     cmd_map = {
-        "brow_session_new": lambda p: ["brow", "session", "new"] + (["--headed"] if p.get("headed") else []) + (["--profile", f"bench-{uuid.uuid4().hex[:8]}"]),
-        "brow_navigate": lambda p: _cmd("navigate", p, p["url"]),
+        "brow_session_new": lambda p: (
+            ["brow", "session", "new"]
+            + (["--headed"] if p.get("headed") else [])
+            + ["--profile", f"bench-{uuid.uuid4().hex[:8]}"]
+            + (["--url", p["url"]] if p.get("url") else [])
+        ),
         "brow_snapshot": lambda p: _cmd("snapshot", p) + (["--search", p["search"]] if p.get("search") else []),
-        "brow_click": lambda p: _cmd("click", p, p["selector"]),
-        "brow_fill": lambda p: _cmd("fill", p, p["selector"], p["value"]),
-        "brow_type": lambda p: _cmd("type", p, p["text"]),
-        "brow_key": lambda p: _cmd("key", p, p["key"]),
-        "brow_screenshot": lambda p: _cmd("screenshot", p) + (["--quality", p["quality"]] if p.get("quality") else []),
-        "brow_wait": lambda p: _cmd("wait", p) + ([p["selector"]] if p.get("selector") else []) + (["--load"] if p.get("load") else []),
-        "brow_url": lambda p: _cmd("url", p),
-        "brow_html": lambda p: _cmd("html", p) + (["--locator", p["locator"]] if p.get("locator") else []),
-        "brow_select": lambda p: ["brow", "eval", "-s", p["session"], "await page.select_option(" + json.dumps(p["selector"]) + ", " + json.dumps(p["value"]) + ")"],
-        "brow_scroll": lambda p: (["brow", "scroll-to", "-s", p["session"], p["selector"]] if p.get("selector") else ["brow", "scroll", "-s", p["session"], str(p.get("pixels", 0))]),
-        "brow_hover": lambda p: _cmd("hover", p, p["selector"]),
+        "brow_click": lambda p: ["brow", "click", "-s", p["session"]] + _ref_or_selector(p),
+        "brow_fill": lambda p: ["brow", "fill", "-s", p["session"]] + _ref_or_selector(p) + [p["value"]],
+        "brow_select": lambda p: ["brow", "select", "-s", p["session"]] + _ref_or_selector(p) + [p["value"]],
+        "brow_scroll": lambda p: (
+            ["brow", "scroll-to", "-s", p["session"], p["selector"]]
+            if p.get("selector")
+            else ["brow", "scroll", "-s", p["session"], str(p.get("pixels", 0))]
+        ),
     }
     builder = cmd_map.get(name)
     if not builder:
@@ -213,7 +130,11 @@ async def execute_brow_tool(name, params):
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=60)
         if proc.returncode != 0:
             return {"error": stderr.decode().strip() or f"Exit code {proc.returncode}"}
-        return {"output": stdout.decode().strip()}
+        output = stdout.decode().strip()
+        if name == "brow_session_new" and "\n" in output:
+            lines = output.split("\n", 1)
+            return {"output": lines[0].strip(), "snapshot": lines[1].strip()}
+        return {"output": output}
     except asyncio.TimeoutError:
         proc.kill()
         return {"error": "Command timed out after 60s"}
