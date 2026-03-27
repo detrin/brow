@@ -94,6 +94,23 @@ brow session delete 1
 
 Because the `google` profile persists your login, you get personalized results -no cookie banners, no sign-in walls, just data.
 
+## Benchmarks
+
+Compared against **playwright-cli** (Playwright MCP's CLI mode) and **MCP Playwright** (SSE server) on 16 browser automation tasks using Claude Sonnet as the agent. All tasks use local fixture pages for reproducibility.
+
+| Metric | **brow** | playwright-cli | MCP Playwright |
+|--------|----------|---------------|----------------|
+| Avg tokens/task | **86K** | 113K | 118K |
+| Success rate | **69%** | 44% | 38% |
+| Avg wall-clock | **33s** | 44s | 50s |
+| Est. cost/task | **$0.27** | $0.35 | $0.37 |
+
+brow uses **24% fewer tokens**, succeeds on **25% more tasks**, and runs **25% faster** than the next-best backend.
+
+Key optimizations: ref-based element addressing (`[N]` refs instead of CSS selectors), auto-snapshot after mutations (fewer tool calls), table-aware markdown output, inline list compression, and adaptive node caps.
+
+Full results and methodology: [benchmarks/README.md](benchmarks/README.md)
+
 ## Commands
 
 ### Daemon
