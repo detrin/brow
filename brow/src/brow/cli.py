@@ -120,6 +120,8 @@ def navigate(url: str, s: Optional[str] = session_opt, timeout: int = 30000):
     c = _client()
     result = run_async(c.post(f"/browser/{s}/navigate", json={"url": url, "timeout": timeout}))
     typer.echo(f"{result['url']} [{result.get('status', '')}]")
+    if result.get("snapshot"):
+        typer.echo(result["snapshot"])
 
 @app.command("wait")
 def wait_cmd(selector: Optional[str] = None, load: bool = False, s: Optional[str] = session_opt, timeout: int = 30000):
@@ -249,7 +251,9 @@ def select_cmd(
     else:
         typer.echo("Either selector or --ref required", err=True)
         raise typer.Exit(1)
-    run_async(c.post(f"/browser/{s}/select", json=payload))
+    result = run_async(c.post(f"/browser/{s}/select", json=payload))
+    if result.get("snapshot"):
+        typer.echo(result["snapshot"])
 
 @app.command("type")
 def type_cmd(text: str, s: Optional[str] = session_opt):

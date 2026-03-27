@@ -102,8 +102,9 @@ def _build_brow_cmd(name, params):
         ),
         "brow_snapshot": lambda p: _cmd("snapshot", p) + (["--search", p["search"]] if p.get("search") else []),
         "brow_click": lambda p: ["brow", "click", "-s", p["session"]] + _ref_or_selector(p),
-        "brow_fill": lambda p: ["brow", "fill", "-s", p["session"]] + _ref_or_selector(p) + [p["value"]],
-        "brow_select": lambda p: ["brow", "select", "-s", p["session"]] + _ref_or_selector(p) + [p["value"]],
+        # When using --ref, pass "_" as dummy selector so Typer parses value as the 2nd positional
+        "brow_fill": lambda p: ["brow", "fill", "-s", p["session"]] + (["_", p["value"], "--ref", str(p["ref"])] if p.get("ref") else [p["selector"], p["value"]]),
+        "brow_select": lambda p: ["brow", "select", "-s", p["session"]] + (["_", p["value"], "--ref", str(p["ref"])] if p.get("ref") else [p["selector"], p["value"]]),
         "brow_scroll": lambda p: (
             ["brow", "scroll-to", "-s", p["session"], p["selector"]]
             if p.get("selector")
