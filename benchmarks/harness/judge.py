@@ -33,6 +33,8 @@ def _find_results_list(answer):
         for v in answer.values():
             if isinstance(v, list) and v and isinstance(v[0], dict):
                 return v
+        # If no nested list found, treat the dict itself as a single result
+        return [answer]
     return []
 
 def _check_url_match(criteria, browser_state):

@@ -243,6 +243,8 @@ class AgentLoop:
         if name == "submit_answer":
             return execute_submit_answer(params)
         if self.backend == "brow":
+            if self._brow_session_id and "session" not in params:
+                params["session"] = self._brow_session_id
             return await execute_brow_tool(name, params)
         if self.backend == "playwright-cli":
             return await execute_playwright_cli_tool(name, params)
