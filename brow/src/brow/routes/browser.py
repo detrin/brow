@@ -126,8 +126,10 @@ SNAPSHOT_JS = """
                 lastSig = s;
                 repeatCount = 0;
             }
-            const c = buildTree(child, depth + 1);
-            if (c) children.push(c);
+            try {
+                const c = buildTree(child, depth + 1);
+                if (c) children.push(c);
+            } catch (e) { /* skip unprocessable node */ }
         }
         if (repeatCount > 3) {
             children.push({ role: 'text', name: '... ' + (repeatCount - 3) + ' similar items omitted' });
@@ -186,7 +188,13 @@ SNAPSHOT_JS = """
         return obj;
     }
 
-    const tree = buildTree(document.body, 0);
+    let tree = null;
+    try {
+        tree = buildTree(document.body, 0);
+    } catch (e) {
+        // Fallback: return minimal tree on crash
+        tree = { role: 'text', name: 'Snapshot error: ' + e.message };
+    }
     return { tree, truncated: nodeCount >= NODE_LIMIT, nodeCount, refCount: refCounter, interactiveCount };
 }
 """
@@ -196,7 +204,10 @@ async def _take_snapshot(page, search=None):
         await page.wait_for_load_state("domcontentloaded", timeout=5000)
     except Exception:
         pass
-    result = await page.evaluate(SNAPSHOT_JS)
+    try:
+        result = await page.evaluate(SNAPSHOT_JS)
+    except Exception:
+        result = {"tree": {"role": "text", "name": "Snapshot unavailable (page too complex)"}, "truncated": True, "nodeCount": 0}
     tree = result.get("tree") if isinstance(result, dict) else result
     truncated = result.get("truncated", False) if isinstance(result, dict) else False
     node_count = result.get("nodeCount", 0) if isinstance(result, dict) else 0
