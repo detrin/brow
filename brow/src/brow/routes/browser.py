@@ -147,6 +147,17 @@ SNAPSHOT_JS = """
             }
         }
 
+        // List compression: inline >5 same-type simple children
+        if (children.length > 5) {
+            const roles = children.map(c => c.role);
+            const firstRole = roles[0];
+            const allSame = roles.every(r => r === firstRole);
+            const allSimple = children.every(c => !c.children || c.children.every(gc => gc.role === 'text'));
+            if (allSame && allSimple) {
+                return { role: 'inline-list', itemRole: firstRole, items: children };
+            }
+        }
+
         return obj;
     }
 

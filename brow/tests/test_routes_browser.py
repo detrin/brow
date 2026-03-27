@@ -219,6 +219,27 @@ async def test_snapshot_table_compact(client, session_id):
 
 
 @pytest.mark.asyncio
+async def test_snapshot_list_compression(client, session_id):
+    html = """data:text/html,<body><nav>
+        <a href="/home">Home</a>
+        <a href="/about">About</a>
+        <a href="/products">Products</a>
+        <a href="/blog">Blog</a>
+        <a href="/contact">Contact</a>
+        <a href="/help">Help</a>
+        <a href="/faq">FAQ</a>
+    </nav></body>"""
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.get(f"/browser/{session_id}/snapshot")
+    assert r.status_code == 200
+    tree = r.json()["tree"]
+    assert "[1]" in tree
+    assert "[7]" in tree
+    lines = [l for l in tree.strip().split("\n") if "Home" in l or "FAQ" in l]
+    assert len(lines) == 1
+
+
+@pytest.mark.asyncio
 async def test_session_not_found(client):
     r = await client.get("/browser/999/url")
     assert r.status_code == 404
