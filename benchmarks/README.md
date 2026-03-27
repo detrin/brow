@@ -54,6 +54,32 @@ python -m benchmarks.run --backend brow --tasks vacuum-research --include-live -
 
 Success rates: brow 60% (6/10), playwright-cli 50% (5/10).
 
+### brow v3 — All 16 Fixture Tasks (Phase 2: Smart Snapshots)
+
+brow v3 adds table-aware markdown output, inline list compression, and adaptive node caps. Run on all 16 tasks (10 original + 6 new harder tasks).
+
+| Task | Tokens | Calls | Success | Time (s) |
+|------|--------|-------|---------|----------|
+| dynamic-content | 5,038 | 3 | 0/1 | 9s |
+| ecommerce-search | 43,603 | 7 | 1/1 | 25s |
+| error-recovery | 6,754 | 4 | 1/1 | 16s |
+| form-fill | 18,290 | 6 | 0/1 | 15s |
+| info-lookup | 5,353 | 3 | 1/1 | 29s |
+| large-snapshot | 181,958 | 10 | 0/1 | 65s |
+| login-auth | 135,157 | 8 | 0/1 | 26s |
+| multi-page-nav | 7,838 | 4 | 1/1 | 9s |
+| rapid-multi-step | 136,685 | 13 | 1/1 | 43s |
+| search-extract | 3,662 | 2 | 0/1 | 6s |
+| **deep-wizard** | 214,266 | 9 | 1/1 | 129s |
+| **data-table-extract** | 177,739 | 15 | 0/1 | 66s |
+| **spa-navigation** | 58,050 | 9 | 0/1 | 28s |
+| **multi-tab-workflow** | 325,331 | 11 | 1/1 | 46s |
+| **infinite-scroll** | 273,693 | 13 | 1/1 | 47s |
+| **form-validation-recovery** | 26,485 | 10 | 1/1 | 28s |
+| **Average** | **101,244** | **7.9** | **56% (9/16)** | **37s** |
+
+v3 vs v2 on original 10 tasks: `large-snapshot` -19% (182K vs 226K), `form-fill` -28% (18K vs 25K). New hard tasks: 4/6 success — deep-wizard, multi-tab-workflow, infinite-scroll, and form-validation-recovery all passed.
+
 ### Live Task — Vacuum Robot Research
 
 Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavace/18863907.htm) with [Valetudo supported models](https://valetudo.cloud/pages/general/supported-robots.html). Extract matching products with price, rating, and review count.
@@ -81,11 +107,17 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 - `multi-page-nav` **-28%**: combined session+navigate removes setup overhead
 - Average **-46% tokens**, **-34% tool calls**, **-50% wall clock**
 
+### Phase 2 (v3) — smart snapshot impact
+
+- `large-snapshot` **-19%** (182K vs 226K): table-aware markdown compresses tabular data
+- `form-fill` **-28%** (18K vs 25K): adaptive node cap reduces non-interactive noise
+- `login-auth` **-2%**: marginal improvement, still dominated by large auth page snapshots
+- Single-run variance is high; structural improvements are best measured over multiple runs
+
 ### Where playwright-cli still wins
 
 - `login-auth` +47%: brow's auto-snapshot returns large snapshots after each form fill
 - `rapid-multi-step` +84%: multi-step wizard generates cumulative snapshot data
-- Both cases suggest Phase 2 optimization (smart snapshot compression) would help
 
 ### Key v1 → v2 improvements
 
