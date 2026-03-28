@@ -6,7 +6,7 @@ from typing import Optional
 
 import typer
 
-from brow.client import BrowClient
+from brow.client import BrowAPIError, BrowClient
 from brow.config import DAEMON_HOST, DAEMON_PORT
 from brow.daemon import daemon_running, stop_daemon
 
@@ -26,7 +26,11 @@ app.add_typer(page_app, name="page")
 session_opt = typer.Option(None, "-s", "--session")
 
 def run_async(coro):
-    return asyncio.run(coro)
+    try:
+        return asyncio.run(coro)
+    except BrowAPIError as e:
+        typer.echo(f"Error ({e.status_code}): {e.detail}", err=True)
+        raise typer.Exit(2)
 
 def _client():
     return BrowClient()
@@ -56,7 +60,7 @@ def ensure_daemon():
     raise typer.Exit(1)
 
 @daemon_app.command("start")
-def daemon_start(port: int = DAEMON_PORT):
+def daemon_start(port: int = DAEMON_PORT, wait: bool = typer.Option(False, "--wait", help="Block until daemon is ready")):
     if daemon_running():
         typer.echo("Daemon already running")
         return
@@ -66,6 +70,14 @@ def daemon_start(port: int = DAEMON_PORT):
         stderr=subprocess.DEVNULL,
         start_new_session=True,
     )
+    if wait:
+        for _ in range(50):
+            time.sleep(0.3)
+            if _daemon_healthy():
+                typer.echo(f"Daemon ready on {DAEMON_HOST}:{port}")
+                return
+        typer.echo("Daemon failed to start", err=True)
+        raise typer.Exit(1)
     typer.echo(f"Daemon starting on {DAEMON_HOST}:{port}")
 
 @daemon_app.command("stop")
@@ -211,14 +223,20 @@ def click_cmd(
 
 @app.command("fill")
 def fill_cmd(
-    selector: Optional[str] = typer.Argument(None),
-    value: str = typer.Argument(...),
+    args: Optional[list[str]] = typer.Argument(None, help="[SELECTOR] VALUE — selector is optional when --ref is used"),
     s: Optional[str] = session_opt,
     ref: Optional[int] = typer.Option(None, "--ref", help="Element ref from snapshot"),
     timeout: int = 30000,
     retry: int = 0,
     no_wait: bool = typer.Option(False, help="Skip waiting for selector to be visible")
 ):
+    if not args:
+        typer.echo("Usage: brow fill [SELECTOR] VALUE [--ref N]", err=True)
+        raise typer.Exit(1)
+    if len(args) == 1:
+        selector, value = None, args[0]
+    else:
+        selector, value = args[-2], args[-1]
     ensure_daemon()
     c = _client()
     payload = {"value": value, "timeout": timeout, "retry": retry, "wait_for_selector": not no_wait}
@@ -235,12 +253,18 @@ def fill_cmd(
 
 @app.command("select")
 def select_cmd(
-    selector: Optional[str] = typer.Argument(None),
-    value: str = typer.Argument(...),
+    args: Optional[list[str]] = typer.Argument(None, help="[SELECTOR] VALUE — selector is optional when --ref is used"),
     ref: Optional[int] = typer.Option(None, "--ref", help="Element ref from snapshot"),
     s: Optional[str] = session_opt,
     timeout: int = 30000,
 ):
+    if not args:
+        typer.echo("Usage: brow select [SELECTOR] VALUE [--ref N]", err=True)
+        raise typer.Exit(1)
+    if len(args) == 1:
+        selector, value = None, args[0]
+    else:
+        selector, value = args[-2], args[-1]
     ensure_daemon()
     c = _client()
     payload = {"value": value, "timeout": timeout}
