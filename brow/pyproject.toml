@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "brow-cli"
-version = "1.0.2"
+version = "1.0.3"
 description = "Standalone Playwright CLI for agent browser automation"
 readme = {file = "README.md", content-type = "text/markdown"}
 license = "MIT"
@@ -17,6 +17,7 @@ dependencies = [
     "typer>=0.9",
     "httpx>=0.25",
     "pillow>=10.0",
+    "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
@@ -24,6 +25,10 @@ dev = [
     "pytest>=7.0",
     "pytest-asyncio>=0.23",
     "httpx>=0.25",
+]
+docs = [
+    "mkdocs>=1.5",
+    "mkdocs-material>=9.0",
 ]
 
 [project.scripts]
