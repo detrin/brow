@@ -1,58 +1,56 @@
-import subprocess
 import os
-import time
 from PIL import Image, ImageDraw, ImageFont
 
-DEMO_DIR = "/Users/danherma/projects-personal/detrin"
-FRAMES_DIR = f"{DEMO_DIR}/frames"
+DEMO_DIR = os.environ.get("DEMO_DIR", "/Users/danherma/projects-personal/brow")
+FRAMES_DIR = os.environ.get("FRAMES_DIR", f"{DEMO_DIR}/frames_maps")
+OUTPUT = os.environ.get("OUTPUT", f"{DEMO_DIR}/docs/demo.gif")
 os.makedirs(FRAMES_DIR, exist_ok=True)
 
-TERM_W, BROWSER_W, H = 500, 700, 500
+TERM_W, BROWSER_W, H = 480, 720, 520
 BG = (30, 30, 30)
 GREEN = (80, 250, 123)
 WHITE = (220, 220, 220)
-GRAY = (150, 150, 150)
+GRAY = (130, 130, 130)
+CYAN = (139, 233, 253)
+YELLOW = (241, 250, 140)
 TITLE_BG = (50, 50, 50)
+DIVIDER = (70, 70, 70)
 
 try:
-    FONT = ImageFont.truetype("/System/Library/Fonts/SFMono-Regular.otf", 14)
-    FONT_TITLE = ImageFont.truetype("/System/Library/Fonts/SFMono-Bold.otf", 16)
+    FONT = ImageFont.truetype("/System/Library/Fonts/SFMono-Regular.otf", 13)
+    FONT_TITLE = ImageFont.truetype("/System/Library/Fonts/SFMono-Bold.otf", 14)
 except:
-    try:
-        FONT = ImageFont.truetype("/System/Library/Fonts/Menlo.ttc", 14)
-        FONT_TITLE = ImageFont.truetype("/System/Library/Fonts/Menlo.ttc", 16)
-    except:
-        FONT = ImageFont.load_default()
-        FONT_TITLE = FONT
+    FONT = ImageFont.load_default()
+    FONT_TITLE = FONT
 
 
-def run(cmd):
-    r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
-    return (r.stdout + r.stderr).strip()
-
-
-def draw_terminal(lines):
+def draw_terminal(lines, title="Terminal"):
     img = Image.new("RGB", (TERM_W, H), BG)
     d = ImageDraw.Draw(img)
-    d.rectangle([0, 0, TERM_W, 30], fill=TITLE_BG)
-    d.text((15, 7), "Terminal", fill=GRAY, font=FONT_TITLE)
-    y = 45
+    d.rectangle([0, 0, TERM_W, 28], fill=TITLE_BG)
+    dots_x = 12
+    for color in [(255, 95, 86), (255, 189, 46), (39, 201, 63)]:
+        d.ellipse([dots_x, 8, dots_x + 12, 20], fill=color)
+        dots_x += 20
+    d.text((dots_x + 10, 7), title, fill=GRAY, font=FONT_TITLE)
+    y = 40
     for color, text in lines:
-        for wrapped in wrap_text(text, 50):
-            d.text((15, y), wrapped, fill=color, font=FONT)
-            y += 20
-        y += 4
+        for wrapped in wrap_text(text, 52):
+            if y < H - 10:
+                d.text((12, y), wrapped, fill=color, font=FONT)
+                y += 18
+        y += 2
     return img
 
 
 def wrap_text(text, max_chars):
     if len(text) <= max_chars:
         return [text]
-    lines = []
+    result = []
     while text:
-        lines.append(text[:max_chars])
+        result.append(text[:max_chars])
         text = text[max_chars:]
-    return lines
+    return result
 
 
 def load_screenshot(path):
@@ -62,19 +60,31 @@ def load_screenshot(path):
         d.text((BROWSER_W // 2 - 40, H // 2), "Loading...", fill=GRAY, font=FONT)
         return img
     img = Image.open(path)
-    img = img.resize((BROWSER_W, H - 30), Image.LANCZOS)
+    aspect = img.width / img.height
+    new_h = H - 28
+    new_w = int(new_h * aspect)
+    if new_w > BROWSER_W:
+        new_w = BROWSER_W
+        new_h = int(new_w / aspect)
+    img = img.resize((new_w, new_h), Image.LANCZOS)
     canvas = Image.new("RGB", (BROWSER_W, H), BG)
     d = ImageDraw.Draw(canvas)
-    d.rectangle([0, 0, BROWSER_W, 30], fill=TITLE_BG)
-    d.text((15, 7), "Chromium (headed)", fill=GRAY, font=FONT_TITLE)
-    canvas.paste(img, (0, 30))
+    d.rectangle([0, 0, BROWSER_W, 28], fill=TITLE_BG)
+    dots_x = 12
+    for color in [(255, 95, 86), (255, 189, 46), (39, 201, 63)]:
+        d.ellipse([dots_x, 8, dots_x + 12, 20], fill=color)
+        dots_x += 20
+    d.text((dots_x + 10, 7), "Chromium \u2014 personal profile", fill=GRAY, font=FONT_TITLE)
+    x_offset = (BROWSER_W - new_w) // 2
+    canvas.paste(img, (x_offset, 28))
     return canvas
 
 
-def compose_frame(term_lines, screenshot_path, idx):
+def compose(term_lines, screenshot_path, idx):
     term = draw_terminal(term_lines)
     browser = load_screenshot(screenshot_path)
-    frame = Image.new("RGB", (TERM_W + BROWSER_W + 3, H), (80, 80, 80))
+    total_w = TERM_W + 3 + BROWSER_W
+    frame = Image.new("RGB", (total_w, H), DIVIDER)
     frame.paste(term, (0, 0))
     frame.paste(browser, (TERM_W + 3, 0))
     path = f"{FRAMES_DIR}/frame_{idx:03d}.png"
@@ -82,78 +92,82 @@ def compose_frame(term_lines, screenshot_path, idx):
     return frame
 
 
-print("Starting headed session...")
-sid = run("brow session new --profile demo-headed --headed")
-print(f"Session: {sid}")
-time.sleep(2)
+ss_blank = f"{FRAMES_DIR}/ss_blank.png"
+ss_maps = f"{FRAMES_DIR}/ss_maps_loaded.png"
 
 frames = []
 durations = []
 
-term_lines = [
-    (GREEN, "$ brow session new --profile demo-headed --headed"),
-    (WHITE, f"{sid}"),
+term_1 = [
+    (GREEN, "$ brow session new \\"),
+    (GREEN, "    --profile personal --headed"),
+    (WHITE, "35"),
 ]
-run(f"brow screenshot -s {sid} --path {FRAMES_DIR}/ss_01.png")
-f = compose_frame(term_lines, f"{FRAMES_DIR}/ss_01.png", 1)
-frames.append(f)
+frames.append(compose(term_1, ss_blank, 1))
 durations.append(2500)
 
-print("Navigating...")
-nav_out = run(f'brow navigate -s {sid} "https://news.ycombinator.com"')
-time.sleep(1)
-run(f"brow screenshot -s {sid} --path {FRAMES_DIR}/ss_02.png")
-term_lines.append((GREEN, "$ brow navigate -s " + sid + ' "https://news.ycombinator.com"'))
-nav_short = nav_out.split("\n")[0][:60] if nav_out else ""
-term_lines.append((WHITE, nav_short))
-f = compose_frame(term_lines, f"{FRAMES_DIR}/ss_02.png", 2)
-frames.append(f)
-durations.append(3000)
-
-print("Snapshot...")
-snap = run(f"brow snapshot -s {sid}")
-snap_lines = snap.split("\n")[:5]
-term_lines.append((GREEN, f"$ brow snapshot -s {sid} | head -5"))
-for sl in snap_lines:
-    term_lines.append((WHITE, sl[:50]))
-term_lines.append((GRAY, "  ..."))
-f = compose_frame(term_lines, f"{FRAMES_DIR}/ss_02.png", 3)
-frames.append(f)
+term_2 = term_1 + [
+    (WHITE, ""),
+    (GREEN, "$ brow navigate -s 35 \\"),
+    (GREEN, '  "https://google.com/maps/search/'),
+    (GREEN, '  bars+near+Times+Square+New+York"'),
+    (WHITE, ""),
+    (WHITE, "https://www.google.com/.../bars... [200]"),
+]
+frames.append(compose(term_2, ss_maps, 2))
 durations.append(3500)
 
-print("Clicking...")
-run(f'brow click -s {sid} "text=new"')
-time.sleep(1)
-run(f"brow screenshot -s {sid} --path {FRAMES_DIR}/ss_03.png")
-term_lines_2 = [
-    (GREEN, f'$ brow click -s {sid} "text=new"'),
-    (WHITE, "Clicked"),
+term_3 = term_2 + [
+    (WHITE, ""),
+    (GREEN, "$ brow snapshot -s 35 | head -8"),
+    (WHITE, "  Results | Share"),
+    (WHITE, "  Jimmy's Corner"),
+    (WHITE, "  4.6 (2,204) \u00b7 $$ \u00b7 Dive bar"),
+    (WHITE, "  The Perfect Pint"),
+    (WHITE, "  4.4 (2,001) \u00b7 $$ \u00b7 Irish pub"),
+    (GRAY, "  ..."),
 ]
-f = compose_frame(term_lines_2, f"{FRAMES_DIR}/ss_03.png", 4)
-frames.append(f)
-durations.append(2500)
+frames.append(compose(term_3, ss_maps, 3))
+durations.append(4000)
 
-print("URL...")
-url_out = run(f"brow url -s {sid}")
-term_lines_2.append((GREEN, f"$ brow url -s {sid}"))
-term_lines_2.append((WHITE, url_out[:60]))
-f = compose_frame(term_lines_2, f"{FRAMES_DIR}/ss_03.png", 5)
-frames.append(f)
-durations.append(2500)
+bars = [
+    ("Jimmy's Corner",   "4.6", "2,204"),
+    ("The Perfect Pint", "4.4", "2,001"),
+    ("The Dickens",      "4.8", "2,133"),
+    ("O'Donoghue's",     "4.4", "2,639"),
+    ("Haswell Green's",  "4.7", "2,206"),
+    ("The Woo Woo",      "4.8", "1,900"),
+]
 
-print("Cleanup...")
-run(f"brow session delete {sid}")
-term_lines_2.append((GREEN, f"$ brow session delete {sid}"))
-term_lines_2.append((WHITE, f"Deleted session {sid}"))
-term_lines_2.append((GREEN, ""))
-term_lines_2.append((WHITE, "pip install brow-cli"))
-f = compose_frame(term_lines_2, f"{FRAMES_DIR}/ss_03.png", 6)
-frames.append(f)
-durations.append(3000)
+term_4 = [
+    (GREEN, "$ brow eval -s 35 '...extract bars...'"),
+    (WHITE, ""),
+    (CYAN,  "| Bar                  | Rating | Reviews |"),
+    (CYAN,  "|----------------------|--------|---------|"),
+]
+for name, rating, reviews in bars:
+    term_4.append((WHITE, f"| {name:<20s} | {rating:>6s} | {reviews:>7s} |"))
+term_4 += [
+    (WHITE, ""),
+    (YELLOW, "6 bars extracted in 1.2s"),
+]
+frames.append(compose(term_4, ss_maps, 4))
+durations.append(5000)
 
-print("Saving GIF...")
+term_5 = term_4 + [
+    (WHITE, ""),
+    (GREEN, "$ brow session delete 35"),
+    (WHITE, "Deleted session 35"),
+    (WHITE, ""),
+    (YELLOW, "pip install brow-cli"),
+    (GRAY, "github.com/detrin/brow"),
+]
+frames.append(compose(term_5, ss_maps, 5))
+durations.append(4000)
+
+print(f"Composing {len(frames)} frames...")
 frames[0].save(
-    f"{DEMO_DIR}/demo.gif",
+    OUTPUT,
     save_all=True,
     append_images=frames[1:],
     duration=durations,
@@ -161,4 +175,5 @@ frames[0].save(
     optimize=True,
 )
 
-print(f"Done! {len(frames)} frames saved to demo.gif")
+size = os.path.getsize(OUTPUT)
+print(f"Done! {len(frames)} frames, {size // 1024}KB -> {OUTPUT}")
