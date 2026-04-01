@@ -2,7 +2,7 @@
 
 Standalone Playwright CLI for agent browser automation. Launches a real Chromium instance with an agent-friendly API - structured commands for common actions, eval escape hatch for full power.
 
-![brow demo](docs/demo.gif)
+![brow demo](https://github.com/user-attachments/assets/fb45a708-5437-4257-8994-7b758d15a529)
 
 ## Install
 
