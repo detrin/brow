@@ -16,3 +16,6 @@ htmlcov/
 .pypirc
 .playwright-mcp/
 .playwright-cli/
+website/node_modules/
+website/dist/
+.superpowers/
