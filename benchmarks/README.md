@@ -107,6 +107,7 @@ brow results re-run 2026-04-04 after adding `brow_goto`, `brow_wait`, `brow_eval
 | hacker-news-ask | **54,866** | 1,580 ⚠️ | 626,068 ⚠️ | 76,884 | 36,844 |
 | **Avg tokens** | 139,949 | **51,262** | 170,096 | 57,731 | 95,929 |
 | **Avg wall-clock** | 56s | **37s** | 57s | **35s** | 120s |
+| **Est. cost/task** | $0.45 | **$0.16** | $0.53 | $0.19 | $0.36 |
 
 ⚠️ = outlier requiring explanation (see analysis below)
 
