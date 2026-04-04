@@ -2,6 +2,8 @@
 
 Standalone Playwright CLI for agent browser automation. Launches a real Chromium instance with an agent-friendly API - structured commands for common actions, eval escape hatch for full power.
 
+**[Documentation →](https://detrin.github.io/brow)**
+
 ## Install
 
 **Homebrew:**
@@ -227,6 +229,22 @@ Playwright selector syntax:
 | `BROW_HOME` | `~/.brow` | Data directory |
 | `BROW_PORT` | `19987` | Daemon port |
 | `BROW_MAX_SESSIONS` | `10` | Max concurrent sessions |
+
+## Benchmarks
+
+16 fixture tasks, Claude Sonnet via AWS Bedrock, 1 run each. Compared against playwright-cli, MCP Playwright, agent-browser, and browser-use.
+
+| Metric | **brow** | agent-browser | browser-use | playwright-cli | MCP Playwright |
+|--------|----------|---------------|-------------|----------------|----------------|
+| Success rate | **69% (11/16)** | 56% | 56% | 44% | 38% |
+| Avg tokens/task | 86K | **73K** | 75K | 113K | 118K |
+| Avg tool calls | **7.4** | 11.2 | 5.8 | 9.6 | 11.6 |
+| Avg wall-clock | **33s** | 36s | 73s | 44s | 50s |
+| Est. cost/task | $0.27 | **$0.23** | $0.27 | $0.35 | $0.37 |
+
+brow is the only backend to solve `data-table-extract` (table markdown compression) and one of two to solve `deep-wizard` (10-step wizard). agent-browser wins on cost and tab-heavy tasks. browser-use wins on tasks requiring high-level wait semantics.
+
+[Full results and per-task breakdown →](../benchmarks/README.md)
 
 ## Resource Usage
 
