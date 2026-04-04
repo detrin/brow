@@ -1,0 +1,20 @@
+id: paginated-news
+name: "Paginated News Archive Search"
+category: extraction
+url: "FIXTURE_URL/static/news/page1.html"
+requires_fixture: true
+description: |
+  Navigate to FIXTURE_URL/static/news/page1.html.
+  The news archive has 3 pages (page1.html, page2.html, page3.html), each with 10 articles.
+
+  Find ALL articles written by author "Sarah Chen" in the "Technology" category.
+  Matching articles are spread across all 3 pages — you must check every page.
+
+  Return a JSON object {"articles": [...]} where each item has: title, date, author, category.
+max_steps: 20
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["title", "date"]
+    min_results: 3
+tags: [extraction, pagination, filtering, multi-page]

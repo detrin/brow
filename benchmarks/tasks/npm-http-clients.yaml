@@ -1,0 +1,26 @@
+id: npm-http-clients
+name: "npm HTTP Client Libraries Research"
+category: live
+url: "https://www.npmjs.com/search?q=http+client&ranking=popularity"
+requires_fixture: false
+description: |
+  Research the most popular JavaScript HTTP client libraries on npm.
+
+  Steps:
+  1. Navigate to https://www.npmjs.com/search?q=http+client&ranking=popularity
+  2. Identify the top 3 packages by popularity (as ranked by npm search).
+  3. For each package, navigate to its npm page (e.g. https://www.npmjs.com/package/<name>)
+     and extract: weekly downloads, latest version, and description.
+
+  Return a JSON object {"packages": [...]} where each item has:
+  name, weekly_downloads, version, description.
+
+  IMPORTANT: Use brow_eval or snapshot search to extract the weekly download number shown
+  on each package page. Only visit the npm pages — do not go to GitHub.
+max_steps: 20
+timeout_seconds: 180
+success_criteria:
+  - type: structured_output
+    min_fields: ["name", "weekly_downloads", "description"]
+    min_results: 3
+tags: [live, npm, research, extraction, cross-reference]

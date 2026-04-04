@@ -1,0 +1,25 @@
+id: tech-stack-graph
+name: "Tech Stack Dependency Graph Traversal"
+category: extraction
+url: "FIXTURE_URL/static/techstack/index.html"
+requires_fixture: true
+description: |
+  Navigate to FIXTURE_URL/static/techstack/index.html.
+  Find the "Nexus" framework and navigate to its detail page.
+
+  Nexus has several dependencies listed with their version numbers.
+  Find all dependencies that are at version 2.0 or higher
+  (e.g. v2.0.0, v2.1.0, v3.0.0 all qualify; v1.8.3 does NOT).
+
+  For each qualifying dependency, follow the link to its detail page
+  and retrieve its description.
+
+  Return a JSON object {"dependencies": [...]} where each item has:
+  name, version, description.
+max_steps: 20
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["name", "version", "description"]
+    min_results: 3
+tags: [extraction, graph-traversal, multi-page, filtering]

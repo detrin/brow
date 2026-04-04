@@ -1,0 +1,26 @@
+id: github-trending-python
+name: "GitHub Trending Python Repositories"
+category: live
+url: "https://github.com/trending/python"
+requires_fixture: false
+description: |
+  Navigate to https://github.com/trending/python (GitHub's trending Python repositories for today).
+  Extract the top 5 repositories listed on the page.
+
+  For each repository return:
+  - name: full name in "owner/repo" format
+  - description: the repository description
+  - stars_today: number of stars gained today (shown as "N stars today")
+  - total_stars: total star count
+
+  Return a JSON object {"repositories": [...]} with those fields for each repo.
+
+  IMPORTANT: Use snapshot with search= filter to find the repository cards efficiently.
+  If a field is not shown on the page, use null for that field.
+max_steps: 15
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["name", "stars_today"]
+    min_results: 5
+tags: [live, github, extraction, trending]

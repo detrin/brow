@@ -1,0 +1,26 @@
+id: hacker-news-ask
+name: "Hacker News Ask HN Front Page"
+category: live
+url: "https://news.ycombinator.com"
+requires_fixture: false
+description: |
+  Navigate to https://news.ycombinator.com (Hacker News front page).
+  The front page shows 30 stories. Find all stories whose title starts with "Ask HN:".
+
+  For each "Ask HN" post found, extract:
+  - title: full post title including "Ask HN:"
+  - points: number of points (score)
+  - comment_count: number of comments
+
+  Return a JSON object {"ask_posts": [...]} with those fields for each post.
+  If no Ask HN posts are on the front page right now, return {"ask_posts": []}.
+
+  IMPORTANT: All 30 stories are visible on one page — no pagination needed.
+  Use snapshot with search="Ask HN" to find them quickly.
+max_steps: 10
+timeout_seconds: 90
+success_criteria:
+  - type: structured_output
+    min_fields: ["ask_posts"]
+    min_results: 1
+tags: [live, hackernews, extraction]

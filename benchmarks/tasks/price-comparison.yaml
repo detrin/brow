@@ -1,0 +1,23 @@
+id: price-comparison
+name: "Multi-Store Price Comparison"
+category: extraction
+url: "FIXTURE_URL/static/stores/store-a.html"
+requires_fixture: true
+description: |
+  You are comparing prices across two electronics stores.
+
+  Store A (TechMart): FIXTURE_URL/static/stores/store-a.html
+  Store B (DigiShop): FIXTURE_URL/static/stores/store-b.html
+
+  Visit both store pages. Find all products that appear in BOTH stores (matched by exact product name).
+  For each shared product, compare the prices from both stores and determine which store is cheaper.
+
+  Return a JSON object {"comparisons": [...]} where each item has:
+  name, price_techmart, price_digishop, cheaper_store.
+max_steps: 15
+timeout_seconds: 120
+success_criteria:
+  - type: structured_output
+    min_fields: ["name", "price_techmart", "price_digishop", "cheaper_store"]
+    min_results: 3
+tags: [extraction, multi-page, comparison, cross-reference]
