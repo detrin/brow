@@ -1,0 +1,75 @@
+---
+title: brow
+description: Standalone Playwright CLI for agent browser automation
+template: splash
+hero:
+  tagline: Standalone Playwright CLI for agent browser automation
+  actions:
+    - text: Get Started
+      link: /brow/getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: GitHub
+      link: https://github.com/detrin/brow
+      icon: external
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Why brow?
+
+Most browser automation tools are designed for test suites: verbose configuration, assertion libraries, test runners. brow is designed for **agents**: terse commands, structured output, minimal surface area, persistent profiles.
+
+- **Session-based**: each session is a real Chromium profile — log in once, reuse forever
+- **Structured output**: snapshots return accessibility trees, not raw HTML — easy for LLMs to parse
+- **API-first**: all commands go through a local HTTP daemon — call it from any language
+- **Action recording**: every interaction is logged and can be replayed or exported as a script
+
+## Install
+
+<Tabs>
+  <TabItem label="pip">
+  ```bash
+  pip install brow-cli
+  playwright install chromium
+  ```
+  </TabItem>
+  <TabItem label="Homebrew">
+  ```bash
+  brew tap detrin/tap
+  brew install brow
+  ```
+  </TabItem>
+  <TabItem label="Agent skill">
+  ```bash
+  npx -y skills add detrin/brow
+  ```
+  </TabItem>
+</Tabs>
+
+## Quick start
+
+```bash
+brow session new --headed           # → 1
+brow navigate -s 1 "https://news.ycombinator.com"
+brow snapshot -s 1
+brow click -s 1 "text=Ask HN"
+brow session delete 1
+```
+
+## Architecture
+
+```
+Claude Code / your script
+        │
+        ▼  CLI (brow)
+   BrowClient (httpx)
+        │
+        ▼  HTTP  localhost:19987
+   FastAPI daemon  (auto-starts on first command)
+        │
+        ▼  Playwright
+   Chromium browser
+```
+
+The daemon starts automatically the first time you run a command that needs it. It keeps sessions alive across multiple CLI invocations — you don't need to pass credentials or re-login between commands.
