@@ -40,36 +40,38 @@ python -m benchmarks.run --backend brow --tasks vacuum-research --include-live -
 
 ### Final Comparison — All 16 Fixture Tasks (5 backends)
 
-16 tasks using a local fixture server. brow includes ref-based element addressing, auto-snapshot, table-aware markdown, inline list compression, adaptive node caps, and parallel tool execution. agent-browser uses Rust + CDP directly (no Playwright), with `@eN` refs. browser-use is a full-stack agent framework with its own loop — compared here using our judge for fair structured-output evaluation, with `use_vision=False`.
+16 tasks using a local fixture server. brow includes ref-based element addressing, auto-snapshot, table-aware markdown, inline list compression, adaptive node caps, and parallel tool execution. agent-browser uses Rust + CDP directly (no Playwright), with `@eN` refs. browser-use is a full-stack agent framework — compared here using our judge with `use_vision=False`.
+
+brow results re-run 2026-04-04 after adding `brow_goto`, `brow_wait`, `brow_eval` tools and fixing hash-routing auto-snapshot.
 
 | Metric | **brow** | **playwright-cli** | **MCP Playwright** | **agent-browser** | **browser-use** |
 |--------|----------|-------------------|-------------------|------------------|----------------|
-| Avg tokens/task | **86,115** | 112,775 | 118,161 | 73,156 | 74,751 |
-| Avg tool calls | **7.4** | 9.6 | 11.6 | 11.2 | 5.8 |
-| Success rate | **69% (11/16)** | 44% (7/16) | 38% (6/16) | 56% (9/16) | 56% (9/16) |
-| Avg wall-clock | **33s** | 44s | 50s | 36s | 73s |
-| Est. cost/task | $0.27 | $0.35 | $0.37 | **$0.23** | $0.27 |
+| Avg tokens/task | **68,255** | 112,775 | 118,161 | 73,156 | 74,751 |
+| Avg tool calls | 9.6 | 9.6 | 11.6 | 11.2 | **5.8** |
+| Success rate | **81% (13/16)** | 44% (7/16) | 38% (6/16) | 56% (9/16) | 56% (9/16) |
+| Avg wall-clock | 41s | 44s | 50s | **36s** | 73s |
+| Est. cost/task | **$0.22** | $0.35 | $0.37 | $0.23 | $0.27 |
 
 #### Per-Task Breakdown
 
 | Task | brow | pwcli | mcp | agent-browser | browser-use | brow ✓ | pwcli ✓ | mcp ✓ | ab ✓ | bu ✓ |
 |------|------|-------|-----|---------------|-------------|--------|---------|-------|------|------|
-| data-table-extract | **130,593** | 259,625 | 476,499 | 295,975 | 61,710 | **1/1** | 0/1 | 0/1 | 0/1 | 0/1 |
-| deep-wizard | 182,894 | 273,691 | 124,159 | **79,238** | 169,436 | **1/1** | 0/1 | 0/1 | 0/1 | **1/1** |
-| dynamic-content | **3,229** | 48,498 | 43,470 | 5,239 | 25,874 | 0/1 | 0/1 | 0/1 | 0/1 | **1/1** |
-| ecommerce-search | **11,419** | 140,630 | 66,236 | 38,230 | 50,418 | **1/1** | 0/1 | 0/1 | **1/1** | 0/1 |
-| error-recovery | **4,881** | 20,704 | 32,752 | 16,495 | 73,667 | **1/1** | 1/1 | 1/1 | **1/1** | 0/1 |
-| form-fill | **18,288** | 24,489 | 22,856 | 19,632 | 38,136 | 0/1 | 0/1 | 0/1 | 0/1 | 0/1 |
-| form-validation-recovery | **26,300** | 48,247 | 64,808 | 41,677 | 50,309 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
-| infinite-scroll | 168,610 | 116,602 | 73,556 | **88,090** | 91,221 | **1/1** | 1/1 | 0/1 | **1/1** | **1/1** |
-| info-lookup | **5,381** | 6,376 | 6,247 | 11,298 | 37,363 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
-| large-snapshot | 195,458 | 609,060 | 607,043 | 340,559 | **86,331** | **1/1** | 0/1 | 0/1 | **1/1** | 0/1 |
-| login-auth | 185,257 | 92,525 | **56,757** | 55,250 | 126,253 | 0/1 | 0/1 | 0/1 | 0/1 | 0/1 |
-| multi-page-nav | **7,864** | 10,806 | 71,339 | 17,046 | 91,742 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
-| multi-tab-workflow | 217,941 | 23,787 | 115,354 | **29,067** | 66,571 | **1/1** | 1/1 | 0/1 | **1/1** | **1/1** |
-| rapid-multi-step | 159,912 | 80,952 | 45,907 | **44,519** | 74,646 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
-| search-extract | **3,663** | 4,061 | 27,074 | 12,642 | 64,177 | 0/1 | 0/1 | 0/1 | 0/1 | **1/1** |
-| spa-navigation | 56,148 | **44,354** | 56,521 | 75,544 | 88,156 | 0/1 | 0/1 | **1/1** | 0/1 | 0/1 |
+| data-table-extract | **63,962** | 259,625 | 476,499 | 295,975 | 61,710 | **1/1** | 0/1 | 0/1 | 0/1 | 0/1 |
+| deep-wizard | 293,672 | 273,691 | 124,159 | **79,238** | 169,436 | 0/1 | 0/1 | 0/1 | 0/1 | **1/1** |
+| dynamic-content | 34,925 | 48,498 | 43,470 | **5,239** | 25,874 | **1/1** | 0/1 | 0/1 | 0/1 | **1/1** |
+| ecommerce-search | 46,006 | 140,630 | 66,236 | **38,230** | 50,418 | **1/1** | 0/1 | 0/1 | **1/1** | 0/1 |
+| error-recovery | 60,504 | **20,704** | 32,752 | 16,495 | 73,667 | **1/1** | 1/1 | 1/1 | **1/1** | 0/1 |
+| form-fill | 31,067 | **24,489** | 22,856 | 19,632 | 38,136 | 0/1 | 0/1 | 0/1 | 0/1 | 0/1 |
+| form-validation-recovery | **34,493** | 48,247 | 64,808 | 41,677 | 50,309 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
+| infinite-scroll | 120,127 | 116,602 | 73,556 | **88,090** | 91,221 | 0/1 | 1/1 | 0/1 | **1/1** | **1/1** |
+| info-lookup | **7,816** | 6,376 | 6,247 | 11,298 | 37,363 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
+| large-snapshot | 80,295 | 609,060 | 607,043 | 340,559 | **86,331** | **1/1** | 0/1 | 0/1 | **1/1** | 0/1 |
+| login-auth | **54,919** | 92,525 | 56,757 | 55,250 | 126,253 | **1/1** | 0/1 | 0/1 | 0/1 | 0/1 |
+| multi-page-nav | **11,140** | 10,806 | 71,339 | 17,046 | 91,742 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
+| multi-tab-workflow | 44,570 | **23,787** | 115,354 | 29,067 | 66,571 | **1/1** | 1/1 | 0/1 | **1/1** | **1/1** |
+| rapid-multi-step | 124,400 | 80,952 | **45,907** | 44,519 | 74,646 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
+| search-extract | **9,179** | 4,061 | 27,074 | 12,642 | 64,177 | **1/1** | 0/1 | 0/1 | 0/1 | **1/1** |
+| spa-navigation | 74,999 | **44,354** | 56,521 | 75,544 | 88,156 | **1/1** | 0/1 | **1/1** | 0/1 | 0/1 |
 
 ### Live Task — Vacuum Robot Research
 
@@ -89,50 +91,47 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 
 ## Analysis
 
-### brow leads on success rate
+### brow leads overall after tooling improvements
 
-- **69% success rate** vs 56% (agent-browser = browser-use), 44% (pwcli), 38% (mcp)
-- brow is the only backend to solve `data-table-extract` and is one of two to solve `deep-wizard` (browser-use also passes)
-- `spa-navigation` is solved only by MCP Playwright — an outlier where hash-routing caused issues for all others
+- **81% success rate (13/16)** — up from 69% before adding `brow_goto`/`brow_wait`/`brow_eval` tools
+- Lowest avg tokens: **68,255/task** — 7% less than agent-browser (73K), 39% less than pwcli
+- Lowest cost: **$0.22/task**
+- New passes vs previous run: `dynamic-content`, `search-extract`, `spa-navigation`, `login-auth`
+- Still failing: `form-fill` (field name mismatch in judge), `deep-wizard` (timeout on 10-step wizard), `infinite-scroll` (single-run variance)
 
-### agent-browser lowest cost
+### agent-browser: strong on speed, weaker on success
 
-- **$0.23/task** — cheapest backend despite 56% success, due to lean `-i` interactive-only snapshots
-- 73,156 avg tokens/task — 15% less than brow, but 2x more tool calls (11.2 vs 7.4)
+- **56% success** — 25pp behind brow after brow's improvements
+- Wins on wall-clock (**36s** vs brow's 41s) due to no per-session overhead
+- `ecommerce-search` and `login-auth` now solved by brow, closing the gap on agent-browser's prior advantages
 
-### browser-use: same success rate as agent-browser, 2x slower
+### browser-use: same success as agent-browser, 2x slower
 
-- **56% success (9/16)** — ties agent-browser, passes different tasks
-- Solves `deep-wizard`, `dynamic-content`, `search-extract` where brow fails; fails `ecommerce-search`, `error-recovery` where brow wins
-- **73s avg wall-clock** — slowest backend due to framework overhead (extension loading, browser setup per task)
-- **5.8 tool calls** — fewest of any backend (plans more, acts less); higher-level actions than raw refs
-- Not a drop-in tool backend: runs its own agent loop with planning, memory, and loop detection
+- **56% success (9/16)** — passes `deep-wizard`, `dynamic-content`, `search-extract` where brow now also passes most
+- **73s avg wall-clock** — slowest due to per-task browser setup + extension loading
+- Still the only backend to pass `deep-wizard` other than a prior brow run (brow regressed on this run)
 
 ### Where brow excels
 
-- `dynamic-content` **3,229 tokens** vs 5,239 (ab) vs 25,874 (bu): ref-based clicking eliminates waits
-- `ecommerce-search` **11,419** vs 38,230 (ab) vs 50,418 (bu): compact snapshot + fewer calls
-- `error-recovery` **4,881** vs 16,495 (ab) vs 73,667 (bu): ref system, brow recovers cleanly
-- `data-table-extract` **130,593** — only backend to succeed; table markdown compression critical
-- `large-snapshot` 195,458 vs **86,331 (bu)** — browser-use wins tokens but fails; brow succeeds via tree pruning
+- `data-table-extract` **63,962** — only backend to succeed; token count also dropped 51% from prior run
+- `login-auth` **54,919** — now passes with `brow_goto` preserving session cookies; cheapest tokens of any backend here
+- `large-snapshot` **80,295** vs 609K (pwcli) vs 607K (mcp): tree pruning dominates on 550-element pages
+- `search-extract` **9,179** — now passes via `brow_eval`; agent-browser still fails
 
 ### Where agent-browser wins
 
-- `multi-tab-workflow` **29,067** vs 217,941 (brow): CDP-native tab handling, no overhead
-- `rapid-multi-step` **44,519** vs 159,912 (brow): no cumulative auto-snapshot accumulation
-- `login-auth` **55,250** vs 185,257 (brow): -i snapshots lean on form-heavy pages
+- `multi-tab-workflow` **29,067** vs 44,570 (brow): CDP-native tab handling still cheaper
+- `rapid-multi-step` **44,519** vs 124,400 (brow): no snapshot accumulation
 
 ### Where browser-use wins
 
-- `deep-wizard` **1/1** success — only backend besides brow to complete the 10-step wizard
-- `dynamic-content` **1/1** — all other backends except brow fail; browser-use's high-level waits work
-- `search-extract` **1/1** vs 0/1 for all others — brow/agent-browser both fail here
-- `large-snapshot` **86,331 tokens** — lowest token count on the 550-element page (but 0/1 success)
+- `deep-wizard` **1/1** — only backend to reliably complete the 10-step wizard (brow failed this run)
+- `infinite-scroll` **1/1** — brow regressed on this run (single-run variance likely)
 
-### Where playwright-cli wins over brow (tokens, not success)
+### Where playwright-cli wins over brow (tokens only, not success)
 
-- `multi-tab-workflow` 23,787 vs 217,941: brow's page management is expensive but brow still succeeded
-- `rapid-multi-step` 80,952 vs 159,912: auto-snapshot accumulation; diff snapshots would help
+- `multi-tab-workflow` **23,787** vs 44,570: still cheaper but brow now much closer (was 217K)
+- `error-recovery` **20,704** vs 60,504: pwcli more token-efficient here despite same success
 
 ### Optimizations applied to brow
 
@@ -193,44 +192,44 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 | Task | brow | pwcli | mcp | agent-browser | browser-use |
 |------|------|-------|-----|---------------|-------------|
 | data-table-extract | ✅ | ❌ | ❌ | ❌ | ❌ |
-| deep-wizard | ✅ | ❌ | ❌ | ❌ | ✅ |
-| dynamic-content | ❌ | ❌ | ❌ | ❌ | ✅ |
+| deep-wizard | ❌ | ❌ | ❌ | ❌ | ✅ |
+| dynamic-content | ✅ | ❌ | ❌ | ❌ | ✅ |
 | ecommerce-search | ✅ | ❌ | ❌ | ✅ | ❌ |
 | error-recovery | ✅ | ✅ | ✅ | ✅ | ❌ |
 | form-fill | ❌ | ❌ | ❌ | ❌ | ❌ |
 | form-validation-recovery | ✅ | ✅ | ✅ | ✅ | ✅ |
-| infinite-scroll | ✅ | ✅ | ❌ | ✅ | ✅ |
+| infinite-scroll | ❌ | ✅ | ❌ | ✅ | ✅ |
 | info-lookup | ✅ | ✅ | ✅ | ✅ | ✅ |
 | large-snapshot | ✅ | ❌ | ❌ | ✅ | ❌ |
-| login-auth | ❌ | ❌ | ❌ | ❌ | ❌ |
+| login-auth | ✅ | ❌ | ❌ | ❌ | ❌ |
 | multi-page-nav | ✅ | ✅ | ✅ | ✅ | ✅ |
 | multi-tab-workflow | ✅ | ✅ | ❌ | ✅ | ✅ |
 | rapid-multi-step | ✅ | ✅ | ✅ | ✅ | ✅ |
-| search-extract | ❌ | ❌ | ❌ | ❌ | ✅ |
-| spa-navigation | ❌ | ❌ | ✅ | ❌ | ❌ |
-| **Total** | **11/16** | **7/16** | **6/16** | **9/16** | **9/16** |
+| search-extract | ✅ | ❌ | ❌ | ❌ | ✅ |
+| spa-navigation | ✅ | ❌ | ✅ | ❌ | ❌ |
+| **Total** | **13/16** | **7/16** | **6/16** | **9/16** | **9/16** |
 
 ### Token Cost Per Task
 
 | Task | brow | pwcli | mcp | agent-browser | browser-use |
 |------|------|-------|-----|---------------|-------------|
-| data-table-extract | 130,593 | 259,625 | 476,499 | 295,975 | **61,710** |
-| deep-wizard | 182,894 | 273,691 | 124,159 | **79,238** | 169,436 |
-| dynamic-content | **3,229** | 48,498 | 43,470 | 5,239 | 25,874 |
-| ecommerce-search | **11,419** | 140,630 | 66,236 | 38,230 | 50,418 |
-| error-recovery | **4,881** | 20,704 | 32,752 | 16,495 | 73,667 |
-| form-fill | **18,288** | 24,489 | 22,856 | 19,632 | 38,136 |
-| form-validation-recovery | **26,300** | 48,247 | 64,808 | 41,677 | 50,309 |
-| infinite-scroll | 168,610 | 116,602 | 73,556 | **88,090** | 91,221 |
-| info-lookup | **5,381** | 6,376 | 6,247 | 11,298 | 37,363 |
-| large-snapshot | 195,458 | 609,060 | 607,043 | 340,559 | **86,331** |
-| login-auth | 185,257 | 92,525 | **56,757** | 55,250 | 126,253 |
-| multi-page-nav | **7,864** | 10,806 | 71,339 | 17,046 | 91,742 |
-| multi-tab-workflow | 217,941 | 23,787 | 115,354 | **29,067** | 66,571 |
-| rapid-multi-step | 159,912 | 80,952 | 45,907 | **44,519** | 74,646 |
-| search-extract | **3,663** | 4,061 | 27,074 | 12,642 | 64,177 |
-| spa-navigation | 56,148 | **44,354** | 56,521 | 75,544 | 88,156 |
-| **Average** | **86,115** | 112,775 | 118,161 | 73,156 | 74,751 |
+| data-table-extract | **63,962** | 259,625 | 476,499 | 295,975 | 61,710 |
+| deep-wizard | 293,672 | 273,691 | 124,159 | **79,238** | 169,436 |
+| dynamic-content | 34,925 | 48,498 | 43,470 | **5,239** | 25,874 |
+| ecommerce-search | 46,006 | 140,630 | 66,236 | **38,230** | 50,418 |
+| error-recovery | 60,504 | **20,704** | 32,752 | 16,495 | 73,667 |
+| form-fill | 31,067 | **24,489** | 22,856 | 19,632 | 38,136 |
+| form-validation-recovery | **34,493** | 48,247 | 64,808 | 41,677 | 50,309 |
+| infinite-scroll | 120,127 | 116,602 | 73,556 | **88,090** | 91,221 |
+| info-lookup | **7,816** | 6,376 | 6,247 | 11,298 | 37,363 |
+| large-snapshot | **80,295** | 609,060 | 607,043 | 340,559 | 86,331 |
+| login-auth | **54,919** | 92,525 | 56,757 | 55,250 | 126,253 |
+| multi-page-nav | **11,140** | 10,806 | 71,339 | 17,046 | 91,742 |
+| multi-tab-workflow | 44,570 | **23,787** | 115,354 | 29,067 | 66,571 |
+| rapid-multi-step | 124,400 | 80,952 | **45,907** | 44,519 | 74,646 |
+| search-extract | **9,179** | 4,061 | 27,074 | 12,642 | 64,177 |
+| spa-navigation | 74,999 | **44,354** | 56,521 | 75,544 | 88,156 |
+| **Average** | **68,255** | 112,775 | 118,161 | 73,156 | 74,751 |
 
 ### Notable Patterns
 

@@ -102,13 +102,13 @@ Because the `google` profile persists your login, you get personalized results -
 
 | Metric | **brow** | agent-browser | browser-use | playwright-cli | MCP Playwright |
 |--------|----------|---------------|-------------|----------------|----------------|
-| Success rate | **69% (11/16)** | 56% (9/16) | 56% (9/16) | 44% (7/16) | 38% (6/16) |
-| Avg tokens/task | 86K | **73K** | 75K | 113K | 118K |
-| Avg tool calls | **7.4** | 11.2 | 5.8 | 9.6 | 11.6 |
-| Avg wall-clock | **33s** | 36s | 73s | 44s | 50s |
-| Est. cost/task | $0.27 | **$0.23** | $0.27 | $0.35 | $0.37 |
+| Success rate | **81% (13/16)** | 56% (9/16) | 56% (9/16) | 44% (7/16) | 38% (6/16) |
+| Avg tokens/task | **68K** | 73K | 75K | 113K | 118K |
+| Avg tool calls | 9.6 | 11.2 | **5.8** | 9.6 | 11.6 |
+| Avg wall-clock | 41s | **36s** | 73s | 44s | 50s |
+| Est. cost/task | **$0.22** | $0.23 | $0.27 | $0.35 | $0.37 |
 
-brow leads on success rate (+13pp over agent-browser, +25pp over playwright-cli). agent-browser wins on token cost. browser-use runs its own agent loop so it's a different comparison — included for completeness.
+brow leads on success rate (+25pp over agent-browser after tooling improvements) and token efficiency. browser-use runs its own agent loop — included for completeness.
 
 Per-task success grid, token breakdown, and analysis: [benchmarks/README.md](benchmarks/README.md)
 

@@ -237,12 +237,12 @@ Playwright selector syntax:
 | Metric | **brow** | agent-browser | browser-use | playwright-cli | MCP Playwright |
 |--------|----------|---------------|-------------|----------------|----------------|
 | Success rate | **69% (11/16)** | 56% | 56% | 44% | 38% |
-| Avg tokens/task | 86K | **73K** | 75K | 113K | 118K |
-| Avg tool calls | **7.4** | 11.2 | 5.8 | 9.6 | 11.6 |
-| Avg wall-clock | **33s** | 36s | 73s | 44s | 50s |
-| Est. cost/task | $0.27 | **$0.23** | $0.27 | $0.35 | $0.37 |
+| Avg tokens/task | **68K** | 73K | 75K | 113K | 118K |
+| Avg tool calls | 9.6 | 11.2 | **5.8** | 9.6 | 11.6 |
+| Avg wall-clock | 41s | **36s** | 73s | 44s | 50s |
+| Est. cost/task | **$0.22** | $0.23 | $0.27 | $0.35 | $0.37 |
 
-brow is the only backend to solve `data-table-extract` (table markdown compression) and one of two to solve `deep-wizard` (10-step wizard). agent-browser wins on cost and tab-heavy tasks. browser-use wins on tasks requiring high-level wait semantics.
+brow leads on success rate (81% vs 56%) and lowest token cost ($0.22/task) after adding `brow_goto`, `brow_wait`, `brow_eval` tools. agent-browser wins on wall-clock speed. browser-use is the only other backend to pass `deep-wizard`.
 
 [Full results and per-task breakdown →](../benchmarks/README.md)
 
