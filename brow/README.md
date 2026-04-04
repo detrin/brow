@@ -238,12 +238,13 @@ Playwright selector syntax:
 |--------|----------|---------------|-------------|----------------|----------------|
 | Success rate (16 fixture) | **88% (14/16)** | 63% (10/16) | 63% (10/16) | 50% (8/16) | 44% (7/16) |
 | Success rate (22 total) | **82% (18/22)** | 64% (14/22) | 64% (14/22) | 55% (12/22) | 36% (8/22) |
-| Avg tokens/task | **68K** | 73K | 75K | 113K | 118K |
+| Avg tokens/task (16 fixture) | **68K** | 73K | 75K | 113K | 118K |
+| Avg tokens/task (22 total) | 88K | **69K** | 81K | 96K | 132K |
 | Avg tool calls | 9.6 | 11.2 | **5.8** | 9.6 | 11.6 |
 | Avg wall-clock | 41s | **36s** | 73s | 44s | 50s |
 | Est. cost/task | **$0.22** | $0.23 | $0.27 | $0.35 | $0.37 |
 
-brow leads on success rate across both the original 16-task fixture suite and a 22-task extended suite (adds pagination traversal, cross-site price comparison, dependency graph traversal, and 3 live web tasks). agent-browser wins on wall-clock speed. browser-use is the only other backend to pass `deep-wizard`.
+brow leads on success rate across both suites. On token efficiency, brow leads the 16-task fixture suite (68K avg); agent-browser leads across all 22 tasks (69K avg) — brow's 22-task average is inflated by a single live task where the agent didn't use snapshot filtering. agent-browser wins on wall-clock speed. browser-use runs its own agent loop — included for completeness.
 
 [Full results and per-task breakdown →](../benchmarks/README.md)
 

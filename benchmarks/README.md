@@ -95,17 +95,32 @@ brow results re-run 2026-04-04 after adding `brow_goto`, `brow_wait`, `brow_eval
 | hacker-news-ask *(live)* | ✅ | ❌ | ❌ | ✅ | ❌ |
 | **Total** | **4/6** | **4/6** | **1/6** | **4/6** | **4/6** |
 
-### New Tasks — Token Cost
+### New Tasks — Token Cost and Wall Clock
 
 | Task | brow | pwcli | mcp | agent-browser | browser-use |
 |------|------|-------|-----|---------------|-------------|
 | price-comparison | 43,774 | **8,913** | 86,215 | 12,994 | 69,884 |
 | paginated-news | **16,356** | 19,427 | 145,694 | 58,162 | 100,587 |
 | tech-stack-graph | 173,318 | **87,169** | 98,161 | 126,828 | 154,209 |
-| github-trending-python | 383,096 | **11,130** | 12,813 | 9,902 | 14,819 |
+| github-trending-python | 383,096 ⚠️ | **11,130** | 12,813 | 9,902 | 14,819 |
 | npm-http-clients | 168,282 | 179,350 | **51,625** | 61,618 | 199,229 |
-| hacker-news-ask | **54,866** | 1,580 | 626,068 | 76,884 | 36,844 |
-| **Average** | 139,949 | **51,262** | 170,096 | 57,731 | 95,929 |
+| hacker-news-ask | **54,866** | 1,580 ⚠️ | 626,068 ⚠️ | 76,884 | 36,844 |
+| **Avg tokens** | 139,949 | **51,262** | 170,096 | 57,731 | 95,929 |
+| **Avg wall-clock** | 56s | **37s** | 57s | **35s** | 120s |
+
+⚠️ = outlier requiring explanation (see analysis below)
+
+### Combined Token Averages (All 22 Tasks)
+
+Weighted average across the full 22-task suite (16 fixture + 6 new):
+
+| Metric | **brow** | **agent-browser** | **browser-use** | **playwright-cli** | **MCP Playwright** |
+|--------|----------|-------------------|-----------------|--------------------|--------------------|
+| Avg tokens/task (16 fixture) | **68,255** | 73,156 | 74,751 | 112,775 | 118,161 |
+| Avg tokens/task (6 new) | 139,949 | **57,731** | 95,929 | 51,262 | 170,096 |
+| **Avg tokens/task (22 total)** | 87,808 | **68,949** | 80,527 | 95,998 | 132,325 |
+
+The rankings flip between suites. On fixture tasks brow is most token-efficient; on live tasks agent-browser and playwright-cli pull ahead. brow's 22-task average is inflated by a single 383K outlier (see analysis).
 
 ### Combined Totals (22 Tasks)
 
@@ -127,14 +142,20 @@ npmjs.com deploys Cloudflare bot protection against headless browsers. playwrigh
 **`hacker-news-ask` (live) — brow and agent-browser pass, rest fail**
 playwright-cli hit max_steps (returned in 1,580 tokens — barely started). MCP used 626K tokens hitting JSON parse errors. browser-use ran 86s but misidentified job posts as Ask HN. brow and agent-browser used `snapshot --search` / snapshot filtering to find Ask HN posts quickly.
 
-**`github-trending-python` (live) — all pass but brow uses 383K tokens**
-Every backend succeeded, but brow used 383K tokens vs 10-15K for others. The agent didn't apply `snapshot --search` and re-read the full GitHub page multiple times. The task description has been noted for a future hint to use search filtering.
+**`github-trending-python` (live) — all pass but brow uses 383K tokens ⚠️**
+Every backend succeeded, but brow used 383K tokens vs 10–15K for others. The agent didn't apply `brow_snapshot --search` and re-read the full GitHub page repeatedly. Without this outlier brow's new-tasks average drops from 140K to ~91K. The tool works; the agent behavior on this specific task was suboptimal.
+
+**`hacker-news-ask` (live) — playwright-cli uses 1,580 tokens ⚠️**
+playwright-cli barely started before timing out (1,580 tokens, 101s wall clock, empty output). The session likely stalled on initialization. Its "average" of 51K tokens is partly a product of this near-zero data point suppressing the mean — not a sign of genuine efficiency on this task.
+
+**`hacker-news-ask` (live) — MCP uses 626K tokens ⚠️**
+MCP entered an error loop with 7 JSON parse failures and spent 626K tokens going nowhere. It neither succeeds nor bails early — worst of both worlds.
 
 **`price-comparison` and `paginated-news` (fixture) — brow most token-efficient**
-brow excels on multi-page fixture tasks: paginated-news in 16K tokens (vs 58K agent-browser, 100K browser-use). price-comparison shows playwright-cli at 8.9K — it gets the data in fewer round-trips by reading the raw HTML.
+brow excels on multi-page fixture tasks: `paginated-news` in 16K tokens (vs 58K agent-browser, 100K browser-use). `price-comparison` shows playwright-cli at 8.9K — it reads raw HTML in fewer round-trips.
 
 **MCP Playwright regression on fixture tasks**
-MCP fails all 3 new fixture tasks with JSON parse errors (18 errors on paginated-news, 13 on price-comparison). The server crashes early on longer tasks. Its 1/6 on new tasks vs 7/16 on the original suite confirms it degrades on complex multi-page work.
+MCP fails all 3 new fixture tasks with JSON parse errors (18 errors on paginated-news, 13 on price-comparison). Its 1/6 on new tasks vs 7/16 on the original suite confirms it degrades on complex multi-page work.
 
 ### Live Task — Vacuum Robot Research
 
