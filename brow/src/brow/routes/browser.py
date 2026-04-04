@@ -235,6 +235,12 @@ def _resolve_selector(body):
         return body.selector
     raise HTTPException(400, "Either 'ref' or 'selector' must be provided")
 
+def _log_action(session, action: str, **kwargs):
+    actions = session.state.setdefault("actions", [])
+    entry = {"seq": len(actions) + 1, "action": action}
+    entry.update({k: v for k, v in kwargs.items() if v is not None})
+    actions.append(entry)
+
 class NavigateReq(BaseModel):
     url: str
     timeout: int = DEFAULT_TIMEOUT
@@ -304,8 +310,10 @@ async def navigate(req: Request, sid: str, body: NavigateReq):
     except Exception as e:
         logging.error(f"Navigate to {body.url} failed: {e}")
         raise HTTPException(502, f"Navigation failed: {e}")
+    status = r.status if r else None
+    _log_action(session, "navigate", url=body.url, status=status)
     formatted, truncated, node_count = await _take_snapshot(page)
-    resp = {"url": page.url, "status": r.status if r else None, "snapshot": formatted}
+    resp = {"url": page.url, "status": status, "snapshot": formatted}
     if truncated:
         resp["truncated"] = True
         resp["hint"] = f"Page has {node_count}+ nodes. Use search param to filter."
@@ -395,6 +403,85 @@ async def get_logs(req: Request, sid: str, search: Optional[str] = None, count: 
         text = filter_lines(text, search)
     return {"logs": text}
 
+_STATIC_PREFIXES = ("image/", "font/", "text/css", "application/javascript", "text/javascript", "application/font")
+
+@router.get("/network")
+async def get_network(req: Request, sid: str, search: Optional[str] = None, count: int = 50, include_static: bool = False, include_response: bool = False):
+    import re
+    session = _get_session(req, sid)
+    reqs = session.state.get("network_requests", [])
+    if not include_static:
+        reqs = [r for r in reqs if not any(r["type"].startswith(p) for p in _STATIC_PREFIXES)]
+    if search:
+        pattern = re.compile(search)
+        reqs = [r for r in reqs if pattern.search(r["url"]) or pattern.search(r["type"])]
+    reqs = reqs[-count:]
+    lines = []
+    for r in reqs:
+        line = f"{r['method']:<6} {r['status']}  {r['type']:<30} {r['url']}"
+        if include_response and r.get("response_preview"):
+            line += f"\n    {r['response_preview'][:200]}"
+        lines.append(line)
+    return {"network": "\n".join(lines)}
+
+@router.delete("/network")
+async def clear_network(req: Request, sid: str):
+    session = _get_session(req, sid)
+    session.state["network_requests"] = []
+    return {"ok": True}
+
+class FetchReq(BaseModel):
+    url: str
+    method: str = "GET"
+    headers: Optional[dict] = None
+    body: Optional[str] = None
+    no_cookies: bool = False
+
+@router.post("/fetch")
+async def fetch_url(req: Request, sid: str, body: FetchReq):
+    session = _get_session(req, sid)
+    if body.no_cookies:
+        import httpx
+        async with httpx.AsyncClient(follow_redirects=True, timeout=30) as client:
+            r = await client.request(
+                body.method,
+                body.url,
+                headers=body.headers or {},
+                content=body.body,
+            )
+        result = {"status": r.status_code, "contentType": r.headers.get("content-type", ""), "body": r.text}
+        _log_action(session, "fetch", url=body.url, method=body.method, no_cookies=True, status=r.status_code)
+        return result
+    page = _get_page(session)
+    js = """
+async ({url, method, headers, body}) => {
+    const opts = {method, headers: headers || {}};
+    if (body) opts.body = body;
+    const r = await fetch(url, opts);
+    const text = await r.text();
+    return {status: r.status, contentType: r.headers.get('content-type') || '', body: text};
+}
+"""
+    result = await page.evaluate(js, {"url": body.url, "method": body.method, "headers": body.headers or {}, "body": body.body})
+    _log_action(session, "fetch", url=body.url, method=body.method, no_cookies=False, status=result.get("status"))
+    return result
+
+@router.get("/websocket")
+async def get_websocket(req: Request, sid: str, search: Optional[str] = None, count: int = 50):
+    session = _get_session(req, sid)
+    msgs = session.state.get("websocket_messages", [])[-count:]
+    lines = [f"{m['direction'].upper():<4}  {m['url']}\n      {m['data'][:200]}" for m in msgs]
+    text = "\n".join(lines)
+    if search:
+        text = filter_lines(text, search)
+    return {"websocket": text}
+
+@router.delete("/websocket")
+async def clear_websocket(req: Request, sid: str):
+    session = _get_session(req, sid)
+    session.state["websocket_messages"] = []
+    return {"ok": True}
+
 @router.post("/click")
 async def click(req: Request, sid: str, body: ClickReq):
     import asyncio as aio
@@ -412,6 +499,13 @@ async def click(req: Request, sid: str, body: ClickReq):
                 await page.wait_for_selector(selector, timeout=body.timeout, state="visible")
 
             await page.click(selector, timeout=body.timeout)
+            _log_action(session, "click", selector=selector)
+            # Wait for navigation if it occurs; otherwise sleep briefly to allow
+            # hash-routing / JS DOM mutations to settle before snapshotting.
+            try:
+                await page.wait_for_load_state("load", timeout=300)
+            except Exception:
+                await aio.sleep(0.15)
             formatted, truncated, _ = await _take_snapshot(page)
             resp = {"ok": True, "snapshot": formatted}
             if truncated:
@@ -444,6 +538,7 @@ async def fill(req: Request, sid: str, body: FillReq):
                 await page.wait_for_selector(selector, timeout=body.timeout, state="visible")
 
             await page.fill(selector, body.value, timeout=body.timeout)
+            _log_action(session, "fill", selector=selector, value=body.value)
             formatted, truncated, _ = await _take_snapshot(page)
             resp = {"ok": True, "snapshot": formatted}
             if truncated:
@@ -471,6 +566,7 @@ async def press_key(req: Request, sid: str, body: KeyReq):
     session = _get_session(req, sid)
     page = _get_page(session)
     await page.keyboard.press(body.key)
+    _log_action(session, "key", key=body.key)
     formatted, truncated, _ = await _take_snapshot(page)
     resp = {"ok": True, "snapshot": formatted}
     if truncated:
@@ -507,6 +603,7 @@ async def select_option(req: Request, sid: str, body: SelectReq):
     page = _get_page(session)
     selector = _resolve_selector(body)
     await page.select_option(selector, body.value, timeout=body.timeout)
+    _log_action(session, "select", selector=selector, value=body.value)
     formatted, truncated, _ = await _take_snapshot(page)
     resp = {"ok": True, "snapshot": formatted}
     if truncated:
@@ -518,4 +615,117 @@ async def upload(req: Request, sid: str, body: UploadReq):
     session = _get_session(req, sid)
     page = _get_page(session)
     await page.set_input_files(body.selector, body.filepath)
+    _log_action(session, "upload", selector=body.selector, filepath=body.filepath)
     return {"ok": True}
+
+@router.get("/actions")
+async def get_actions(req: Request, sid: str, as_json: bool = False):
+    session = _get_session(req, sid)
+    actions = session.state.get("actions", [])
+    if as_json:
+        return {"actions": actions}
+    lines = []
+    for a in actions:
+        s, act = a["seq"], a["action"]
+        if act == "navigate":
+            lines.append(f"{s:<3} navigate  {a.get('url','')}  [{a.get('status','')}]")
+        elif act == "fetch":
+            nc = " --no-cookies" if a.get("no_cookies") else ""
+            lines.append(f"{s:<3} fetch     {a.get('url','')}  [{a.get('status','')}]{nc}")
+        elif act == "click":
+            lines.append(f"{s:<3} click     {a.get('selector','')}")
+        elif act == "fill":
+            lines.append(f"{s:<3} fill      {a.get('selector','')}  value={str(a.get('value',''))[:40]!r}")
+        elif act == "key":
+            lines.append(f"{s:<3} key       {a.get('key','')}")
+        elif act == "select":
+            lines.append(f"{s:<3} select    {a.get('selector','')}  value={a.get('value','')!r}")
+        elif act == "upload":
+            lines.append(f"{s:<3} upload    {a.get('selector','')}  file={a.get('filepath','')}")
+        else:
+            lines.append(f"{s:<3} {act}")
+    return {"actions": "\n".join(lines)}
+
+@router.delete("/actions")
+async def clear_actions(req: Request, sid: str):
+    session = _get_session(req, sid)
+    session.state["actions"] = []
+    return {"ok": True}
+
+class ReplayReq(BaseModel):
+    playbook: dict
+    vars: dict = {}
+
+@router.post("/replay")
+async def replay(req: Request, sid: str, body: ReplayReq):
+    import re as _re
+    session = _get_session(req, sid)
+    page = _get_page(session)
+    base_url = body.playbook.get("base_url", "")
+    variables = {**body.playbook.get("vars", {}), **body.vars}
+
+    def sub(val):
+        if not isinstance(val, str):
+            return val
+        for k, v in variables.items():
+            val = val.replace(f"{{{k}}}", str(v))
+        return val
+
+    def resolve_url(u):
+        u = sub(u)
+        return u if u.startswith("http") else base_url + u
+
+    results = []
+    for step in body.playbook.get("steps", []):
+        act = step["action"]
+        entry = {"action": act, "ok": False}
+        try:
+            if act == "navigate":
+                url = resolve_url(step["url"])
+                r = await page.goto(url, timeout=step.get("timeout", 30000))
+                entry.update({"url": url, "status": r.status if r else None, "ok": True})
+                _log_action(session, "navigate", url=url, status=r.status if r else None)
+            elif act == "click":
+                await page.click(sub(step["selector"]))
+                _log_action(session, "click", selector=sub(step["selector"]))
+                entry["ok"] = True
+            elif act == "fill":
+                await page.fill(sub(step["selector"]), sub(step["value"]))
+                _log_action(session, "fill", selector=sub(step["selector"]), value=sub(step["value"]))
+                entry["ok"] = True
+            elif act == "key":
+                await page.keyboard.press(sub(step["key"]))
+                _log_action(session, "key", key=sub(step["key"]))
+                entry["ok"] = True
+            elif act == "select":
+                await page.select_option(sub(step["selector"]), sub(step["value"]))
+                _log_action(session, "select", selector=sub(step["selector"]), value=sub(step["value"]))
+                entry["ok"] = True
+            elif act == "fetch":
+                url = resolve_url(step["url"])
+                method = step.get("method", "GET")
+                no_cookies = step.get("auth") == "none"
+                if no_cookies:
+                    import httpx
+                    async with httpx.AsyncClient(follow_redirects=True, timeout=30) as client:
+                        r = await client.request(method, url)
+                    data_text, status = r.text, r.status_code
+                else:
+                    js = "async ({url,method})=>{const r=await fetch(url,{method});return {status:r.status,body:await r.text()}}"
+                    r = await page.evaluate(js, {"url": url, "method": method})
+                    data_text, status = r["body"], r["status"]
+                _log_action(session, "fetch", url=url, method=method, no_cookies=no_cookies, status=status)
+                entry.update({"url": url, "status": status, "ok": True})
+                if step.get("output"):
+                    import json as _json
+                    try:
+                        entry["data"] = _json.loads(data_text)
+                    except Exception:
+                        entry["data"] = data_text
+            elif act == "wait":
+                await page.wait_for_timeout(step.get("ms", 1000))
+                entry["ok"] = True
+        except Exception as e:
+            entry["error"] = str(e)
+        results.append(entry)
+    return {"results": results}

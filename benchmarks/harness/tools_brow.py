@@ -80,6 +80,43 @@ BROW_TOOLS = [
             "required": ["session"],
         },
     },
+    {
+        "name": "brow_goto",
+        "description": "Navigate to a URL within the existing session (preserves cookies and login state). Use this instead of brow_session_new when you need to visit a new URL mid-task.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "session": {"type": "string"},
+                "url": {"type": "string"},
+            },
+            "required": ["session", "url"],
+        },
+    },
+    {
+        "name": "brow_wait",
+        "description": "Wait for a CSS selector to appear/become visible on the page. Use before snapshotting dynamic or JS-rendered content.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "session": {"type": "string"},
+                "selector": {"type": "string", "description": "CSS selector to wait for"},
+                "timeout": {"type": "integer", "description": "Timeout in ms (default 5000)"},
+            },
+            "required": ["session", "selector"],
+        },
+    },
+    {
+        "name": "brow_eval",
+        "description": "Run Python code in the brow daemon. The variable `page` is a Playwright Page object. To run JavaScript in the browser use: await page.evaluate('js expression'). Do NOT use document/window directly — wrap JS in page.evaluate().",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "session": {"type": "string"},
+                "code": {"type": "string", "description": "Python code. Use `await page.evaluate(\"js\")` to run JS. Example: await page.evaluate(\"Array.from(document.querySelectorAll('a')).map(a => a.href)\")"},
+            },
+            "required": ["session", "code"],
+        },
+    },
 ]
 
 
@@ -110,6 +147,10 @@ def _build_brow_cmd(name, params):
             if p.get("selector")
             else ["brow", "scroll", "-s", p["session"], str(p.get("pixels", 0))]
         ),
+        "brow_goto": lambda p: ["brow", "navigate", "-s", p["session"], p["url"]],
+        "brow_wait": lambda p: ["brow", "wait", "-s", p["session"], "--selector", p["selector"]]
+            + (["--timeout", str(p["timeout"])] if p.get("timeout") else []),
+        "brow_eval": lambda p: ["brow", "eval", "-s", p["session"], p["code"]],
     }
     builder = cmd_map.get(name)
     if not builder:

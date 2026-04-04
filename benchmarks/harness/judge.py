@@ -18,7 +18,7 @@ def evaluate_criteria(criteria, answer, browser_state, errors=None):
 def _check_structured_output(criteria, answer):
     min_fields = criteria.get("min_fields", [])
     min_results = criteria.get("min_results", 1)
-    results = _find_results_list(answer)
+    results = _find_results_list(answer, min_fields)
     if len(results) < min_results:
         return False
     for item in results:
@@ -26,14 +26,18 @@ def _check_structured_output(criteria, answer):
             return False
     return True
 
-def _find_results_list(answer):
+def _find_results_list(answer, min_fields=None):
     if isinstance(answer, list):
         return answer
     if isinstance(answer, dict):
         for v in answer.values():
             if isinstance(v, list) and v and isinstance(v[0], dict):
-                return v
-        # If no nested list found, treat the dict itself as a single result
+                # Only use a nested list if its items actually contain the expected
+                # fields. This prevents wrongly selecting a sub-array (e.g. stats)
+                # when the top-level dict is itself the answer (e.g. spa-navigation).
+                if min_fields is None or all(f in v[0] for f in min_fields):
+                    return v
+        # Treat the dict itself as a single result
         return [answer]
     return []
 

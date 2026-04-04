@@ -12,4 +12,12 @@ SUBMIT_ANSWER_TOOL = {
 }
 
 def execute_submit_answer(params):
-    return {"done": True, "answer": params.get("answer", {}), "confidence": params.get("confidence", "medium")}
+    import json
+    answer = params.get("answer", {})
+    # Claude sometimes passes a JSON string instead of a parsed object — fix it here.
+    if isinstance(answer, str):
+        try:
+            answer = json.loads(answer)
+        except (json.JSONDecodeError, ValueError):
+            answer = {"result": answer}
+    return {"done": True, "answer": answer, "confidence": params.get("confidence", "medium")}

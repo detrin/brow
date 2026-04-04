@@ -20,13 +20,36 @@ Snapshots show numbered refs like [1], [2] for interactive elements.
 Use ref= to click, fill, or select elements (e.g. brow_click ref=3).
 Each action returns an updated snapshot — no need to call brow_snapshot after every action.
 Use brow_snapshot with search="pattern" to filter large pages.
+
+Navigation rules:
+- NEVER call brow_session_new more than once. Use brow_goto to navigate to new URLs within the same session — this preserves cookies and login state.
+- If a page has dynamic/JS-rendered content, use brow_wait(selector=...) before snapshotting.
+- If you need data not visible in the snapshot (e.g. link href attributes), use brow_eval. NOTE: brow_eval runs Python code — use `await page.evaluate("js")` to execute JavaScript. Never use document/window directly in the code field.
+
 When done, call submit_answer with your structured result.
 
 Example workflow:
   brow_session_new(url="https://shop.com") → snapshot shows [1] search box, [2] cart...
   brow_fill(ref=1, value="headphones") → snapshot shows [3] "Sony WH-1000" [4] "AirPods Max"...
   brow_click(ref=3) → snapshot shows product details...
-  submit_answer({name: "Sony WH-1000XM5", price: "$348"})"""
+  submit_answer({name: "Sony WH-1000XM5", price: "$348"})
+
+Example with dynamic content:
+  brow_session_new(url="http://site.com/dynamic") → snapshot shows "Loading..."
+  brow_wait(selector="#dynamic-content") → waits until content appears
+  brow_snapshot() → now shows the loaded items
+
+Example extracting link URLs via eval (Python code, JS inside page.evaluate):
+  brow_eval(code="await page.evaluate(\"Array.from(document.querySelectorAll('a.title')).map(a => ({title: a.textContent.trim(), url: a.href}))\")") → returns list
+
+Example login flow (use brow_goto to preserve session cookies):
+  brow_session_new(url="http://site.com/login") → snapshot shows login form
+  brow_fill(ref=1, value="admin") → fills username
+  brow_fill(ref=2, value="password") → fills password
+  brow_click(ref=3) → submits form, snapshot shows "Login Successful"
+  brow_goto(url="http://site.com/dashboard") → navigates within same session (cookie preserved)
+  brow_snapshot() → shows dashboard content
+  submit_answer({username: "admin", role: "Administrator"})"""
 
 MCP_INSTRUCTIONS = """You have access to MCP Playwright tools for browser automation.
 Use mcp_navigate to go to URLs. Use mcp_snapshot to read the page.
