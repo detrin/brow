@@ -98,20 +98,19 @@ Because the `google` profile persists your login, you get personalized results -
 
 ## Benchmarks
 
-Compared against **playwright-cli** (Playwright MCP's CLI mode) and **MCP Playwright** (SSE server) on 16 browser automation tasks using Claude Sonnet as the agent. All tasks use local fixture pages for reproducibility.
+16 fixture tasks, Claude Sonnet via AWS Bedrock. Compared against playwright-cli, MCP Playwright, agent-browser (Rust/CDP), and browser-use (full-stack agent framework).
 
-| Metric | **brow** | playwright-cli | MCP Playwright |
-|--------|----------|---------------|----------------|
-| Avg tokens/task | **86K** | 113K | 118K |
-| Success rate | **69%** | 44% | 38% |
-| Avg wall-clock | **33s** | 44s | 50s |
-| Est. cost/task | **$0.27** | $0.35 | $0.37 |
+| Metric | **brow** | agent-browser | browser-use | playwright-cli | MCP Playwright |
+|--------|----------|---------------|-------------|----------------|----------------|
+| Success rate | **69% (11/16)** | 56% (9/16) | 56% (9/16) | 44% (7/16) | 38% (6/16) |
+| Avg tokens/task | 86K | **73K** | 75K | 113K | 118K |
+| Avg tool calls | **7.4** | 11.2 | 5.8 | 9.6 | 11.6 |
+| Avg wall-clock | **33s** | 36s | 73s | 44s | 50s |
+| Est. cost/task | $0.27 | **$0.23** | $0.27 | $0.35 | $0.37 |
 
-brow uses **24% fewer tokens**, succeeds on **25% more tasks**, and runs **25% faster** than the next-best backend.
+brow leads on success rate (+13pp over agent-browser, +25pp over playwright-cli). agent-browser wins on token cost. browser-use runs its own agent loop so it's a different comparison — included for completeness.
 
-Key optimizations: ref-based element addressing (`[N]` refs instead of CSS selectors), auto-snapshot after mutations (fewer tool calls), table-aware markdown output, inline list compression, and adaptive node caps.
-
-Full results and methodology: [benchmarks/README.md](benchmarks/README.md)
+Per-task success grid, token breakdown, and analysis: [benchmarks/README.md](benchmarks/README.md)
 
 ## Commands
 
