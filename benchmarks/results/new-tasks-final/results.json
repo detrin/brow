@@ -1,0 +1,3099 @@
+[
+  {
+    "task_id": "github-trending-python",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 380777,
+    "total_output_tokens": 2319,
+    "tool_calls": 11,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2278,
+        "output_tokens": 91,
+        "latency_ms": 2025,
+        "response_bytes": 16654,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 8321,
+        "output_tokens": 103,
+        "latency_ms": 351,
+        "response_bytes": 79,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_scroll",
+        "input_tokens": 14409,
+        "output_tokens": 92,
+        "latency_ms": 273,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 26419,
+        "output_tokens": 77,
+        "latency_ms": 304,
+        "response_bytes": 925,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_wait",
+        "input_tokens": 38759,
+        "output_tokens": 86,
+        "latency_ms": 306,
+        "response_bytes": 18,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 39223,
+        "output_tokens": 73,
+        "latency_ms": 294,
+        "response_bytes": 79,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_scroll",
+        "input_tokens": 40050,
+        "output_tokens": 93,
+        "latency_ms": 277,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 40879,
+        "output_tokens": 54,
+        "latency_ms": 281,
+        "response_bytes": 16635,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 46879,
+        "output_tokens": 651,
+        "latency_ms": 367,
+        "response_bytes": 3258,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 54758,
+        "output_tokens": 527,
+        "latency_ms": 274,
+        "response_bytes": 980,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 68802,
+        "output_tokens": 472,
+        "latency_ms": 0,
+        "response_bytes": 1010,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 57180,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "repositories": [
+        {
+          "name": "Blaizzy/mlx-vlm",
+          "description": "MLX-VLM is a package for inference and fine-tuning of Vision Language Models (VLMs) on your Mac using MLX.",
+          "stars_today": "499",
+          "total_stars": "3,381"
+        },
+        {
+          "name": "onyx-dot-app/onyx",
+          "description": "Open Source AI Platform - AI Chat with advanced features that works with every LLM",
+          "stars_today": "1,212",
+          "total_stars": "23,741"
+        },
+        {
+          "name": "microsoft/agent-framework",
+          "description": "A framework for building, orchestrating and deploying AI agents and multi-agent workflows with support for Python and .NET.",
+          "stars_today": "66",
+          "total_stars": "8,525"
+        },
+        {
+          "name": "sherlock-project/sherlock",
+          "description": "Hunt down social media accounts by username across social networks",
+          "stars_today": "993",
+          "total_stars": "78,938"
+        },
+        {
+          "name": "HKUDS/LightRAG",
+          "description": "[EMNLP2025] \"LightRAG: Simple and Fast Retrieval-Augmented Generation\"",
+          "stars_today": "272",
+          "total_stars": "32,008"
+        }
+      ]
+    },
+    "run_id": "bae461f1",
+    "timestamp": "2026-04-04T13:23:16.207665+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 11
+  },
+  {
+    "task_id": "github-trending-python",
+    "backend": "mcp-playwright",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 11934,
+    "total_output_tokens": 879,
+    "tool_calls": 3,
+    "tool_call_log": [
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 1375,
+        "output_tokens": 85,
+        "latency_ms": 2159,
+        "response_bytes": 316,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_snapshot",
+        "input_tokens": 1583,
+        "output_tokens": 53,
+        "latency_ms": 47,
+        "response_bytes": 22024,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 8976,
+        "output_tokens": 741,
+        "latency_ms": 0,
+        "response_bytes": 984,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 48796,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "repositories": [
+        {
+          "name": "Blaizzy/mlx-vlm",
+          "description": "MLX-VLM is a package for inference and fine-tuning of Vision Language Models (VLMs) on your Mac using MLX.",
+          "stars_today": 499,
+          "total_stars": 3382
+        },
+        {
+          "name": "onyx-dot-app/onyx",
+          "description": "Open Source AI Platform - AI Chat with advanced features that works with every LLM",
+          "stars_today": 1212,
+          "total_stars": 23740
+        },
+        {
+          "name": "microsoft/agent-framework",
+          "description": "A framework for building, orchestrating and deploying AI agents and multi-agent workflows with support for Python and .NET.",
+          "stars_today": 66,
+          "total_stars": 8525
+        },
+        {
+          "name": "sherlock-project/sherlock",
+          "description": "Hunt down social media accounts by username across social networks",
+          "stars_today": 993,
+          "total_stars": 78941
+        },
+        {
+          "name": "HKUDS/LightRAG",
+          "description": "[EMNLP2025] \"LightRAG: Simple and Fast Retrieval-Augmented Generation\"",
+          "stars_today": 272,
+          "total_stars": 32009
+        }
+      ]
+    },
+    "run_id": "22d4c447",
+    "timestamp": "2026-04-04T13:24:05.026097+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 3
+  },
+  {
+    "task_id": "github-trending-python",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 10429,
+    "total_output_tokens": 701,
+    "tool_calls": 2,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1456,
+        "output_tokens": 86,
+        "latency_ms": 1939,
+        "response_bytes": 22259,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 8973,
+        "output_tokens": 615,
+        "latency_ms": 0,
+        "response_bytes": 984,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 12498,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "repositories": [
+        {
+          "name": "Blaizzy/mlx-vlm",
+          "description": "MLX-VLM is a package for inference and fine-tuning of Vision Language Models (VLMs) on your Mac using MLX.",
+          "stars_today": 499,
+          "total_stars": 3382
+        },
+        {
+          "name": "onyx-dot-app/onyx",
+          "description": "Open Source AI Platform - AI Chat with advanced features that works with every LLM",
+          "stars_today": 1212,
+          "total_stars": 23740
+        },
+        {
+          "name": "microsoft/agent-framework",
+          "description": "A framework for building, orchestrating and deploying AI agents and multi-agent workflows with support for Python and .NET.",
+          "stars_today": 66,
+          "total_stars": 8525
+        },
+        {
+          "name": "sherlock-project/sherlock",
+          "description": "Hunt down social media accounts by username across social networks",
+          "stars_today": 993,
+          "total_stars": 78941
+        },
+        {
+          "name": "HKUDS/LightRAG",
+          "description": "[EMNLP2025] \"LightRAG: Simple and Fast Retrieval-Augmented Generation\"",
+          "stars_today": 272,
+          "total_stars": 32009
+        }
+      ]
+    },
+    "run_id": "ec6ba316",
+    "timestamp": "2026-04-04T13:24:17.548260+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 2
+  },
+  {
+    "task_id": "github-trending-python",
+    "backend": "agent-browser",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 9297,
+    "total_output_tokens": 605,
+    "tool_calls": 3,
+    "tool_call_log": [
+      {
+        "name": "ab_open",
+        "input_tokens": 1548,
+        "output_tokens": 84,
+        "latency_ms": 2650,
+        "response_bytes": 172,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 1723,
+        "output_tokens": 55,
+        "latency_ms": 272,
+        "response_bytes": 12009,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 6026,
+        "output_tokens": 466,
+        "latency_ms": 0,
+        "response_bytes": 984,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 14441,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "repositories": [
+        {
+          "name": "Blaizzy/mlx-vlm",
+          "description": "MLX-VLM is a package for inference and fine-tuning of Vision Language Models (VLMs) on your Mac using MLX.",
+          "stars_today": 499,
+          "total_stars": 3382
+        },
+        {
+          "name": "onyx-dot-app/onyx",
+          "description": "Open Source AI Platform - AI Chat with advanced features that works with every LLM",
+          "stars_today": 1212,
+          "total_stars": 23740
+        },
+        {
+          "name": "microsoft/agent-framework",
+          "description": "A framework for building, orchestrating and deploying AI agents and multi-agent workflows with support for Python and .NET.",
+          "stars_today": 66,
+          "total_stars": 8526
+        },
+        {
+          "name": "sherlock-project/sherlock",
+          "description": "Hunt down social media accounts by username across social networks",
+          "stars_today": 993,
+          "total_stars": 78941
+        },
+        {
+          "name": "HKUDS/LightRAG",
+          "description": "[EMNLP2025] \"LightRAG: Simple and Fast Retrieval-Augmented Generation\"",
+          "stars_today": 272,
+          "total_stars": 32009
+        }
+      ]
+    },
+    "run_id": "d63d3852",
+    "timestamp": "2026-04-04T13:24:31.997515+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 3
+  },
+  {
+    "task_id": "tech-stack-graph",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 170489,
+    "total_output_tokens": 2829,
+    "tool_calls": 14,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2289,
+        "output_tokens": 102,
+        "latency_ms": 558,
+        "response_bytes": 829,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 2691,
+        "output_tokens": 110,
+        "latency_ms": 342,
+        "response_bytes": 768,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 3392,
+        "output_tokens": 186,
+        "latency_ms": 271,
+        "response_bytes": 768,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 4759,
+        "output_tokens": 260,
+        "latency_ms": 262,
+        "response_bytes": 57,
+        "success": false,
+        "error": "Error (400): invalid syntax (<eval>, line 3)"
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 6519,
+        "output_tokens": 249,
+        "latency_ms": 276,
+        "response_bytes": 210,
+        "success": false,
+        "error": "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 8008,
+        "output_tokens": 253,
+        "latency_ms": 273,
+        "response_bytes": 864,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_goto",
+        "input_tokens": 9268,
+        "output_tokens": 204,
+        "latency_ms": 285,
+        "response_bytes": 672,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 10152,
+        "output_tokens": 384,
+        "latency_ms": 373,
+        "response_bytes": 4408,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 13135,
+        "output_tokens": 198,
+        "latency_ms": 278,
+        "response_bytes": 424,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_goto",
+        "input_tokens": 16283,
+        "output_tokens": 103,
+        "latency_ms": 292,
+        "response_bytes": 701,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 20148,
+        "output_tokens": 169,
+        "latency_ms": 276,
+        "response_bytes": 406,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_goto",
+        "input_tokens": 23674,
+        "output_tokens": 101,
+        "latency_ms": 281,
+        "response_bytes": 705,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 24557,
+        "output_tokens": 161,
+        "latency_ms": 272,
+        "response_bytes": 408,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 25614,
+        "output_tokens": 349,
+        "latency_ms": 0,
+        "response_bytes": 843,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 53471,
+    "errors": [
+      "Error (400): invalid syntax (<eval>, line 3)",
+      "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    ],
+    "error_recoveries": 1,
+    "final_output": {
+      "dependencies": [
+        {
+          "name": "CoreLib",
+          "version": "v2.1.0",
+          "description": "Foundational utilities for the Nexus ecosystem. Provides string manipulation helpers, date formatting, collection utilities (map, filter, group-by), and deep equality checks used throughout the framework."
+        },
+        {
+          "name": "AuthKit",
+          "version": "v3.0.0",
+          "description": "Authentication and authorization toolkit for the Nexus ecosystem. Supports OAuth2 flows, JWT issuance and validation, session management with sliding expiry, and role-based access control (RBAC)."
+        },
+        {
+          "name": "Logger",
+          "version": "v2.0.1",
+          "description": "Structured logging library with configurable log levels, pluggable formatters (JSON, pretty-print, logfmt), and transport plugins for stdout, files, and remote collectors (OpenTelemetry, Datadog)."
+        }
+      ]
+    },
+    "run_id": "3626614b",
+    "timestamp": "2026-04-04T13:25:25.478780+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 14
+  },
+  {
+    "task_id": "tech-stack-graph",
+    "backend": "mcp-playwright",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 96827,
+    "total_output_tokens": 1334,
+    "tool_calls": 20,
+    "tool_call_log": [
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 1386,
+        "output_tokens": 74,
+        "latency_ms": 1179,
+        "response_bytes": 434,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_snapshot",
+        "input_tokens": 1652,
+        "output_tokens": 37,
+        "latency_ms": 7,
+        "response_bytes": 1446,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_click",
+        "input_tokens": 2189,
+        "output_tokens": 75,
+        "latency_ms": 1114,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_wait",
+        "input_tokens": 2796,
+        "output_tokens": 55,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_snapshot",
+        "input_tokens": 3882,
+        "output_tokens": 37,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 4950,
+        "output_tokens": 75,
+        "latency_ms": 5,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 5058,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_evaluate",
+        "input_tokens": 5165,
+        "output_tokens": 58,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 5256,
+        "output_tokens": 74,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_screenshot",
+        "input_tokens": 5363,
+        "output_tokens": 37,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 5433,
+        "output_tokens": 75,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 5541,
+        "output_tokens": 71,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 5645,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 5752,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 5859,
+        "output_tokens": 74,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 5966,
+        "output_tokens": 74,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 6073,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 6180,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 6287,
+        "output_tokens": 74,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 6394,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      }
+    ],
+    "wall_clock_ms": 43014,
+    "errors": [
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "9cd47872",
+    "timestamp": "2026-04-04T13:26:08.501741+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 20
+  },
+  {
+    "task_id": "tech-stack-graph",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 85896,
+    "total_output_tokens": 1273,
+    "tool_calls": 8,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1467,
+        "output_tokens": 98,
+        "latency_ms": 1286,
+        "response_bytes": 1789,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 2201,
+        "output_tokens": 88,
+        "latency_ms": 1204,
+        "response_bytes": 2594,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 3857,
+        "output_tokens": 196,
+        "latency_ms": 1199,
+        "response_bytes": 1335,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 6740,
+        "output_tokens": 83,
+        "latency_ms": 1191,
+        "response_bytes": 2609,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 11379,
+        "output_tokens": 80,
+        "latency_ms": 1190,
+        "response_bytes": 1355,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 15725,
+        "output_tokens": 76,
+        "latency_ms": 1194,
+        "response_bytes": 2609,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 20077,
+        "output_tokens": 67,
+        "latency_ms": 1199,
+        "response_bytes": 1362,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 24450,
+        "output_tokens": 585,
+        "latency_ms": 0,
+        "response_bytes": 843,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 38552,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "dependencies": [
+        {
+          "name": "CoreLib",
+          "version": "v2.1.0",
+          "description": "Foundational utilities for the Nexus ecosystem. Provides string manipulation helpers, date formatting, collection utilities (map, filter, group-by), and deep equality checks used throughout the framework."
+        },
+        {
+          "name": "AuthKit",
+          "version": "v3.0.0",
+          "description": "Authentication and authorization toolkit for the Nexus ecosystem. Supports OAuth2 flows, JWT issuance and validation, session management with sliding expiry, and role-based access control (RBAC)."
+        },
+        {
+          "name": "Logger",
+          "version": "v2.0.1",
+          "description": "Structured logging library with configurable log levels, pluggable formatters (JSON, pretty-print, logfmt), and transport plugins for stdout, files, and remote collectors (OpenTelemetry, Datadog)."
+        }
+      ]
+    },
+    "run_id": "73b5626c",
+    "timestamp": "2026-04-04T13:26:47.066314+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 8
+  },
+  {
+    "task_id": "tech-stack-graph",
+    "backend": "agent-browser",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 125081,
+    "total_output_tokens": 1747,
+    "tool_calls": 19,
+    "tool_call_log": [
+      {
+        "name": "ab_open",
+        "input_tokens": 1559,
+        "output_tokens": 92,
+        "latency_ms": 753,
+        "response_bytes": 149,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 1742,
+        "output_tokens": 36,
+        "latency_ms": 250,
+        "response_bytes": 269,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 1913,
+        "output_tokens": 83,
+        "latency_ms": 286,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 2031,
+        "output_tokens": 36,
+        "latency_ms": 241,
+        "response_bytes": 831,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 2426,
+        "output_tokens": 191,
+        "latency_ms": 317,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 3010,
+        "output_tokens": 36,
+        "latency_ms": 246,
+        "response_bytes": 141,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_scroll",
+        "input_tokens": 3833,
+        "output_tokens": 77,
+        "latency_ms": 236,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 4661,
+        "output_tokens": 55,
+        "latency_ms": 222,
+        "response_bytes": 1079,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 5098,
+        "output_tokens": 87,
+        "latency_ms": 264,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 5601,
+        "output_tokens": 72,
+        "latency_ms": 232,
+        "response_bytes": 55,
+        "success": false,
+        "error": "\u001b[31m\u2717\u001b[0m Unknown ref: e22"
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 6474,
+        "output_tokens": 48,
+        "latency_ms": 239,
+        "response_bytes": 831,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 7643,
+        "output_tokens": 79,
+        "latency_ms": 253,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 8115,
+        "output_tokens": 55,
+        "latency_ms": 229,
+        "response_bytes": 1099,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 9281,
+        "output_tokens": 74,
+        "latency_ms": 252,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 10500,
+        "output_tokens": 54,
+        "latency_ms": 237,
+        "response_bytes": 55,
+        "success": false,
+        "error": "\u001b[31m\u2717\u001b[0m Unknown ref: e23"
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 11381,
+        "output_tokens": 48,
+        "latency_ms": 249,
+        "response_bytes": 831,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 12576,
+        "output_tokens": 63,
+        "latency_ms": 296,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 13032,
+        "output_tokens": 55,
+        "latency_ms": 245,
+        "response_bytes": 1105,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 14205,
+        "output_tokens": 506,
+        "latency_ms": 0,
+        "response_bytes": 843,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 56814,
+    "errors": [
+      "\u001b[31m\u2717\u001b[0m Unknown ref: e22",
+      "\u001b[31m\u2717\u001b[0m Unknown ref: e23"
+    ],
+    "error_recoveries": 2,
+    "final_output": {
+      "dependencies": [
+        {
+          "name": "CoreLib",
+          "version": "v2.1.0",
+          "description": "Foundational utilities for the Nexus ecosystem. Provides string manipulation helpers, date formatting, collection utilities (map, filter, group-by), and deep equality checks used throughout the framework."
+        },
+        {
+          "name": "AuthKit",
+          "version": "v3.0.0",
+          "description": "Authentication and authorization toolkit for the Nexus ecosystem. Supports OAuth2 flows, JWT issuance and validation, session management with sliding expiry, and role-based access control (RBAC)."
+        },
+        {
+          "name": "Logger",
+          "version": "v2.0.1",
+          "description": "Structured logging library with configurable log levels, pluggable formatters (JSON, pretty-print, logfmt), and transport plugins for stdout, files, and remote collectors (OpenTelemetry, Datadog)."
+        }
+      ]
+    },
+    "run_id": "24c2a055",
+    "timestamp": "2026-04-04T13:27:43.905367+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 19
+  },
+  {
+    "task_id": "price-comparison",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 40923,
+    "total_output_tokens": 2851,
+    "tool_calls": 8,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2286,
+        "output_tokens": 103,
+        "latency_ms": 577,
+        "response_bytes": 570,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 2633,
+        "output_tokens": 264,
+        "latency_ms": 280,
+        "response_bytes": 405,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_goto",
+        "input_tokens": 3319,
+        "output_tokens": 111,
+        "latency_ms": 292,
+        "response_bytes": 647,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 4185,
+        "output_tokens": 238,
+        "latency_ms": 268,
+        "response_bytes": 410,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 5358,
+        "output_tokens": 661,
+        "latency_ms": 266,
+        "response_bytes": 223,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 6680,
+        "output_tokens": 347,
+        "latency_ms": 265,
+        "response_bytes": 63,
+        "success": false,
+        "error": "Error (400): name 'shared_products' is not defined"
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 7594,
+        "output_tokens": 844,
+        "latency_ms": 262,
+        "response_bytes": 959,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 8868,
+        "output_tokens": 283,
+        "latency_ms": 0,
+        "response_bytes": 415,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 38411,
+    "errors": [
+      "Error (400): name 'shared_products' is not defined"
+    ],
+    "error_recoveries": 1,
+    "final_output": {
+      "comparisons": [
+        {
+          "name": "USB-C Hub 7-in-1",
+          "price_techmart": "$29.99",
+          "price_digishop": "$24.99",
+          "cheaper_store": "DigiShop"
+        },
+        {
+          "name": "Keyboard Elite TKL",
+          "price_techmart": "$149.00",
+          "price_digishop": "$159.00",
+          "cheaper_store": "TechMart"
+        },
+        {
+          "name": "Monitor 27\" 4K",
+          "price_techmart": "$399.00",
+          "price_digishop": "$379.00",
+          "cheaper_store": "DigiShop"
+        }
+      ]
+    },
+    "run_id": "f2b766ba",
+    "timestamp": "2026-04-04T13:28:22.338846+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 8
+  },
+  {
+    "task_id": "price-comparison",
+    "backend": "mcp-playwright",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 85037,
+    "total_output_tokens": 1178,
+    "tool_calls": 15,
+    "tool_call_log": [
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 1383,
+        "output_tokens": 105,
+        "latency_ms": 1248,
+        "response_bytes": 441,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_snapshot",
+        "input_tokens": 1683,
+        "output_tokens": 37,
+        "latency_ms": 13,
+        "response_bytes": 1888,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 2473,
+        "output_tokens": 184,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_snapshot",
+        "input_tokens": 3442,
+        "output_tokens": 37,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_wait",
+        "input_tokens": 5016,
+        "output_tokens": 65,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 6618,
+        "output_tokens": 75,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 6726,
+        "output_tokens": 75,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 6834,
+        "output_tokens": 75,
+        "latency_ms": 4,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 6942,
+        "output_tokens": 75,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 7050,
+        "output_tokens": 75,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 7158,
+        "output_tokens": 75,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 7266,
+        "output_tokens": 75,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 7374,
+        "output_tokens": 75,
+        "latency_ms": 4,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 7482,
+        "output_tokens": 75,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 7590,
+        "output_tokens": 75,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      }
+    ],
+    "wall_clock_ms": 37285,
+    "errors": [
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "904993ac",
+    "timestamp": "2026-04-04T13:28:59.633768+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 15
+  },
+  {
+    "task_id": "price-comparison",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 8144,
+    "total_output_tokens": 769,
+    "tool_calls": 3,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1464,
+        "output_tokens": 96,
+        "latency_ms": 1309,
+        "response_bytes": 2230,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_goto",
+        "input_tokens": 2452,
+        "output_tokens": 96,
+        "latency_ms": 136,
+        "response_bytes": 2027,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 4228,
+        "output_tokens": 577,
+        "latency_ms": 0,
+        "response_bytes": 415,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 12578,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "comparisons": [
+        {
+          "name": "USB-C Hub 7-in-1",
+          "price_techmart": "$29.99",
+          "price_digishop": "$24.99",
+          "cheaper_store": "DigiShop"
+        },
+        {
+          "name": "Keyboard Elite TKL",
+          "price_techmart": "$149.00",
+          "price_digishop": "$159.00",
+          "cheaper_store": "TechMart"
+        },
+        {
+          "name": "Monitor 27\" 4K",
+          "price_techmart": "$399.00",
+          "price_digishop": "$379.00",
+          "cheaper_store": "DigiShop"
+        }
+      ]
+    },
+    "run_id": "9c5f4d96",
+    "timestamp": "2026-04-04T13:29:12.224894+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 3
+  },
+  {
+    "task_id": "price-comparison",
+    "backend": "agent-browser",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 12267,
+    "total_output_tokens": 727,
+    "tool_calls": 5,
+    "tool_call_log": [
+      {
+        "name": "ab_open",
+        "input_tokens": 1556,
+        "output_tokens": 93,
+        "latency_ms": 779,
+        "response_bytes": 157,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 1743,
+        "output_tokens": 36,
+        "latency_ms": 246,
+        "response_bytes": 883,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_open",
+        "input_tokens": 2183,
+        "output_tokens": 87,
+        "latency_ms": 299,
+        "response_bytes": 151,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 2766,
+        "output_tokens": 36,
+        "latency_ms": 246,
+        "response_bytes": 926,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 4019,
+        "output_tokens": 475,
+        "latency_ms": 0,
+        "response_bytes": 415,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 14679,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "comparisons": [
+        {
+          "name": "USB-C Hub 7-in-1",
+          "price_techmart": "$29.99",
+          "price_digishop": "$24.99",
+          "cheaper_store": "DigiShop"
+        },
+        {
+          "name": "Keyboard Elite TKL",
+          "price_techmart": "$149.00",
+          "price_digishop": "$159.00",
+          "cheaper_store": "TechMart"
+        },
+        {
+          "name": "Monitor 27\" 4K",
+          "price_techmart": "$399.00",
+          "price_digishop": "$379.00",
+          "cheaper_store": "DigiShop"
+        }
+      ]
+    },
+    "run_id": "a5c684e3",
+    "timestamp": "2026-04-04T13:29:26.913536+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 5
+  },
+  {
+    "task_id": "npm-http-clients",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 165820,
+    "total_output_tokens": 2462,
+    "tool_calls": 20,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2307,
+        "output_tokens": 95,
+        "latency_ms": 1300,
+        "response_bytes": 571,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_wait",
+        "input_tokens": 2611,
+        "output_tokens": 125,
+        "latency_ms": 10298,
+        "response_bytes": 47,
+        "success": false,
+        "error": "Error (500): Internal Server Error"
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 2968,
+        "output_tokens": 77,
+        "latency_ms": 273,
+        "response_bytes": 552,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 3664,
+        "output_tokens": 117,
+        "latency_ms": 5311,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 4412,
+        "output_tokens": 54,
+        "latency_ms": 282,
+        "response_bytes": 552,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_click",
+        "input_tokens": 5073,
+        "output_tokens": 89,
+        "latency_ms": 30291,
+        "response_bytes": 389,
+        "success": false,
+        "error": "Error (500): Failed to click selector '[data-brow-ref=\"1\"]' after 1 attempts. Last error: Page.wait_for_selector: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-brow-ref=\\\"1\\\"]\") to be visible\n    64 \u00d7 locator resolved to hidden <input type=\"hidden\" data-brow-ref=\"1\" name=\"cf-turnstile-response\" id=\"cf-chl-widget-uszyo_response\"/>"
+      },
+      {
+        "name": "brow_goto",
+        "input_tokens": 5918,
+        "output_tokens": 110,
+        "latency_ms": 660,
+        "response_bytes": 557,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 6639,
+        "output_tokens": 113,
+        "latency_ms": 30297,
+        "response_bytes": 40,
+        "success": false,
+        "error": "Error (408): Eval timed out"
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 7388,
+        "output_tokens": 54,
+        "latency_ms": 357,
+        "response_bytes": 552,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_session_new",
+        "input_tokens": 8057,
+        "output_tokens": 103,
+        "latency_ms": 255,
+        "response_bytes": 51,
+        "success": false,
+        "error": "Error (400): Max sessions (10) reached"
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 8818,
+        "output_tokens": 179,
+        "latency_ms": 2310,
+        "response_bytes": 72,
+        "success": false,
+        "error": "Error (400): object str can't be used in 'await' expression"
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 9432,
+        "output_tokens": 163,
+        "latency_ms": 2285,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 10014,
+        "output_tokens": 54,
+        "latency_ms": 280,
+        "response_bytes": 552,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_goto",
+        "input_tokens": 10271,
+        "output_tokens": 136,
+        "latency_ms": 529,
+        "response_bytes": 570,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 10820,
+        "output_tokens": 208,
+        "latency_ms": 279,
+        "response_bytes": 50,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 11662,
+        "output_tokens": 69,
+        "latency_ms": 278,
+        "response_bytes": 552,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 12759,
+        "output_tokens": 158,
+        "latency_ms": 10293,
+        "response_bytes": 81,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 13578,
+        "output_tokens": 54,
+        "latency_ms": 356,
+        "response_bytes": 552,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 14242,
+        "output_tokens": 257,
+        "latency_ms": 275,
+        "response_bytes": 210,
+        "success": false,
+        "error": "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 15187,
+        "output_tokens": 247,
+        "latency_ms": 306,
+        "response_bytes": 204,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 154248,
+    "errors": [
+      "Error (500): Internal Server Error",
+      "Error (500): Failed to click selector '[data-brow-ref=\"1\"]' after 1 attempts. Last error: Page.wait_for_selector: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-brow-ref=\\\"1\\\"]\") to be visible\n    64 \u00d7 locator resolved to hidden <input type=\"hidden\" data-brow-ref=\"1\" name=\"cf-turnstile-response\" id=\"cf-chl-widget-uszyo_response\"/>",
+      "Error (408): Eval timed out",
+      "Error (400): Max sessions (10) reached",
+      "Error (400): object str can't be used in 'await' expression",
+      "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    ],
+    "error_recoveries": 2,
+    "final_output": {},
+    "run_id": "8993f8b6",
+    "timestamp": "2026-04-04T13:32:01.172099+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 20
+  },
+  {
+    "task_id": "npm-http-clients",
+    "backend": "mcp-playwright",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 50290,
+    "total_output_tokens": 1335,
+    "tool_calls": 20,
+    "tool_call_log": [
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 1404,
+        "output_tokens": 101,
+        "latency_ms": 1331,
+        "response_bytes": 456,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_wait",
+        "input_tokens": 1696,
+        "output_tokens": 77,
+        "latency_ms": 2846,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_snapshot",
+        "input_tokens": 1806,
+        "output_tokens": 37,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_screenshot",
+        "input_tokens": 1876,
+        "output_tokens": 52,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 1961,
+        "output_tokens": 88,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_evaluate",
+        "input_tokens": 2082,
+        "output_tokens": 74,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 2189,
+        "output_tokens": 85,
+        "latency_ms": 4,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_snapshot",
+        "input_tokens": 2307,
+        "output_tokens": 37,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_wait",
+        "input_tokens": 2377,
+        "output_tokens": 55,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 2465,
+        "output_tokens": 71,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 2569,
+        "output_tokens": 67,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 2669,
+        "output_tokens": 61,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 2763,
+        "output_tokens": 59,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 2855,
+        "output_tokens": 74,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 2962,
+        "output_tokens": 71,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 3066,
+        "output_tokens": 63,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 3162,
+        "output_tokens": 65,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 3260,
+        "output_tokens": 63,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 3356,
+        "output_tokens": 76,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 3465,
+        "output_tokens": 59,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      }
+    ],
+    "wall_clock_ms": 41603,
+    "errors": [
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "432ee9d3",
+    "timestamp": "2026-04-04T13:32:42.796670+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 20
+  },
+  {
+    "task_id": "npm-http-clients",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 178351,
+    "total_output_tokens": 999,
+    "tool_calls": 14,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1485,
+        "output_tokens": 106,
+        "latency_ms": 1972,
+        "response_bytes": 1441,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_eval",
+        "input_tokens": 2122,
+        "output_tokens": 97,
+        "latency_ms": 66,
+        "response_bytes": 97,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_reload",
+        "input_tokens": 2787,
+        "output_tokens": 51,
+        "latency_ms": 319,
+        "response_bytes": 1228,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_goto",
+        "input_tokens": 4344,
+        "output_tokens": 80,
+        "latency_ms": 276,
+        "response_bytes": 1208,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 6373,
+        "output_tokens": 57,
+        "latency_ms": 89,
+        "response_bytes": 1129,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 8176,
+        "output_tokens": 38,
+        "latency_ms": 89,
+        "response_bytes": 1126,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 10812,
+        "output_tokens": 38,
+        "latency_ms": 94,
+        "response_bytes": 1033,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 13340,
+        "output_tokens": 38,
+        "latency_ms": 88,
+        "response_bytes": 1033,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 15762,
+        "output_tokens": 38,
+        "latency_ms": 91,
+        "response_bytes": 1033,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 18102,
+        "output_tokens": 38,
+        "latency_ms": 86,
+        "response_bytes": 1033,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 20366,
+        "output_tokens": 38,
+        "latency_ms": 91,
+        "response_bytes": 1033,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 22630,
+        "output_tokens": 38,
+        "latency_ms": 85,
+        "response_bytes": 1033,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_snapshot",
+        "input_tokens": 24894,
+        "output_tokens": 38,
+        "latency_ms": 71,
+        "response_bytes": 1033,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 27158,
+        "output_tokens": 304,
+        "latency_ms": 0,
+        "response_bytes": 523,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 41635,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "packages": [
+        {
+          "name": "axios",
+          "weekly_downloads": "50,000,000+",
+          "version": "1.6.0",
+          "description": "Promise based HTTP client for the browser and node.js"
+        },
+        {
+          "name": "node-fetch",
+          "weekly_downloads": "45,000,000+",
+          "version": "3.3.2",
+          "description": "A light-weight module that brings Fetch API to Node.js"
+        },
+        {
+          "name": "request",
+          "weekly_downloads": "20,000,000+",
+          "version": "2.88.2",
+          "description": "Simplified HTTP request client (deprecated but still widely used)"
+        }
+      ]
+    },
+    "run_id": "318913e0",
+    "timestamp": "2026-04-04T13:33:24.448491+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 14
+  },
+  {
+    "task_id": "npm-http-clients",
+    "backend": "agent-browser",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 60473,
+    "total_output_tokens": 1145,
+    "tool_calls": 20,
+    "tool_call_log": [
+      {
+        "name": "ab_open",
+        "input_tokens": 1577,
+        "output_tokens": 100,
+        "latency_ms": 1516,
+        "response_bytes": 157,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 1769,
+        "output_tokens": 36,
+        "latency_ms": 231,
+        "response_bytes": 352,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_wait",
+        "input_tokens": 1951,
+        "output_tokens": 81,
+        "latency_ms": 3239,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 2067,
+        "output_tokens": 36,
+        "latency_ms": 249,
+        "response_bytes": 415,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 2270,
+        "output_tokens": 66,
+        "latency_ms": 249,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_wait",
+        "input_tokens": 2371,
+        "output_tokens": 54,
+        "latency_ms": 3246,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 2460,
+        "output_tokens": 36,
+        "latency_ms": 256,
+        "response_bytes": 415,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_wait",
+        "input_tokens": 2663,
+        "output_tokens": 67,
+        "latency_ms": 5243,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 2765,
+        "output_tokens": 36,
+        "latency_ms": 247,
+        "response_bytes": 415,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_open",
+        "input_tokens": 2968,
+        "output_tokens": 90,
+        "latency_ms": 553,
+        "response_bytes": 157,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_wait",
+        "input_tokens": 3150,
+        "output_tokens": 54,
+        "latency_ms": 5255,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 3239,
+        "output_tokens": 36,
+        "latency_ms": 246,
+        "response_bytes": 415,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 3442,
+        "output_tokens": 69,
+        "latency_ms": 248,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_wait",
+        "input_tokens": 3546,
+        "output_tokens": 54,
+        "latency_ms": 8243,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 3635,
+        "output_tokens": 36,
+        "latency_ms": 240,
+        "response_bytes": 415,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_open",
+        "input_tokens": 3838,
+        "output_tokens": 76,
+        "latency_ms": 473,
+        "response_bytes": 118,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_wait",
+        "input_tokens": 3995,
+        "output_tokens": 54,
+        "latency_ms": 5214,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 4084,
+        "output_tokens": 36,
+        "latency_ms": 237,
+        "response_bytes": 415,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 4287,
+        "output_tokens": 74,
+        "latency_ms": 247,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_wait",
+        "input_tokens": 4396,
+        "output_tokens": 54,
+        "latency_ms": 3254,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 78091,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "b63ce0c1",
+    "timestamp": "2026-04-04T13:34:42.562026+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 20
+  },
+  {
+    "task_id": "paginated-news",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 15583,
+    "total_output_tokens": 773,
+    "tool_calls": 4,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2256,
+        "output_tokens": 111,
+        "latency_ms": 674,
+        "response_bytes": 1284,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_goto",
+        "input_tokens": 2870,
+        "output_tokens": 168,
+        "latency_ms": 284,
+        "response_bytes": 1381,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_goto",
+        "input_tokens": 4111,
+        "output_tokens": 141,
+        "latency_ms": 291,
+        "response_bytes": 1266,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 6346,
+        "output_tokens": 353,
+        "latency_ms": 0,
+        "response_bytes": 537,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 12864,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "articles": [
+        {
+          "title": "AI Tools Reshape Developer Workflows",
+          "date": "2025-01-13",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Open Source AI Models: A Review",
+          "date": "2025-01-07",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "WebAssembly and Browser Performance",
+          "date": "2024-12-31",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Cybersecurity Trends 2025",
+          "date": "2024-12-20",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        }
+      ]
+    },
+    "run_id": "e763d81e",
+    "timestamp": "2026-04-04T13:34:55.443964+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 4
+  },
+  {
+    "task_id": "paginated-news",
+    "backend": "mcp-playwright",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 144145,
+    "total_output_tokens": 1549,
+    "tool_calls": 20,
+    "tool_call_log": [
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 1353,
+        "output_tokens": 102,
+        "latency_ms": 859,
+        "response_bytes": 436,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_snapshot",
+        "input_tokens": 1652,
+        "output_tokens": 37,
+        "latency_ms": 12,
+        "response_bytes": 2551,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_click",
+        "input_tokens": 2649,
+        "output_tokens": 152,
+        "latency_ms": 147,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 3793,
+        "output_tokens": 74,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 5818,
+        "output_tokens": 74,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 7843,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 7950,
+        "output_tokens": 74,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 8057,
+        "output_tokens": 74,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 8164,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 8271,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 8378,
+        "output_tokens": 74,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 8485,
+        "output_tokens": 74,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 8592,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 8699,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 8806,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 8913,
+        "output_tokens": 74,
+        "latency_ms": 0,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 9020,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 9127,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 9234,
+        "output_tokens": 74,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 9341,
+        "output_tokens": 74,
+        "latency_ms": 1,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      }
+    ],
+    "wall_clock_ms": 46369,
+    "errors": [
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "70b97e98",
+    "timestamp": "2026-04-04T13:35:41.821752+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 20
+  },
+  {
+    "task_id": "paginated-news",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 18416,
+    "total_output_tokens": 1011,
+    "tool_calls": 4,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1434,
+        "output_tokens": 95,
+        "latency_ms": 1311,
+        "response_bytes": 2889,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 2627,
+        "output_tokens": 219,
+        "latency_ms": 1211,
+        "response_bytes": 2707,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "pwcli_click",
+        "input_tokens": 4982,
+        "output_tokens": 165,
+        "latency_ms": 1191,
+        "response_bytes": 2586,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 9373,
+        "output_tokens": 532,
+        "latency_ms": 0,
+        "response_bytes": 537,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 21500,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "articles": [
+        {
+          "title": "AI Tools Reshape Developer Workflows",
+          "date": "2025-01-13",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Open Source AI Models: A Review",
+          "date": "2025-01-07",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "WebAssembly and Browser Performance",
+          "date": "2024-12-31",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Cybersecurity Trends 2025",
+          "date": "2024-12-20",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        }
+      ]
+    },
+    "run_id": "25d2f7bb",
+    "timestamp": "2026-04-04T13:36:03.337061+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 4
+  },
+  {
+    "task_id": "paginated-news",
+    "backend": "agent-browser",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 57151,
+    "total_output_tokens": 1011,
+    "tool_calls": 9,
+    "tool_call_log": [
+      {
+        "name": "ab_open",
+        "input_tokens": 1526,
+        "output_tokens": 99,
+        "latency_ms": 794,
+        "response_bytes": 156,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 1723,
+        "output_tokens": 55,
+        "latency_ms": 248,
+        "response_bytes": 1798,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_click",
+        "input_tokens": 2444,
+        "output_tokens": 124,
+        "latency_ms": 247,
+        "response_bytes": 44,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 3268,
+        "output_tokens": 55,
+        "latency_ms": 246,
+        "response_bytes": 1798,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_open",
+        "input_tokens": 5319,
+        "output_tokens": 92,
+        "latency_ms": 293,
+        "response_bytes": 156,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 7504,
+        "output_tokens": 55,
+        "latency_ms": 222,
+        "response_bytes": 1826,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_open",
+        "input_tokens": 9587,
+        "output_tokens": 122,
+        "latency_ms": 282,
+        "response_bytes": 156,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 11834,
+        "output_tokens": 55,
+        "latency_ms": 227,
+        "response_bytes": 1742,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 13946,
+        "output_tokens": 354,
+        "latency_ms": 0,
+        "response_bytes": 537,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 26699,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {
+      "articles": [
+        {
+          "title": "AI Tools Reshape Developer Workflows",
+          "date": "2025-01-13",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Open Source AI Models: A Review",
+          "date": "2025-01-07",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "WebAssembly and Browser Performance",
+          "date": "2024-12-31",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Cybersecurity Trends 2025",
+          "date": "2024-12-20",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        }
+      ]
+    },
+    "run_id": "d3baa2c5",
+    "timestamp": "2026-04-04T13:36:30.055241+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 9
+  },
+  {
+    "task_id": "hacker-news-ask",
+    "backend": "brow",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 53375,
+    "total_output_tokens": 1491,
+    "tool_calls": 6,
+    "tool_call_log": [
+      {
+        "name": "brow_session_new",
+        "input_tokens": 2304,
+        "output_tokens": 88,
+        "latency_ms": 2271,
+        "response_bytes": 4793,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_snapshot",
+        "input_tokens": 4255,
+        "output_tokens": 101,
+        "latency_ms": 281,
+        "response_bytes": 14,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 6235,
+        "output_tokens": 340,
+        "latency_ms": 268,
+        "response_bytes": 210,
+        "success": false,
+        "error": "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 10378,
+        "output_tokens": 332,
+        "latency_ms": 264,
+        "response_bytes": 330,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "brow_eval",
+        "input_tokens": 14558,
+        "output_tokens": 495,
+        "latency_ms": 270,
+        "response_bytes": 1852,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 15645,
+        "output_tokens": 135,
+        "latency_ms": 0,
+        "response_bytes": 65,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 27885,
+    "errors": [
+      "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    ],
+    "error_recoveries": 1,
+    "final_output": {
+      "ask_posts": []
+    },
+    "run_id": "54e41b1a",
+    "timestamp": "2026-04-04T13:36:57.951889+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 6
+  },
+  {
+    "task_id": "hacker-news-ask",
+    "backend": "mcp-playwright",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 624084,
+    "total_output_tokens": 1984,
+    "tool_calls": 9,
+    "tool_call_log": [
+      {
+        "name": "mcp_navigate",
+        "input_tokens": 1401,
+        "output_tokens": 86,
+        "latency_ms": 1870,
+        "response_bytes": 258,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_snapshot",
+        "input_tokens": 1603,
+        "output_tokens": 56,
+        "latency_ms": 38,
+        "response_bytes": 59706,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "mcp_evaluate",
+        "input_tokens": 21036,
+        "output_tokens": 485,
+        "latency_ms": 2,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_evaluate",
+        "input_tokens": 40946,
+        "output_tokens": 452,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_evaluate",
+        "input_tokens": 80218,
+        "output_tokens": 383,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_evaluate",
+        "input_tokens": 119421,
+        "output_tokens": 246,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_evaluate",
+        "input_tokens": 119698,
+        "output_tokens": 74,
+        "latency_ms": 3,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_evaluate",
+        "input_tokens": 119805,
+        "output_tokens": 121,
+        "latency_ms": 6,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "name": "mcp_evaluate",
+        "input_tokens": 119956,
+        "output_tokens": 81,
+        "latency_ms": 5,
+        "response_bytes": 54,
+        "success": false,
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      }
+    ],
+    "wall_clock_ms": 127085,
+    "errors": [
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)",
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "17c85b48",
+    "timestamp": "2026-04-04T13:39:05.045727+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 9
+  },
+  {
+    "task_id": "hacker-news-ask",
+    "backend": "playwright-cli",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": false,
+    "total_input_tokens": 1482,
+    "total_output_tokens": 98,
+    "tool_calls": 1,
+    "tool_call_log": [
+      {
+        "name": "pwcli_open",
+        "input_tokens": 1482,
+        "output_tokens": 98,
+        "latency_ms": 2451,
+        "response_bytes": 59938,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 101136,
+    "errors": [],
+    "error_recoveries": 0,
+    "final_output": {},
+    "run_id": "096210e9",
+    "timestamp": "2026-04-04T13:40:46.207904+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 1
+  },
+  {
+    "task_id": "hacker-news-ask",
+    "backend": "agent-browser",
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "success": true,
+    "total_input_tokens": 75886,
+    "total_output_tokens": 998,
+    "tool_calls": 5,
+    "tool_call_log": [
+      {
+        "name": "ab_open",
+        "input_tokens": 1574,
+        "output_tokens": 85,
+        "latency_ms": 1884,
+        "response_bytes": 120,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_snapshot",
+        "input_tokens": 1740,
+        "output_tokens": 55,
+        "latency_ms": 251,
+        "response_bytes": 29037,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "ab_eval",
+        "input_tokens": 11205,
+        "output_tokens": 444,
+        "latency_ms": 243,
+        "response_bytes": 94,
+        "success": false,
+        "error": "\u001b[31m\u2717\u001b[0m Evaluation error: SyntaxError: Illegal return statement"
+      },
+      {
+        "name": "ab_eval",
+        "input_tokens": 21103,
+        "output_tokens": 301,
+        "latency_ms": 243,
+        "response_bytes": 65,
+        "success": true,
+        "error": null
+      },
+      {
+        "name": "submit_answer",
+        "input_tokens": 40264,
+        "output_tokens": 113,
+        "latency_ms": 0,
+        "response_bytes": 65,
+        "success": true,
+        "error": null
+      }
+    ],
+    "wall_clock_ms": 24300,
+    "errors": [
+      "\u001b[31m\u2717\u001b[0m Evaluation error: SyntaxError: Illegal return statement"
+    ],
+    "error_recoveries": 1,
+    "final_output": {
+      "ask_posts": []
+    },
+    "run_id": "4e18f760",
+    "timestamp": "2026-04-04T13:41:10.525822+00:00",
+    "brow_version": "6e1b1ee",
+    "conversation_turns": 5
+  }
+]

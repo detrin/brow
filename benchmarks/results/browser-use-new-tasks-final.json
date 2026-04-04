@@ -1,0 +1,265 @@
+[
+  {
+    "task_id": "github-trending-python",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
+    "success": true,
+    "total_input_tokens": 13780,
+    "total_output_tokens": 1039,
+    "tool_calls": 2,
+    "tool_call_log": [],
+    "wall_clock_ms": 34434,
+    "errors": [
+      "None",
+      "None"
+    ],
+    "error_recoveries": 0,
+    "final_output": {
+      "repositories": [
+        {
+          "name": "Blaizzy/mlx-vlm",
+          "description": "MLX-VLM is a package for inference and fine-tuning of Vision Language Models (VLMs) on your Mac using MLX.",
+          "stars_today": 499,
+          "total_stars": 3385
+        },
+        {
+          "name": "onyx-dot-app/onyx",
+          "description": "Open Source AI Platform - AI Chat with advanced features that works with every LLM",
+          "stars_today": 1212,
+          "total_stars": 23751
+        },
+        {
+          "name": "microsoft/agent-framework",
+          "description": "A framework for building, orchestrating and deploying AI agents and multi-agent workflows with support for Python and .NET.",
+          "stars_today": 66,
+          "total_stars": 8529
+        },
+        {
+          "name": "sherlock-project/sherlock",
+          "description": "Hunt down social media accounts by username across social networks",
+          "stars_today": 993,
+          "total_stars": 78943
+        },
+        {
+          "name": "HKUDS/LightRAG",
+          "description": "[EMNLP2025] \"LightRAG: Simple and Fast Retrieval-Augmented Generation\"",
+          "stars_today": 272,
+          "total_stars": 32014
+        }
+      ]
+    },
+    "run_id": "b0f5db0f",
+    "timestamp": "2026-04-04T13:37:59.766593+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 2
+  },
+  {
+    "task_id": "hacker-news-ask",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
+    "success": false,
+    "total_input_tokens": 35103,
+    "total_output_tokens": 1741,
+    "tool_calls": 5,
+    "tool_call_log": [],
+    "wall_clock_ms": 86820,
+    "errors": [
+      "None",
+      "None",
+      "Too many tokens, please wait before trying again.",
+      "Too many tokens, please wait before trying again.",
+      "None"
+    ],
+    "error_recoveries": 0,
+    "final_output": {
+      "result": "I have successfully scanned all 30 stories on the Hacker News front page. After examining each title carefully, I found no stories that start with \"Ask HN:\". There is one story that starts with \"Tell HN:\" (\"Tell HN: Anthropic no longer allowing Claude Code subscriptions to use OpenClaw\"), but this is different from \"Ask HN:\" posts.\n\nSince no Ask HN posts are currently on the front page, I'm returning an empty array as requested."
+    },
+    "run_id": "77b8c3df",
+    "timestamp": "2026-04-04T13:39:26.599651+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 5
+  },
+  {
+    "task_id": "npm-http-clients",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
+    "success": false,
+    "total_input_tokens": 189398,
+    "total_output_tokens": 9831,
+    "tool_calls": 16,
+    "tool_call_log": [],
+    "wall_clock_ms": 270100,
+    "errors": [
+      "Too many tokens, please wait before trying again.",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "error_recoveries": 0,
+    "final_output": {
+      "result": "I was unable to complete the research task due to systematic blocking by security verification systems across all platforms.\n\n**Technical Blockers Encountered:**\n\n1. **npm.com pages**: All npm.com URLs (search page, homepage, individual package pages including axios) are protected by Cloudflare security verification that did not auto-resolve after 40+ seconds of waiting across multiple attempts.\n\n2. **Search engines**: All major search engines blocked access:\n   - DuckDuckGo: Required manual CAPTCHA (selecting duck images)\n   - Google: reCAPTCHA verification page that didn't auto-resolve\n   - Bing: Cloudflare security challenge\n\n3. **Direct package access**: Even direct navigation to known popular packages like axios (https://www.npmjs.com/package/axios) hit the same Cloudflare verification wall.\n\n**Attempted Approaches (16 steps total):**\n- Multiple npm search page attempts with extended waiting periods\n- Homepage navigation attempts\n- Search engine queries for popular JavaScript HTTP libraries\n- Direct navigation to known popular packages\n\n**Unable to Extract:**\n- Weekly download numbers from npm package pages\n- Latest version information\n- Package descriptions\n- Top 3 packages by npm popularity ranking\n\nThe task requires accessing npm.com pages to extract specific weekly download data, but this was systematically prevented by persistent security verification across all access methods. The browser rules indicate CAPTCHAs should be automatically solved, but this did not occur for any of the encountered verification systems."
+    },
+    "run_id": "7582fff0",
+    "timestamp": "2026-04-04T13:43:56.711348+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 16
+  },
+  {
+    "task_id": "paginated-news",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
+    "success": true,
+    "total_input_tokens": 94246,
+    "total_output_tokens": 6341,
+    "tool_calls": 7,
+    "tool_call_log": [],
+    "wall_clock_ms": 109451,
+    "errors": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "error_recoveries": 0,
+    "final_output": {
+      "articles": [
+        {
+          "title": "AI Tools Reshape Developer Workflows",
+          "date": "2025-01-13",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Open Source AI Models: A Review",
+          "date": "2025-01-07",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "WebAssembly and Browser Performance",
+          "date": "2024-12-31",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Cybersecurity Trends 2025",
+          "date": "2024-12-20",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        }
+      ]
+    },
+    "run_id": "6e77a9a5",
+    "timestamp": "2026-04-04T13:45:46.174038+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 7
+  },
+  {
+    "task_id": "price-comparison",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
+    "success": true,
+    "total_input_tokens": 64635,
+    "total_output_tokens": 5249,
+    "tool_calls": 5,
+    "tool_call_log": [],
+    "wall_clock_ms": 79785,
+    "errors": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "error_recoveries": 0,
+    "final_output": {
+      "comparisons": [
+        {
+          "name": "USB-C Hub 7-in-1",
+          "price_techmart": "$29.99",
+          "price_digishop": "$24.99",
+          "cheaper_store": "DigiShop"
+        },
+        {
+          "name": "Keyboard Elite TKL",
+          "price_techmart": "$149.00",
+          "price_digishop": "$159.00",
+          "cheaper_store": "TechMart"
+        },
+        {
+          "name": "Monitor 27\" 4K",
+          "price_techmart": "$399.00",
+          "price_digishop": "$379.00",
+          "cheaper_store": "DigiShop"
+        }
+      ]
+    },
+    "run_id": "aeb20bb2",
+    "timestamp": "2026-04-04T13:47:05.971768+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 5
+  },
+  {
+    "task_id": "tech-stack-graph",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
+    "success": true,
+    "total_input_tokens": 144185,
+    "total_output_tokens": 10024,
+    "tool_calls": 11,
+    "tool_call_log": [],
+    "wall_clock_ms": 146786,
+    "errors": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "error_recoveries": 0,
+    "final_output": {
+      "dependencies": [
+        {
+          "name": "CoreLib",
+          "version": "2.1.0",
+          "description": "Foundational utilities for the Nexus ecosystem. Provides string manipulation helpers, date formatting, collection utilities (map, filter, group-by), and deep equality checks used throughout the framework."
+        },
+        {
+          "name": "AuthKit",
+          "version": "3.0.0",
+          "description": "Authentication and authorization toolkit for the Nexus ecosystem. Supports OAuth2 flows, JWT issuance and validation, session management with sliding expiry, and role-based access control (RBAC)."
+        },
+        {
+          "name": "Logger",
+          "version": "2.0.1",
+          "description": "Structured logging library with configurable log levels, pluggable formatters (JSON, pretty-print, logfmt), and transport plugins for stdout, files, and remote collectors (OpenTelemetry, Datadog)."
+        }
+      ]
+    },
+    "run_id": "465b1d2e",
+    "timestamp": "2026-04-04T13:49:32.770112+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 11
+  }
+]

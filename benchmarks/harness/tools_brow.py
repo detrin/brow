@@ -145,7 +145,7 @@ def _build_brow_cmd(name, params):
         "brow_scroll": lambda p: (
             ["brow", "scroll-to", "-s", p["session"], p["selector"]]
             if p.get("selector")
-            else ["brow", "scroll", "-s", p["session"], str(p.get("pixels", 0))]
+            else ["brow", "scroll", "-s", p["session"], "--pixels", str(p.get("pixels", 0))]
         ),
         "brow_goto": lambda p: ["brow", "navigate", "-s", p["session"], p["url"]],
         "brow_wait": lambda p: ["brow", "wait", "-s", p["session"], "--selector", p["selector"]]

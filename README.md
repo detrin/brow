@@ -100,15 +100,18 @@ Because the `google` profile persists your login, you get personalized results -
 
 16 fixture tasks, Claude Sonnet via AWS Bedrock. Compared against playwright-cli, MCP Playwright, agent-browser (Rust/CDP), and browser-use (full-stack agent framework).
 
+16 fixture tasks, Claude Sonnet via AWS Bedrock. Compared against playwright-cli, MCP Playwright, agent-browser (Rust/CDP), and browser-use (full-stack agent framework).
+
 | Metric | **brow** | agent-browser | browser-use | playwright-cli | MCP Playwright |
 |--------|----------|---------------|-------------|----------------|----------------|
-| Success rate | **88% (14/16)** | 63% (10/16) | 63% (10/16) | 50% (8/16) | 44% (7/16) |
+| Success rate (16 tasks) | **88% (14/16)** | 63% (10/16) | 63% (10/16) | 50% (8/16) | 44% (7/16) |
+| Success rate (22 tasks) | **82% (18/22)** | 64% (14/22) | 64% (14/22) | 55% (12/22) | 36% (8/22) |
 | Avg tokens/task | **68K** | 73K | 75K | 113K | 118K |
 | Avg tool calls | 9.6 | 11.2 | **5.8** | 9.6 | 11.6 |
 | Avg wall-clock | 41s | **36s** | 73s | 44s | 50s |
 | Est. cost/task | **$0.22** | $0.23 | $0.27 | $0.35 | $0.37 |
 
-brow leads on success rate (+25pp over agent-browser and browser-use after tooling improvements) and token efficiency. browser-use runs its own agent loop — included for completeness.
+brow leads on success rate across both the original 16-task fixture suite and a 22-task extended suite (adds pagination, cross-site comparison, graph traversal, and live web tasks). browser-use runs its own agent loop — included for completeness.
 
 Per-task success grid, token breakdown, and analysis: [benchmarks/README.md](benchmarks/README.md)
 

@@ -73,6 +73,69 @@ brow results re-run 2026-04-04 after adding `brow_goto`, `brow_wait`, `brow_eval
 | search-extract | **9,179** | 4,061 | 27,074 | 12,642 | 64,177 | **1/1** | 0/1 | 0/1 | 0/1 | **1/1** |
 | spa-navigation | 74,999 | **44,354** | 56,521 | 75,544 | 88,156 | **1/1** | 0/1 | **1/1** | 0/1 | 0/1 |
 
+---
+
+## Extended Task Suite (6 New Tasks)
+
+6 new tasks added 2026-04-04 — 3 fixture tasks and 3 live tasks — covering data joining, pagination traversal, graph link-following, and real-site extraction. Run once per backend (no warmup), same model.
+
+**Fixture scroll bug fixed:** `brow scroll` takes `--pixels` as a flag, not a positional argument — corrected in `tools_brow.py`.
+
+### New Tasks — Success Grid
+
+✅ = passed, ❌ = failed
+
+| Task | brow | pwcli | mcp | agent-browser | browser-use |
+|------|------|-------|-----|---------------|-------------|
+| price-comparison *(fixture)* | ✅ | ✅ | ❌ | ✅ | ✅ |
+| paginated-news *(fixture)* | ✅ | ✅ | ❌ | ✅ | ✅ |
+| tech-stack-graph *(fixture)* | ✅ | ✅ | ❌ | ✅ | ✅ |
+| github-trending-python *(live)* | ✅ | ✅ | ✅ | ✅ | ✅ |
+| npm-http-clients *(live)* | ❌ | ✅ | ❌ | ❌ | ❌ |
+| hacker-news-ask *(live)* | ✅ | ❌ | ❌ | ✅ | ❌ |
+| **Total** | **4/6** | **4/6** | **1/6** | **4/6** | **4/6** |
+
+### New Tasks — Token Cost
+
+| Task | brow | pwcli | mcp | agent-browser | browser-use |
+|------|------|-------|-----|---------------|-------------|
+| price-comparison | 43,774 | **8,913** | 86,215 | 12,994 | 69,884 |
+| paginated-news | **16,356** | 19,427 | 145,694 | 58,162 | 100,587 |
+| tech-stack-graph | 173,318 | **87,169** | 98,161 | 126,828 | 154,209 |
+| github-trending-python | 383,096 | **11,130** | 12,813 | 9,902 | 14,819 |
+| npm-http-clients | 168,282 | 179,350 | **51,625** | 61,618 | 199,229 |
+| hacker-news-ask | **54,866** | 1,580 | 626,068 | 76,884 | 36,844 |
+| **Average** | 139,949 | **51,262** | 170,096 | 57,731 | 95,929 |
+
+### Combined Totals (22 Tasks)
+
+Combining the original 16-task fixture suite with 6 new tasks (3 fixture + 3 live):
+
+| Backend | Original 16 | New 6 | **Total 22** |
+|---------|-------------|-------|-------------|
+| **brow** | 14/16 (88%) | 4/6 (67%) | **18/22 (82%)** |
+| **agent-browser** | 10/16 (63%) | 4/6 (67%) | **14/22 (64%)** |
+| **browser-use** | 10/16 (63%) | 4/6 (67%) | **14/22 (64%)** |
+| **playwright-cli** | 8/16 (50%) | 4/6 (67%) | **12/22 (55%)** |
+| **MCP Playwright** | 7/16 (44%) | 1/6 (17%) | **8/22 (36%)** |
+
+### New Task Analysis
+
+**`npm-http-clients` (live) — only playwright-cli passes**
+npmjs.com deploys Cloudflare bot protection against headless browsers. playwright-cli managed to navigate past it; brow, agent-browser, and browser-use were blocked. MCP crashed with JSON parse errors. This task is a realistic proxy for anti-bot resistance.
+
+**`hacker-news-ask` (live) — brow and agent-browser pass, rest fail**
+playwright-cli hit max_steps (returned in 1,580 tokens — barely started). MCP used 626K tokens hitting JSON parse errors. browser-use ran 86s but misidentified job posts as Ask HN. brow and agent-browser used `snapshot --search` / snapshot filtering to find Ask HN posts quickly.
+
+**`github-trending-python` (live) — all pass but brow uses 383K tokens**
+Every backend succeeded, but brow used 383K tokens vs 10-15K for others. The agent didn't apply `snapshot --search` and re-read the full GitHub page multiple times. The task description has been noted for a future hint to use search filtering.
+
+**`price-comparison` and `paginated-news` (fixture) — brow most token-efficient**
+brow excels on multi-page fixture tasks: paginated-news in 16K tokens (vs 58K agent-browser, 100K browser-use). price-comparison shows playwright-cli at 8.9K — it gets the data in fewer round-trips by reading the raw HTML.
+
+**MCP Playwright regression on fixture tasks**
+MCP fails all 3 new fixture tasks with JSON parse errors (18 errors on paginated-news, 13 on price-comparison). The server crashes early on longer tasks. Its 1/6 on new tasks vs 7/16 on the original suite confirms it degrades on complex multi-page work.
+
 ### Live Task — Vacuum Robot Research
 
 Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavace/18863907.htm) with [Valetudo supported models](https://valetudo.cloud/pages/general/supported-robots.html). Extract matching products with price, rating, and review count.
