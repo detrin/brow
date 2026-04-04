@@ -1,0 +1,13 @@
+{
+  "name": "brow-docs",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.21.0",
+    "astro": "^4.5.0"
+  }
+}
