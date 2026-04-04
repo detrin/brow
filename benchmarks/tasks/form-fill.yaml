@@ -3,7 +3,7 @@ name: "Fill and Submit Form"
 category: practical
 url: "FIXTURE_URL/static/form.html"
 requires_fixture: true
-description: "Navigate to FIXTURE_URL/static/form.html. Fill the form: name='John Doe', email='john@example.com', select subject='Support', message='Need help with account'. Submit the form. Return the confirmation message text."
+description: "Navigate to FIXTURE_URL/static/form.html. Fill the form: name='John Doe', email='john@example.com', select subject='Support', message='Need help with account'. Submit the form. Return as object with field 'confirmation' containing the confirmation message text."
 max_steps: 15
 timeout_seconds: 90
 success_criteria:

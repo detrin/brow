@@ -236,13 +236,13 @@ Playwright selector syntax:
 
 | Metric | **brow** | agent-browser | browser-use | playwright-cli | MCP Playwright |
 |--------|----------|---------------|-------------|----------------|----------------|
-| Success rate | **69% (11/16)** | 56% | 56% | 44% | 38% |
+| Success rate | **88% (14/16)** | 63% (10/16) | 63% (10/16) | 50% (8/16) | 44% (7/16) |
 | Avg tokens/task | **68K** | 73K | 75K | 113K | 118K |
 | Avg tool calls | 9.6 | 11.2 | **5.8** | 9.6 | 11.6 |
 | Avg wall-clock | 41s | **36s** | 73s | 44s | 50s |
 | Est. cost/task | **$0.22** | $0.23 | $0.27 | $0.35 | $0.37 |
 
-brow leads on success rate (81% vs 56%) and lowest token cost ($0.22/task) after adding `brow_goto`, `brow_wait`, `brow_eval` tools. agent-browser wins on wall-clock speed. browser-use is the only other backend to pass `deep-wizard`.
+brow leads on success rate (88% vs 63%) and lowest token cost ($0.22/task) after adding `brow_goto`, `brow_wait`, `brow_eval` tools. agent-browser wins on wall-clock speed. browser-use is the only other backend to pass `deep-wizard`.
 
 [Full results and per-task breakdown →](../benchmarks/README.md)
 

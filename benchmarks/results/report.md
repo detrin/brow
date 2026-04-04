@@ -1,30 +1,15 @@
 ## Benchmark Results (us.anthropic.claude-sonnet-4-20250514-v1:0, 1 runs per task)
 
 ### Summary
-| Metric | brow | Delta |
+| Metric | playwright-cli | Delta |
 |--------|--------|-------|
-| Avg tokens/task | 68255+/-69377 |  |
-| Avg tool calls/task | 9.6+/-4.5 |  |
-| Success rate | 81% |  |
-| Avg wall-clock (s) | 41.3+/-40.2 |  |
-| Est. cost/task | $0.2208 |  |
+| Avg tokens/task | 18441+/-0 |  |
+| Avg tool calls/task | 6.0+/-0.0 |  |
+| Success rate | 100% |  |
+| Avg wall-clock (s) | 21.0+/-0.0 |  |
+| Est. cost/task | $0.0629 |  |
 
 ### Per-Task Breakdown
 | Task | Backend | Tokens | Calls | Success | Time (s) |
 |------|---------|--------|-------|---------|----------|
-| data-table-extract | brow | 63962+/-0 | 8.0+/-0.0 | 1/1 | 31.7+/-0.0 |
-| deep-wizard | brow | 293672+/-0 | 17.0+/-0.0 | 0/1 | 181.3+/-0.0 |
-| dynamic-content | brow | 34925+/-0 | 10.0+/-0.0 | 1/1 | 35.4+/-0.0 |
-| ecommerce-search | brow | 46006+/-0 | 7.0+/-0.0 | 1/1 | 27.3+/-0.0 |
-| error-recovery | brow | 60504+/-0 | 17.0+/-0.0 | 1/1 | 47.7+/-0.0 |
-| form-fill | brow | 31067+/-0 | 7.0+/-0.0 | 0/1 | 18.4+/-0.0 |
-| form-validation-recovery | brow | 34493+/-0 | 10.0+/-0.0 | 1/1 | 30.1+/-0.0 |
-| infinite-scroll | brow | 120127+/-0 | 15.0+/-0.0 | 0/1 | 55.5+/-0.0 |
-| info-lookup | brow | 7816+/-0 | 3.0+/-0.0 | 1/1 | 7.7+/-0.0 |
-| large-snapshot | brow | 80295+/-0 | 7.0+/-0.0 | 1/1 | 32.4+/-0.0 |
-| login-auth | brow | 54919+/-0 | 14.0+/-0.0 | 1/1 | 44.2+/-0.0 |
-| multi-page-nav | brow | 11140+/-0 | 4.0+/-0.0 | 1/1 | 11.1+/-0.0 |
-| multi-tab-workflow | brow | 44570+/-0 | 10.0+/-0.0 | 1/1 | 56.4+/-0.0 |
-| rapid-multi-step | brow | 124400+/-0 | 12.0+/-0.0 | 1/1 | 39.7+/-0.0 |
-| search-extract | brow | 9179+/-0 | 3.0+/-0.0 | 1/1 | 10.0+/-0.0 |
-| spa-navigation | brow | 74999+/-0 | 10.0+/-0.0 | 1/1 | 31.2+/-0.0 |
+| form-fill | playwright-cli | 18441+/-0 | 6.0+/-0.0 | 1/1 | 21.0+/-0.0 |

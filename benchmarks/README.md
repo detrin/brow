@@ -48,7 +48,7 @@ brow results re-run 2026-04-04 after adding `brow_goto`, `brow_wait`, `brow_eval
 |--------|----------|-------------------|-------------------|------------------|----------------|
 | Avg tokens/task | **68,255** | 112,775 | 118,161 | 73,156 | 74,751 |
 | Avg tool calls | 9.6 | 9.6 | 11.6 | 11.2 | **5.8** |
-| Success rate | **81% (13/16)** | 44% (7/16) | 38% (6/16) | 56% (9/16) | 56% (9/16) |
+| Success rate | **88% (14/16)** | 50% (8/16) | 44% (7/16) | 63% (10/16) | 63% (10/16) |
 | Avg wall-clock | 41s | 44s | 50s | **36s** | 73s |
 | Est. cost/task | **$0.22** | $0.35 | $0.37 | $0.23 | $0.27 |
 
@@ -61,7 +61,7 @@ brow results re-run 2026-04-04 after adding `brow_goto`, `brow_wait`, `brow_eval
 | dynamic-content | 34,925 | 48,498 | 43,470 | **5,239** | 25,874 | **1/1** | 0/1 | 0/1 | 0/1 | **1/1** |
 | ecommerce-search | 46,006 | 140,630 | 66,236 | **38,230** | 50,418 | **1/1** | 0/1 | 0/1 | **1/1** | 0/1 |
 | error-recovery | 60,504 | **20,704** | 32,752 | 16,495 | 73,667 | **1/1** | 1/1 | 1/1 | **1/1** | 0/1 |
-| form-fill | 31,067 | **24,489** | 22,856 | 19,632 | 38,136 | 0/1 | 0/1 | 0/1 | 0/1 | 0/1 |
+| form-fill | 31,067 | **24,489** | 22,856 | 19,632 | 38,136 | **1/1** | **1/1** | **1/1** | **1/1** | **1/1** |
 | form-validation-recovery | **34,493** | 48,247 | 64,808 | 41,677 | 50,309 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
 | infinite-scroll | 120,127 | 116,602 | 73,556 | **88,090** | 91,221 | 0/1 | 1/1 | 0/1 | **1/1** | **1/1** |
 | info-lookup | **7,816** | 6,376 | 6,247 | 11,298 | 37,363 | **1/1** | 1/1 | 1/1 | **1/1** | **1/1** |
@@ -93,11 +93,11 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 
 ### brow leads overall after tooling improvements
 
-- **81% success rate (13/16)** — up from 69% before adding `brow_goto`/`brow_wait`/`brow_eval` tools
+- **88% success rate (14/16)** — up from 69% before adding `brow_goto`/`brow_wait`/`brow_eval` tools
 - Lowest avg tokens: **68,255/task** — 7% less than agent-browser (73K), 39% less than pwcli
 - Lowest cost: **$0.22/task**
-- New passes vs previous run: `dynamic-content`, `search-extract`, `spa-navigation`, `login-auth`
-- Still failing: `form-fill` (field name mismatch in judge), `deep-wizard` (timeout on 10-step wizard), `infinite-scroll` (single-run variance)
+- New passes vs previous run: `dynamic-content`, `search-extract`, `spa-navigation`, `login-auth`, `form-fill`
+- Still failing: `deep-wizard` (timeout on 10-step wizard), `infinite-scroll` (single-run variance)
 
 ### agent-browser: strong on speed, weaker on success
 
@@ -196,7 +196,7 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 | dynamic-content | ✅ | ❌ | ❌ | ❌ | ✅ |
 | ecommerce-search | ✅ | ❌ | ❌ | ✅ | ❌ |
 | error-recovery | ✅ | ✅ | ✅ | ✅ | ❌ |
-| form-fill | ❌ | ❌ | ❌ | ❌ | ❌ |
+| form-fill | ✅ | ✅ | ✅ | ✅ | ✅ |
 | form-validation-recovery | ✅ | ✅ | ✅ | ✅ | ✅ |
 | infinite-scroll | ❌ | ✅ | ❌ | ✅ | ✅ |
 | info-lookup | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -207,7 +207,7 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 | rapid-multi-step | ✅ | ✅ | ✅ | ✅ | ✅ |
 | search-extract | ✅ | ❌ | ❌ | ❌ | ✅ |
 | spa-navigation | ✅ | ❌ | ✅ | ❌ | ❌ |
-| **Total** | **13/16** | **7/16** | **6/16** | **9/16** | **9/16** |
+| **Total** | **14/16** | **8/16** | **7/16** | **10/16** | **10/16** |
 
 ### Token Cost Per Task
 
@@ -233,10 +233,10 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 
 ### Notable Patterns
 
-- **`form-fill` and `login-auth`**: no backend passes — auth flow and form submission edge cases trip all five
-- **`search-extract`**: only browser-use passes — its high-level extract action handles result parsing that raw-tool backends miss
-- **`spa-navigation`**: only MCP Playwright passes — hash-routing edge case that suits its navigation model
-- **`dynamic-content`**: only browser-use passes — built-in wait semantics handle JS-delayed content cleanly
+- **`login-auth`**: only brow passes — session cookie preservation with `brow_goto` is required
+- **`search-extract`**: brow and browser-use pass — brow_eval handles result parsing; raw-tool backends struggle
+- **`spa-navigation`**: brow and MCP Playwright pass — hash-routing handled by brow's click fix and MCP's navigation model
+- **`dynamic-content`**: brow and browser-use pass — brow_wait provides explicit selector-based waiting
 - **`data-table-extract`**: only brow passes — table markdown compression is the differentiator; others overflow context
 - **`form-validation-recovery`, `info-lookup`, `multi-page-nav`, `rapid-multi-step`**: most backends pass — straightforward enough that tool quality doesn't matter
 
