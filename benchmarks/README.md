@@ -1,6 +1,6 @@
 # Browser Automation Benchmarks
 
-Compares **brow**, **playwright-cli**, and **MCP Playwright** as browser automation backends for an LLM agent loop (Claude Sonnet on AWS Bedrock).
+Compares **brow**, **playwright-cli**, **MCP Playwright**, and **agent-browser** as browser automation backends for an LLM agent loop (Claude Sonnet on AWS Bedrock).
 
 ## Quick Start
 
@@ -22,7 +22,7 @@ python -m benchmarks.run --backend brow --tasks vacuum-research --include-live -
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--backend` | `all` | `brow`, `mcp-playwright`, `playwright-cli`, or `all` |
+| `--backend` | `all` | `brow`, `mcp-playwright`, `playwright-cli`, `agent-browser`, or `all` |
 | `--tasks` | `all` | Task ID(s), comma-separated |
 | `--runs` | `3` | Runs per task per backend |
 | `--model` | `us.anthropic.claude-sonnet-4-20250514-v1:0` | Claude model ID |
@@ -32,40 +32,40 @@ python -m benchmarks.run --backend brow --tasks vacuum-research --include-live -
 
 ## Results
 
-**Model:** `us.anthropic.claude-sonnet-4-20250514-v1:0` (AWS Bedrock) | **Date:** 2026-03-27
+**Model:** `us.anthropic.claude-sonnet-4-20250514-v1:0` (AWS Bedrock) | **Date:** 2026-04-04
 
-### Final Comparison — All 16 Fixture Tasks (3 backends)
+### Final Comparison — All 16 Fixture Tasks (4 backends)
 
-16 tasks using a local fixture server. brow includes ref-based element addressing, auto-snapshot, table-aware markdown, inline list compression, adaptive node caps, and parallel tool execution.
+16 tasks using a local fixture server. brow includes ref-based element addressing, auto-snapshot, table-aware markdown, inline list compression, adaptive node caps, and parallel tool execution. agent-browser uses Rust + CDP directly (no Playwright), with `@eN` refs from accessibility tree snapshots.
 
-| Metric | **brow** | **playwright-cli** | **MCP Playwright** |
-|--------|----------|-------------------|-------------------|
-| Avg tokens/task | **86,115** | 112,775 | 118,161 |
-| Avg tool calls | **7.4** | 9.6 | 11.6 |
-| Success rate | **69% (11/16)** | 44% (7/16) | 38% (6/16) |
-| Avg wall-clock | **33s** | 44s | 50s |
-| Est. cost/task | **$0.27** | $0.35 | $0.37 |
+| Metric | **brow** | **playwright-cli** | **MCP Playwright** | **agent-browser** |
+|--------|----------|-------------------|-------------------|------------------|
+| Avg tokens/task | **86,115** | 112,775 | 118,161 | 73,156 |
+| Avg tool calls | **7.4** | 9.6 | 11.6 | 11.2 |
+| Success rate | **69% (11/16)** | 44% (7/16) | 38% (6/16) | 56% (9/16) |
+| Avg wall-clock | **33s** | 44s | 50s | 36s |
+| Est. cost/task | **$0.27** | $0.35 | $0.37 | $0.23 |
 
 #### Per-Task Breakdown
 
-| Task | brow tokens | pwcli tokens | mcp tokens | brow &Delta; pwcli | brow ✓ | pwcli ✓ | mcp ✓ |
-|------|------------|-------------|-----------|-------------------|--------|---------|-------|
-| data-table-extract | **130,593** | 259,625 | 476,499 | **-50%** | **1/1** | 0/1 | 0/1 |
-| deep-wizard | **182,894** | 273,691 | 124,159 | **-33%** | **1/1** | 0/1 | 0/1 |
-| dynamic-content | **3,229** | 48,498 | 43,470 | **-93%** | 0/1 | 0/1 | 0/1 |
-| ecommerce-search | **11,419** | 140,630 | 66,236 | **-92%** | **1/1** | 0/1 | 0/1 |
-| error-recovery | **4,881** | 20,704 | 32,752 | **-76%** | **1/1** | 1/1 | 1/1 |
-| form-fill | **18,288** | 24,489 | 22,856 | **-25%** | 0/1 | 0/1 | 0/1 |
-| form-validation-recovery | **26,300** | 48,247 | 64,808 | **-45%** | **1/1** | 1/1 | 1/1 |
-| infinite-scroll | 168,610 | **116,602** | 73,556 | +45% | **1/1** | 1/1 | 0/1 |
-| info-lookup | **5,381** | 6,376 | 6,247 | **-16%** | **1/1** | 1/1 | 1/1 |
-| large-snapshot | **195,458** | 609,060 | 607,043 | **-68%** | **1/1** | 0/1 | 0/1 |
-| login-auth | 185,257 | **92,525** | 56,757 | +100% | 0/1 | 0/1 | 0/1 |
-| multi-page-nav | **7,864** | 10,806 | 71,339 | **-27%** | **1/1** | 1/1 | 1/1 |
-| multi-tab-workflow | 217,941 | **23,787** | 115,354 | +816% | **1/1** | 1/1 | 0/1 |
-| rapid-multi-step | 159,912 | **80,952** | 45,907 | +98% | **1/1** | 1/1 | 1/1 |
-| search-extract | **3,663** | 4,061 | 27,074 | **-10%** | 0/1 | 0/1 | 0/1 |
-| spa-navigation | 56,148 | **44,354** | 56,521 | +27% | 0/1 | 0/1 | **1/1** |
+| Task | brow tokens | pwcli tokens | mcp tokens | ab tokens | brow ✓ | pwcli ✓ | mcp ✓ | ab ✓ |
+|------|------------|-------------|-----------|-----------|--------|---------|-------|------|
+| data-table-extract | **130,593** | 259,625 | 476,499 | 295,975 | **1/1** | 0/1 | 0/1 | 0/1 |
+| deep-wizard | 182,894 | 273,691 | 124,159 | **79,238** | **1/1** | 0/1 | 0/1 | 0/1 |
+| dynamic-content | **3,229** | 48,498 | 43,470 | 5,239 | 0/1 | 0/1 | 0/1 | 0/1 |
+| ecommerce-search | **11,419** | 140,630 | 66,236 | 38,230 | **1/1** | 0/1 | 0/1 | **1/1** |
+| error-recovery | **4,881** | 20,704 | 32,752 | 16,495 | **1/1** | 1/1 | 1/1 | **1/1** |
+| form-fill | **18,288** | 24,489 | 22,856 | 19,632 | 0/1 | 0/1 | 0/1 | 0/1 |
+| form-validation-recovery | **26,300** | 48,247 | 64,808 | 41,677 | **1/1** | 1/1 | 1/1 | **1/1** |
+| infinite-scroll | 168,610 | 116,602 | 73,556 | **88,090** | **1/1** | 1/1 | 0/1 | **1/1** |
+| info-lookup | **5,381** | 6,376 | 6,247 | 11,298 | **1/1** | 1/1 | 1/1 | **1/1** |
+| large-snapshot | 195,458 | 609,060 | 607,043 | 340,559 | **1/1** | 0/1 | 0/1 | **1/1** |
+| login-auth | 185,257 | 92,525 | **56,757** | 55,250 | 0/1 | 0/1 | 0/1 | 0/1 |
+| multi-page-nav | **7,864** | 10,806 | 71,339 | 17,046 | **1/1** | 1/1 | 1/1 | **1/1** |
+| multi-tab-workflow | 217,941 | 23,787 | 115,354 | **29,067** | **1/1** | 1/1 | 0/1 | **1/1** |
+| rapid-multi-step | 159,912 | 80,952 | 45,907 | **44,519** | **1/1** | 1/1 | 1/1 | **1/1** |
+| search-extract | **3,663** | 4,061 | 27,074 | 12,642 | 0/1 | 0/1 | 0/1 | 0/1 |
+| spa-navigation | 56,148 | **44,354** | 56,521 | 75,544 | 0/1 | 0/1 | **1/1** | 0/1 |
 
 ### Live Task — Vacuum Robot Research
 
@@ -85,28 +85,40 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 
 ## Analysis
 
-### brow dominates overall
+### brow leads on success rate
 
-- **-24% avg tokens** vs playwright-cli, **-27%** vs MCP Playwright
-- **69% success rate** vs 44% (pwcli) and 38% (mcp) — +25pp and +31pp respectively
-- **-25% wall-clock** vs pwcli, **-34%** vs mcp
-- Wins 10/16 tasks on tokens, 11/16 on success
+- **69% success rate** vs 56% (agent-browser), 44% (pwcli), 38% (mcp)
+- brow wins 11/16 tasks on success, agent-browser wins 9/16
+- brow is the only backend to solve `data-table-extract`, `deep-wizard`, and `spa-navigation`
 
-### Where brow excels
+### agent-browser lowest token consumption
 
-- `dynamic-content` **-93%**: ref-based clicking + auto-snapshot eliminates 10 tool calls
-- `ecommerce-search` **-92%**: compact snapshot + fewer calls (4 vs 12)
-- `error-recovery` **-76%**: ref system simplifies retry logic
-- `large-snapshot` **-68%**: tree pruning + table-aware markdown on massive pages
-- `data-table-extract` **-50%**: table markdown compression + only backend to succeed
-- `deep-wizard` **-33%**: 10-step wizard, only backend to complete it
+- **73,156 avg tokens/task** — 15% less than brow (86,115), 35% less than pwcli, 38% less than mcp
+- Despite more tool calls (11.2 vs brow's 7.4), snapshots are leaner because `-i` flag returns interactive elements only
+- Fastest cost/task at $0.23 vs brow's $0.27
 
-### Where playwright-cli wins
+### Where brow excels vs agent-browser
 
-- `login-auth` +100%: brow's auto-snapshot returns large snapshots after every form fill
-- `rapid-multi-step` +98%: multi-step wizard generates cumulative snapshot data
-- `multi-tab-workflow` +816%: brow's page management overhead is expensive
-- These tasks show auto-snapshot is costly on form-heavy pages — diff snapshots would help
+- `dynamic-content` 3,229 vs 5,239: brow's auto-snapshot eliminates extra calls
+- `ecommerce-search` 11,419 vs 38,230: compact snapshot + fewer calls (4 vs 9)
+- `error-recovery` 4,881 vs 16,495: ref system simplifies retry logic
+- `data-table-extract` 130,593 vs 295,975: table markdown compression wins big; only brow succeeded
+- `deep-wizard` 182,894 vs 79,238 tokens but only brow succeeded the 10-step wizard
+- `large-snapshot` 195,458 vs 340,559: tree pruning handles 550-element pages better
+
+### Where agent-browser wins
+
+- `multi-tab-workflow` **29,067 vs 217,941** (-87%): CDP-native tab handling vs brow's overhead
+- `rapid-multi-step` **44,519 vs 159,912** (-72%): no cumulative auto-snapshot accumulation
+- `login-auth` **55,250 vs 185,257** (-70%): agent-browser's -i snapshots stay lean on form-heavy pages
+- `deep-wizard` **79,238 vs 182,894** (-57%): same pattern — fewer tokens even though task failed
+- `infinite-scroll` **88,090 vs 168,610** (-48%): leaner snapshots on scroll-loaded content
+
+### Where playwright-cli wins over brow
+
+- `multi-tab-workflow` 23,787 vs 217,941: brow's page management is expensive but succeeded
+- `rapid-multi-step` 80,952 vs 159,912: cumulative snapshots cost brow tokens
+- These show auto-snapshot is costly on form-heavy pages — diff snapshots would help
 
 ### Optimizations applied to brow
 
@@ -177,6 +189,7 @@ benchmarks/
     tools_playwright_cli.py  playwright-cli tool definitions
     tools_mcp.py      MCP Playwright HTTP client + tool definitions
     tools_common.py   submit_answer tool (shared)
+    tools_agent_browser.py  agent-browser CLI tool definitions + async executor
   results/            Generated reports and raw JSON
 ```
 

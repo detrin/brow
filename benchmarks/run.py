@@ -8,7 +8,7 @@ from benchmarks.harness.reporter import save_report
 
 def main():
     parser = argparse.ArgumentParser(description="brow vs MCP Playwright benchmark")
-    parser.add_argument("--backend", default="all", choices=["brow", "mcp-playwright", "playwright-cli", "all"])
+    parser.add_argument("--backend", default="all", choices=["brow", "mcp-playwright", "playwright-cli", "agent-browser", "all"])
     parser.add_argument("--tasks", default="all", help="Task IDs (comma-separated) or 'all'")
     parser.add_argument("--runs", type=int, default=3)
     parser.add_argument("--model", default="us.anthropic.claude-sonnet-4-20250514-v1:0")
@@ -18,7 +18,7 @@ def main():
     args = parser.parse_args()
 
     if args.backend == "all":
-        backends = ["brow", "mcp-playwright", "playwright-cli"]
+        backends = ["brow", "mcp-playwright", "playwright-cli", "agent-browser"]
     else:
         backends = [args.backend]
 

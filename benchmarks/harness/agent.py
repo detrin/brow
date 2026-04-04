@@ -12,6 +12,7 @@ from benchmarks.harness.tools_common import SUBMIT_ANSWER_TOOL, execute_submit_a
 from benchmarks.harness.tools_brow import BROW_TOOLS, execute_brow_tool
 from benchmarks.harness.tools_mcp import MCP_TOOLS, MCP_TOOL_NAME_MAP, McpPlaywrightClient, execute_mcp_tool
 from benchmarks.harness.tools_playwright_cli import PLAYWRIGHT_CLI_TOOLS, execute_playwright_cli_tool, cleanup_playwright_cli
+from benchmarks.harness.tools_agent_browser import AGENT_BROWSER_TOOLS, execute_agent_browser_tool, cleanup_agent_browser
 
 BROW_INSTRUCTIONS = """You have access to brow CLI tools for browser automation.
 Use brow_session_new with a url to start a session and get the initial page snapshot.
@@ -38,11 +39,29 @@ Use pwcli_snapshot to get element references, then use those refs with pwcli_cli
 Use pwcli_goto to navigate to URLs.
 When done, call submit_answer with your structured result."""
 
+AB_INSTRUCTIONS = """You have access to agent-browser tools for browser automation.
+Use ab_open to navigate to a URL (starts the daemon automatically).
+Use ab_snapshot to get the accessibility tree with element refs like @e1, @e2, @e3.
+Use ab_click, ab_fill, ab_select with element refs from the snapshot.
+Use ab_press for keyboard input (Enter, Tab, Escape).
+Use ab_scroll to scroll the page.
+When done, call submit_answer with your structured result.
+
+Example workflow:
+  ab_open(url="https://shop.com") → navigates to page
+  ab_snapshot() → shows @e1 search box, @e2 cart...
+  ab_fill(ref="@e1", value="headphones") → fills the input
+  ab_press(key="Enter") → submits
+  ab_snapshot() → shows @e3 "Sony WH-1000", @e4 "AirPods Max"...
+  submit_answer({name: "Sony WH-1000XM5", price: "$348"})"""
+
 def build_system_prompt(backend, task_description):
     if backend == "brow":
         instructions = BROW_INSTRUCTIONS
     elif backend == "playwright-cli":
         instructions = PWCLI_INSTRUCTIONS
+    elif backend == "agent-browser":
+        instructions = AB_INSTRUCTIONS
     else:
         instructions = MCP_INSTRUCTIONS
     return f"""You are a browser automation agent. Complete the given task using the provided tools.
@@ -76,6 +95,8 @@ class AgentLoop:
             base = BROW_TOOLS
         elif self.backend == "playwright-cli":
             base = PLAYWRIGHT_CLI_TOOLS
+        elif self.backend == "agent-browser":
+            base = AGENT_BROWSER_TOOLS
         else:
             base = MCP_TOOLS
         return base + [SUBMIT_ANSWER_TOOL]
@@ -225,6 +246,8 @@ class AgentLoop:
                     pass
             if self.backend == "playwright-cli":
                 cleanup_playwright_cli()
+            if self.backend == "agent-browser":
+                cleanup_agent_browser()
 
         return final_output
 
@@ -274,4 +297,6 @@ class AgentLoop:
             return await execute_brow_tool(name, params)
         if self.backend == "playwright-cli":
             return await execute_playwright_cli_tool(name, params)
+        if self.backend == "agent-browser":
+            return await execute_agent_browser_tool(name, params)
         return await execute_mcp_tool(self._mcp_client, name, params)
