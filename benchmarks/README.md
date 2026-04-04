@@ -184,6 +184,63 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 |------|-------------|
 | vacuum-research | Cross-reference alza.cz vacuum robots with Valetudo supported models |
 
+## Per-Task Detail
+
+### Success Grid
+
+✅ = passed, ❌ = failed
+
+| Task | brow | pwcli | mcp | agent-browser | browser-use |
+|------|------|-------|-----|---------------|-------------|
+| data-table-extract | ✅ | ❌ | ❌ | ❌ | ❌ |
+| deep-wizard | ✅ | ❌ | ❌ | ❌ | ✅ |
+| dynamic-content | ❌ | ❌ | ❌ | ❌ | ✅ |
+| ecommerce-search | ✅ | ❌ | ❌ | ✅ | ❌ |
+| error-recovery | ✅ | ✅ | ✅ | ✅ | ❌ |
+| form-fill | ❌ | ❌ | ❌ | ❌ | ❌ |
+| form-validation-recovery | ✅ | ✅ | ✅ | ✅ | ✅ |
+| infinite-scroll | ✅ | ✅ | ❌ | ✅ | ✅ |
+| info-lookup | ✅ | ✅ | ✅ | ✅ | ✅ |
+| large-snapshot | ✅ | ❌ | ❌ | ✅ | ❌ |
+| login-auth | ❌ | ❌ | ❌ | ❌ | ❌ |
+| multi-page-nav | ✅ | ✅ | ✅ | ✅ | ✅ |
+| multi-tab-workflow | ✅ | ✅ | ❌ | ✅ | ✅ |
+| rapid-multi-step | ✅ | ✅ | ✅ | ✅ | ✅ |
+| search-extract | ❌ | ❌ | ❌ | ❌ | ✅ |
+| spa-navigation | ❌ | ❌ | ✅ | ❌ | ❌ |
+| **Total** | **11/16** | **7/16** | **6/16** | **9/16** | **9/16** |
+
+### Token Cost Per Task
+
+| Task | brow | pwcli | mcp | agent-browser | browser-use |
+|------|------|-------|-----|---------------|-------------|
+| data-table-extract | 130,593 | 259,625 | 476,499 | 295,975 | **61,710** |
+| deep-wizard | 182,894 | 273,691 | 124,159 | **79,238** | 169,436 |
+| dynamic-content | **3,229** | 48,498 | 43,470 | 5,239 | 25,874 |
+| ecommerce-search | **11,419** | 140,630 | 66,236 | 38,230 | 50,418 |
+| error-recovery | **4,881** | 20,704 | 32,752 | 16,495 | 73,667 |
+| form-fill | **18,288** | 24,489 | 22,856 | 19,632 | 38,136 |
+| form-validation-recovery | **26,300** | 48,247 | 64,808 | 41,677 | 50,309 |
+| infinite-scroll | 168,610 | 116,602 | 73,556 | **88,090** | 91,221 |
+| info-lookup | **5,381** | 6,376 | 6,247 | 11,298 | 37,363 |
+| large-snapshot | 195,458 | 609,060 | 607,043 | 340,559 | **86,331** |
+| login-auth | 185,257 | 92,525 | **56,757** | 55,250 | 126,253 |
+| multi-page-nav | **7,864** | 10,806 | 71,339 | 17,046 | 91,742 |
+| multi-tab-workflow | 217,941 | 23,787 | 115,354 | **29,067** | 66,571 |
+| rapid-multi-step | 159,912 | 80,952 | 45,907 | **44,519** | 74,646 |
+| search-extract | **3,663** | 4,061 | 27,074 | 12,642 | 64,177 |
+| spa-navigation | 56,148 | **44,354** | 56,521 | 75,544 | 88,156 |
+| **Average** | **86,115** | 112,775 | 118,161 | 73,156 | 74,751 |
+
+### Notable Patterns
+
+- **`form-fill` and `login-auth`**: no backend passes — auth flow and form submission edge cases trip all five
+- **`search-extract`**: only browser-use passes — its high-level extract action handles result parsing that raw-tool backends miss
+- **`spa-navigation`**: only MCP Playwright passes — hash-routing edge case that suits its navigation model
+- **`dynamic-content`**: only browser-use passes — built-in wait semantics handle JS-delayed content cleanly
+- **`data-table-extract`**: only brow passes — table markdown compression is the differentiator; others overflow context
+- **`form-validation-recovery`, `info-lookup`, `multi-page-nav`, `rapid-multi-step`**: most backends pass — straightforward enough that tool quality doesn't matter
+
 ## Architecture
 
 ```
