@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
-from playwright.async_api import async_playwright
+from patchright.async_api import async_playwright
 
 from brow.config import DAEMON_HOST, DAEMON_PORT, PID_FILE, ensure_dirs
 from brow.session import SessionManager

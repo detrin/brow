@@ -11,7 +11,7 @@ license = "MIT"
 authors = [{name = "Daniel Herman", email = "daniel.herman@protonmail.com"}]
 requires-python = ">=3.12"
 dependencies = [
-    "playwright>=1.40",
+    "patchright>=1.40",
     "fastapi>=0.104",
     "uvicorn>=0.24",
     "typer>=0.9",
