@@ -9,7 +9,7 @@ tags:
   - web
 requirements:
   - brow-cli
-  - playwright
+  - patchright
 setup: |
   pip install brow-cli
-  playwright install chromium
+  patchright install chromium

@@ -15,7 +15,7 @@ brew install brow
 **pip:**
 ```bash
 pip install brow-cli
-playwright install chromium
+patchright install chromium
 ```
 
 **Agent skill:**
