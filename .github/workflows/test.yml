@@ -32,6 +32,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -e brow/[dev]
-          playwright install --with-deps chromium
+          python -m patchright install --with-deps chromium
       - name: Run tests
         run: pytest brow/tests/ -v
