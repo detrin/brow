@@ -1,5 +1,6 @@
 import re
 
+
 def _format_table(tree, indent=0):
     prefix = "  " * indent
     headers = tree.get("headers", [])
@@ -71,7 +72,8 @@ def format_tree(tree, indent=0):
         lines.append(format_tree(child, indent + 1))
     return "\n".join(lines)
 
+
 def filter_lines(text, pattern, limit=10):
     regex = re.compile(pattern)
-    matches = [l for l in text.split("\n") if regex.search(l)]
+    matches = [line for line in text.split("\n") if regex.search(line)]
     return "\n".join(matches[:limit])

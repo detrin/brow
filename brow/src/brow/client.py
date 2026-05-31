@@ -1,9 +1,11 @@
 import httpx
+
 from brow.config import DAEMON_URL
 
 
 class BrowAPIError(Exception):
     """Raised when the brow daemon returns an error response."""
+
     def __init__(self, status_code: int, detail: str):
         self.status_code = status_code
         self.detail = detail

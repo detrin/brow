@@ -1,10 +1,14 @@
-import pytest
 from unittest.mock import Mock, patch
+
+import pytest
+
 from brow.client import BrowAPIError, BrowClient
+
 
 @pytest.fixture
 def client():
     return BrowClient()
+
 
 @pytest.mark.asyncio
 async def test_post(client):
@@ -16,6 +20,7 @@ async def test_post(client):
         result = await client.post("/sessions", json={"profile": "default"})
         assert result == {"id": "1"}
 
+
 @pytest.mark.asyncio
 async def test_get(client):
     mock_resp = Mock()
@@ -25,6 +30,7 @@ async def test_get(client):
     with patch.object(client._client, "get", return_value=mock_resp):
         result = await client.get("/status")
         assert result == {"status": "running"}
+
 
 @pytest.mark.asyncio
 async def test_error_handling(client):
@@ -36,6 +42,7 @@ async def test_error_handling(client):
         with pytest.raises(BrowAPIError, match="Session 1 not found") as exc_info:
             await client.get("/nope")
         assert exc_info.value.status_code == 404
+
 
 @pytest.mark.asyncio
 async def test_error_handling_plain_text(client):

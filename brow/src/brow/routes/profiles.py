@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 router = APIRouter(tags=["profiles"])
 
+
 @router.get("/profiles")
 async def list_profiles(req: Request):
     return {"profiles": req.app.state.profiles.list()}
+
 
 @router.delete("/profiles/{name}")
 async def delete_profile(req: Request, name: str):
@@ -15,13 +17,16 @@ async def delete_profile(req: Request, name: str):
         raise HTTPException(404, f"Profile '{name}' not found")
     return {"deleted": name}
 
+
 class SaveStateReq(BaseModel):
     name: str
     session_id: str
 
+
 class RestoreStateReq(BaseModel):
     name: str
     session_id: str
+
 
 @router.post("/states/save")
 async def save_state(req: Request, body: SaveStateReq):
@@ -33,6 +38,7 @@ async def save_state(req: Request, body: SaveStateReq):
     state = await session.context.storage_state()
     req.app.state.profiles.save_state(body.name, state)
     return {"saved": body.name}
+
 
 @router.post("/states/restore")
 async def restore_state(req: Request, body: RestoreStateReq):
@@ -49,6 +55,7 @@ async def restore_state(req: Request, body: RestoreStateReq):
     if state.get("cookies"):
         await session.context.add_cookies(state["cookies"])
     return {"restored": body.name}
+
 
 @router.get("/states")
 async def list_states(req: Request):

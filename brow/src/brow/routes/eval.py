@@ -1,16 +1,19 @@
 import asyncio
 import io
 import sys
-from fastapi import APIRouter, Request, HTTPException
+
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from brow.config import DEFAULT_TIMEOUT
 
 router = APIRouter(prefix="/eval/{sid}", tags=["eval"])
 
+
 class EvalReq(BaseModel):
     code: str
     timeout: int = DEFAULT_TIMEOUT
+
 
 @router.post("")
 async def eval_code(req: Request, sid: str, body: EvalReq):

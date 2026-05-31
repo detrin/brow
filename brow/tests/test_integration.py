@@ -1,6 +1,8 @@
 import pytest
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
+
 from brow.daemon import create_app
+
 
 @pytest.fixture
 async def client():
@@ -10,13 +12,17 @@ async def client():
         async with AsyncClient(transport=transport, base_url="http://test") as c:
             yield c
 
+
 @pytest.mark.asyncio
 async def test_full_workflow(client):
     r = await client.post("/sessions", json={"profile": "integration", "headless": True})
     assert r.status_code == 200
     sid = r.json()["id"]
 
-    r = await client.post(f"/browser/{sid}/navigate", json={"url": "data:text/html,<h1>Test</h1><button id='b'>Go</button><input id='i'/>"})
+    r = await client.post(
+        f"/browser/{sid}/navigate",
+        json={"url": "data:text/html,<h1>Test</h1><button id='b'>Go</button><input id='i'/>"},
+    )
     assert r.status_code == 200
 
     r = await client.get(f"/browser/{sid}/snapshot")

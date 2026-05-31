@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
+
 from brow.config import MAX_SESSIONS
+
 
 @dataclass
 class Session:
@@ -30,15 +32,63 @@ class Session:
             ignore_default_args=["--enable-automation"],
         )
         self.state["console_logs"] = []
-        for page in self.context.pages:
+        self.state["network_requests"] = []
+        self.state["websocket_messages"] = []
+        self.state["actions"] = []
+
+        _TEXT_TYPES = ("application/json", "text/", "application/xml", "application/javascript")
+
+        async def _on_resp(resp):
+            ct = resp.headers.get("content-type", "").split(";")[0]
+            entry = {
+                "method": resp.request.method,
+                "url": resp.url,
+                "status": resp.status,
+                "type": ct,
+            }
+            if any(ct.startswith(t) for t in _TEXT_TYPES):
+                try:
+                    body = await resp.body()
+                    entry["response_preview"] = body[:1024].decode("utf-8", errors="replace")
+                except Exception:
+                    pass
+            reqs = self.state["network_requests"]
+            reqs.append(entry)
+            if len(reqs) > 500:
+                reqs.pop(0)
+
+        def _on_ws(ws):
+            def _frame(direction, data):
+                text = (
+                    data
+                    if isinstance(data, str)
+                    else data.decode("utf-8", errors="replace")
+                    if isinstance(data, bytes)
+                    else str(data)
+                )
+                msgs = self.state["websocket_messages"]
+                msgs.append({"direction": direction, "url": ws.url, "data": text[:2048]})
+                if len(msgs) > 200:
+                    msgs.pop(0)
+
+            ws.on("framereceived", lambda data: _frame("recv", data))
+            ws.on("framesent", lambda data: _frame("sent", data))
+
+        def _attach(page):
             page.on("console", lambda msg: self.state["console_logs"].append(f"[{msg.type}] {msg.text}"))
-        self.context.on("page", lambda page: page.on("console", lambda msg: self.state["console_logs"].append(f"[{msg.type}] {msg.text}")))
+            page.on("response", _on_resp)
+            page.on("websocket", _on_ws)
+
+        for page in self.context.pages:
+            _attach(page)
+        self.context.on("page", _attach)
 
     async def close(self):
         if self.context:
             await self.context.close()
             self.context = None
         self.browser = None
+
 
 class SessionManager:
     def __init__(self):
@@ -67,7 +117,10 @@ class SessionManager:
         del self.sessions[sid]
 
     def list(self):
-        return [{"id": s.id, "profile": s.profile, "headless": s.headless, "pages": len(s.pages)} for s in self.sessions.values()]
+        return [
+            {"id": s.id, "profile": s.profile, "headless": s.headless, "pages": len(s.pages)}
+            for s in self.sessions.values()
+        ]
 
     async def close_all(self):
         for s in self.sessions.values():

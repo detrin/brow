@@ -2,11 +2,11 @@ import time
 from pathlib import Path
 from typing import Optional
 
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
-from brow.config import SCREENSHOTS_DIR, DEFAULT_TIMEOUT, ensure_dirs
-from brow.snapshot import format_tree, filter_lines
+from brow.config import DEFAULT_TIMEOUT, SCREENSHOTS_DIR, ensure_dirs
+from brow.snapshot import filter_lines, format_tree
 
 router = APIRouter(prefix="/browser/{sid}", tags=["browser"])
 
@@ -199,6 +199,7 @@ SNAPSHOT_JS = """
 }
 """
 
+
 async def _take_snapshot(page, search=None):
     try:
         await page.wait_for_load_state("domcontentloaded", timeout=5000)
@@ -207,7 +208,11 @@ async def _take_snapshot(page, search=None):
     try:
         result = await page.evaluate(SNAPSHOT_JS)
     except Exception:
-        result = {"tree": {"role": "text", "name": "Snapshot unavailable (page too complex)"}, "truncated": True, "nodeCount": 0}
+        result = {
+            "tree": {"role": "text", "name": "Snapshot unavailable (page too complex)"},
+            "truncated": True,
+            "nodeCount": 0,
+        }
     tree = result.get("tree") if isinstance(result, dict) else result
     truncated = result.get("truncated", False) if isinstance(result, dict) else False
     node_count = result.get("nodeCount", 0) if isinstance(result, dict) else 0
@@ -216,11 +221,13 @@ async def _take_snapshot(page, search=None):
         formatted = filter_lines(formatted, search)
     return formatted, truncated, node_count
 
+
 def _get_session(req, sid):
     try:
         return req.app.state.manager.get(sid)
     except KeyError:
         raise HTTPException(404, f"Session {sid} not found")
+
 
 def _get_page(session):
     page = session.page
@@ -228,12 +235,14 @@ def _get_page(session):
         raise HTTPException(400, "No active page")
     return page
 
+
 def _resolve_selector(body):
-    if hasattr(body, 'ref') and body.ref is not None:
+    if hasattr(body, "ref") and body.ref is not None:
         return f'[data-brow-ref="{body.ref}"]'
-    if hasattr(body, 'selector') and body.selector is not None:
+    if hasattr(body, "selector") and body.selector is not None:
         return body.selector
     raise HTTPException(400, "Either 'ref' or 'selector' must be provided")
+
 
 def _log_action(session, action: str, **kwargs):
     actions = session.state.setdefault("actions", [])
@@ -241,14 +250,17 @@ def _log_action(session, action: str, **kwargs):
     entry.update({k: v for k, v in kwargs.items() if v is not None})
     actions.append(entry)
 
+
 class NavigateReq(BaseModel):
     url: str
     timeout: int = DEFAULT_TIMEOUT
+
 
 class WaitReq(BaseModel):
     selector: Optional[str] = None
     load: bool = False
     timeout: int = DEFAULT_TIMEOUT
+
 
 class ClickReq(BaseModel):
     selector: Optional[str] = None
@@ -256,6 +268,7 @@ class ClickReq(BaseModel):
     timeout: int = DEFAULT_TIMEOUT
     retry: int = 0
     wait_for_selector: bool = True
+
 
 class FillReq(BaseModel):
     selector: Optional[str] = None
@@ -265,33 +278,41 @@ class FillReq(BaseModel):
     retry: int = 0
     wait_for_selector: bool = True
 
+
 class TypeReq(BaseModel):
     text: str
 
+
 class KeyReq(BaseModel):
     key: str
+
 
 class HoverReq(BaseModel):
     selector: str
     timeout: int = DEFAULT_TIMEOUT
 
+
 class ScrollReq(BaseModel):
     pixels: int = 0
     selector: Optional[str] = None
+
 
 class DragReq(BaseModel):
     source: str
     target: str
 
+
 class UploadReq(BaseModel):
     selector: str
     filepath: str
+
 
 class SelectReq(BaseModel):
     selector: Optional[str] = None
     ref: Optional[int] = None
     value: str
     timeout: int = DEFAULT_TIMEOUT
+
 
 class ScreenshotReq(BaseModel):
     full: bool = False
@@ -300,9 +321,11 @@ class ScreenshotReq(BaseModel):
     scale: Optional[float] = None
     quality: Optional[str] = None
 
+
 @router.post("/navigate")
 async def navigate(req: Request, sid: str, body: NavigateReq):
     import logging
+
     session = _get_session(req, sid)
     page = _get_page(session)
     try:
@@ -319,6 +342,7 @@ async def navigate(req: Request, sid: str, body: NavigateReq):
         resp["hint"] = f"Page has {node_count}+ nodes. Use search param to filter."
     return resp
 
+
 @router.post("/wait")
 async def wait(req: Request, sid: str, body: WaitReq):
     session = _get_session(req, sid)
@@ -329,11 +353,13 @@ async def wait(req: Request, sid: str, body: WaitReq):
         await page.wait_for_selector(body.selector, timeout=body.timeout)
     return {"ok": True}
 
+
 @router.get("/url")
 async def get_url(req: Request, sid: str):
     session = _get_session(req, sid)
     page = _get_page(session)
     return {"url": page.url}
+
 
 @router.get("/snapshot")
 async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator: Optional[str] = None):
@@ -345,6 +371,7 @@ async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator
         resp["truncated"] = True
         resp["hint"] = f"Page has {node_count}+ nodes. Use search param to filter, e.g. search='Item 100'"
     return resp
+
 
 @router.post("/screenshot")
 async def screenshot(req: Request, sid: str, body: ScreenshotReq):
@@ -381,6 +408,7 @@ async def screenshot(req: Request, sid: str, body: ScreenshotReq):
 
     return {"path": str(path)}
 
+
 @router.get("/html")
 async def get_html(req: Request, sid: str, locator: Optional[str] = None, search: Optional[str] = None):
     session = _get_session(req, sid)
@@ -394,6 +422,7 @@ async def get_html(req: Request, sid: str, locator: Optional[str] = None, search
         html = filter_lines(html, search)
     return {"html": html}
 
+
 @router.get("/logs")
 async def get_logs(req: Request, sid: str, search: Optional[str] = None, count: int = 50):
     session = _get_session(req, sid)
@@ -403,11 +432,21 @@ async def get_logs(req: Request, sid: str, search: Optional[str] = None, count: 
         text = filter_lines(text, search)
     return {"logs": text}
 
+
 _STATIC_PREFIXES = ("image/", "font/", "text/css", "application/javascript", "text/javascript", "application/font")
 
+
 @router.get("/network")
-async def get_network(req: Request, sid: str, search: Optional[str] = None, count: int = 50, include_static: bool = False, include_response: bool = False):
+async def get_network(
+    req: Request,
+    sid: str,
+    search: Optional[str] = None,
+    count: int = 50,
+    include_static: bool = False,
+    include_response: bool = False,
+):
     import re
+
     session = _get_session(req, sid)
     reqs = session.state.get("network_requests", [])
     if not include_static:
@@ -424,11 +463,13 @@ async def get_network(req: Request, sid: str, search: Optional[str] = None, coun
         lines.append(line)
     return {"network": "\n".join(lines)}
 
+
 @router.delete("/network")
 async def clear_network(req: Request, sid: str):
     session = _get_session(req, sid)
     session.state["network_requests"] = []
     return {"ok": True}
+
 
 class FetchReq(BaseModel):
     url: str
@@ -437,11 +478,13 @@ class FetchReq(BaseModel):
     body: Optional[str] = None
     no_cookies: bool = False
 
+
 @router.post("/fetch")
 async def fetch_url(req: Request, sid: str, body: FetchReq):
     session = _get_session(req, sid)
     if body.no_cookies:
         import httpx
+
         async with httpx.AsyncClient(follow_redirects=True, timeout=30) as client:
             r = await client.request(
                 body.method,
@@ -462,9 +505,12 @@ async ({url, method, headers, body}) => {
     return {status: r.status, contentType: r.headers.get('content-type') || '', body: text};
 }
 """
-    result = await page.evaluate(js, {"url": body.url, "method": body.method, "headers": body.headers or {}, "body": body.body})
+    result = await page.evaluate(
+        js, {"url": body.url, "method": body.method, "headers": body.headers or {}, "body": body.body}
+    )
     _log_action(session, "fetch", url=body.url, method=body.method, no_cookies=False, status=result.get("status"))
     return result
+
 
 @router.get("/websocket")
 async def get_websocket(req: Request, sid: str, search: Optional[str] = None, count: int = 50):
@@ -476,11 +522,13 @@ async def get_websocket(req: Request, sid: str, search: Optional[str] = None, co
         text = filter_lines(text, search)
     return {"websocket": text}
 
+
 @router.delete("/websocket")
 async def clear_websocket(req: Request, sid: str):
     session = _get_session(req, sid)
     session.state["websocket_messages"] = []
     return {"ok": True}
+
 
 @router.post("/click")
 async def click(req: Request, sid: str, body: ClickReq):
@@ -517,9 +565,9 @@ async def click(req: Request, sid: str, body: ClickReq):
                 await aio.sleep(1)
 
     raise HTTPException(
-        500,
-        f"Failed to click selector '{selector}' after {attempts} attempts. Last error: {str(last_error)}"
+        500, f"Failed to click selector '{selector}' after {attempts} attempts. Last error: {str(last_error)}"
     )
+
 
 @router.post("/fill")
 async def fill(req: Request, sid: str, body: FillReq):
@@ -550,9 +598,9 @@ async def fill(req: Request, sid: str, body: FillReq):
                 await aio.sleep(1)
 
     raise HTTPException(
-        500,
-        f"Failed to fill selector '{selector}' after {attempts} attempts. Last error: {str(last_error)}"
+        500, f"Failed to fill selector '{selector}' after {attempts} attempts. Last error: {str(last_error)}"
     )
+
 
 @router.post("/type")
 async def type_text(req: Request, sid: str, body: TypeReq):
@@ -560,6 +608,7 @@ async def type_text(req: Request, sid: str, body: TypeReq):
     page = _get_page(session)
     await page.keyboard.type(body.text)
     return {"ok": True}
+
 
 @router.post("/key")
 async def press_key(req: Request, sid: str, body: KeyReq):
@@ -573,12 +622,14 @@ async def press_key(req: Request, sid: str, body: KeyReq):
         resp["truncated"] = True
     return resp
 
+
 @router.post("/hover")
 async def hover(req: Request, sid: str, body: HoverReq):
     session = _get_session(req, sid)
     page = _get_page(session)
     await page.hover(body.selector, timeout=body.timeout)
     return {"ok": True}
+
 
 @router.post("/scroll")
 async def scroll(req: Request, sid: str, body: ScrollReq):
@@ -590,12 +641,14 @@ async def scroll(req: Request, sid: str, body: ScrollReq):
         await page.evaluate(f"window.scrollBy(0, {body.pixels})")
     return {"ok": True}
 
+
 @router.post("/drag")
 async def drag(req: Request, sid: str, body: DragReq):
     session = _get_session(req, sid)
     page = _get_page(session)
     await page.drag_and_drop(body.source, body.target)
     return {"ok": True}
+
 
 @router.post("/select")
 async def select_option(req: Request, sid: str, body: SelectReq):
@@ -610,6 +663,7 @@ async def select_option(req: Request, sid: str, body: SelectReq):
         resp["truncated"] = True
     return resp
 
+
 @router.post("/upload")
 async def upload(req: Request, sid: str, body: UploadReq):
     session = _get_session(req, sid)
@@ -617,6 +671,7 @@ async def upload(req: Request, sid: str, body: UploadReq):
     await page.set_input_files(body.selector, body.filepath)
     _log_action(session, "upload", selector=body.selector, filepath=body.filepath)
     return {"ok": True}
+
 
 @router.get("/actions")
 async def get_actions(req: Request, sid: str, as_json: bool = False):
@@ -628,23 +683,24 @@ async def get_actions(req: Request, sid: str, as_json: bool = False):
     for a in actions:
         s, act = a["seq"], a["action"]
         if act == "navigate":
-            lines.append(f"{s:<3} navigate  {a.get('url','')}  [{a.get('status','')}]")
+            lines.append(f"{s:<3} navigate  {a.get('url', '')}  [{a.get('status', '')}]")
         elif act == "fetch":
             nc = " --no-cookies" if a.get("no_cookies") else ""
-            lines.append(f"{s:<3} fetch     {a.get('url','')}  [{a.get('status','')}]{nc}")
+            lines.append(f"{s:<3} fetch     {a.get('url', '')}  [{a.get('status', '')}]{nc}")
         elif act == "click":
-            lines.append(f"{s:<3} click     {a.get('selector','')}")
+            lines.append(f"{s:<3} click     {a.get('selector', '')}")
         elif act == "fill":
-            lines.append(f"{s:<3} fill      {a.get('selector','')}  value={str(a.get('value',''))[:40]!r}")
+            lines.append(f"{s:<3} fill      {a.get('selector', '')}  value={str(a.get('value', ''))[:40]!r}")
         elif act == "key":
-            lines.append(f"{s:<3} key       {a.get('key','')}")
+            lines.append(f"{s:<3} key       {a.get('key', '')}")
         elif act == "select":
-            lines.append(f"{s:<3} select    {a.get('selector','')}  value={a.get('value','')!r}")
+            lines.append(f"{s:<3} select    {a.get('selector', '')}  value={a.get('value', '')!r}")
         elif act == "upload":
-            lines.append(f"{s:<3} upload    {a.get('selector','')}  file={a.get('filepath','')}")
+            lines.append(f"{s:<3} upload    {a.get('selector', '')}  file={a.get('filepath', '')}")
         else:
             lines.append(f"{s:<3} {act}")
     return {"actions": "\n".join(lines)}
+
 
 @router.delete("/actions")
 async def clear_actions(req: Request, sid: str):
@@ -652,13 +708,14 @@ async def clear_actions(req: Request, sid: str):
     session.state["actions"] = []
     return {"ok": True}
 
+
 class ReplayReq(BaseModel):
     playbook: dict
     vars: dict = {}
 
+
 @router.post("/replay")
 async def replay(req: Request, sid: str, body: ReplayReq):
-    import re as _re
     session = _get_session(req, sid)
     page = _get_page(session)
     base_url = body.playbook.get("base_url", "")
@@ -707,6 +764,7 @@ async def replay(req: Request, sid: str, body: ReplayReq):
                 no_cookies = step.get("auth") == "none"
                 if no_cookies:
                     import httpx
+
                     async with httpx.AsyncClient(follow_redirects=True, timeout=30) as client:
                         r = await client.request(method, url)
                     data_text, status = r.text, r.status_code
@@ -718,6 +776,7 @@ async def replay(req: Request, sid: str, body: ReplayReq):
                 entry.update({"url": url, "status": status, "ok": True})
                 if step.get("output"):
                     import json as _json
+
                     try:
                         entry["data"] = _json.loads(data_text)
                     except Exception:

@@ -1,7 +1,8 @@
 import pytest
-from httpx import AsyncClient, ASGITransport
-from contextlib import asynccontextmanager
+from httpx import ASGITransport, AsyncClient
+
 from brow.daemon import create_app
+
 
 @pytest.fixture
 async def client():
@@ -11,11 +12,13 @@ async def client():
         async with AsyncClient(transport=transport, base_url="http://test") as c:
             yield c
 
+
 @pytest.mark.asyncio
 async def test_create_session(client):
     r = await client.post("/sessions", json={"profile": "default", "headless": True})
     assert r.status_code == 200
     assert r.json()["id"] == "1"
+
 
 @pytest.mark.asyncio
 async def test_list_sessions(client):
@@ -24,6 +27,7 @@ async def test_list_sessions(client):
     assert r.status_code == 200
     assert len(r.json()) == 1
 
+
 @pytest.mark.asyncio
 async def test_delete_session(client):
     r = await client.post("/sessions", json={"profile": "default", "headless": True})
@@ -31,10 +35,12 @@ async def test_delete_session(client):
     r = await client.delete(f"/sessions/{sid}")
     assert r.status_code == 200
 
+
 @pytest.mark.asyncio
 async def test_delete_nonexistent(client):
     r = await client.delete("/sessions/999")
     assert r.status_code == 404
+
 
 @pytest.mark.asyncio
 async def test_status(client):
@@ -42,13 +48,17 @@ async def test_status(client):
     assert r.status_code == 200
     assert "sessions" in r.json()
 
+
 @pytest.mark.asyncio
 async def test_create_session_with_url(client):
-    r = await client.post("/sessions", json={
-        "profile": "test-url",
-        "headless": True,
-        "url": "data:text/html,<body><h1>Hello</h1><button>Click</button></body>"
-    })
+    r = await client.post(
+        "/sessions",
+        json={
+            "profile": "test-url",
+            "headless": True,
+            "url": "data:text/html,<body><h1>Hello</h1><button>Click</button></body>",
+        },
+    )
     assert r.status_code == 200
     body = r.json()
     assert "id" in body
