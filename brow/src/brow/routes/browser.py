@@ -297,6 +297,13 @@ class ScrollReq(BaseModel):
     selector: Optional[str] = None
 
 
+class ScrollUntilReq(BaseModel):
+    until: str
+    pixels: int = 800
+    max_attempts: int = 10
+    timeout: int = DEFAULT_TIMEOUT
+
+
 class DragReq(BaseModel):
     source: str
     target: str
@@ -362,14 +369,25 @@ async def get_url(req: Request, sid: str):
 
 
 @router.get("/snapshot")
-async def snapshot(req: Request, sid: str, search: Optional[str] = None, locator: Optional[str] = None):
+async def snapshot(
+    req: Request, sid: str, search: Optional[str] = None, locator: Optional[str] = None, compact: bool = False
+):
     session = _get_session(req, sid)
     page = _get_page(session)
     formatted, truncated, node_count = await _take_snapshot(page, search=search)
+    lines = formatted.split("\n")
+    large = len(lines) > 500
+    if (compact or large) and not search:
+        interactive_lines = [ln for ln in lines if "[" in ln and "]" in ln]
+        context_lines = [ln for ln in lines if any(k in ln for k in ("heading", "navigation", "main", "form"))]
+        kept = list(dict.fromkeys(interactive_lines + context_lines))[:300]
+        header = f"[Showing {len(kept)} of {len(lines)} lines — use --search <regex> to filter]\n"
+        formatted = header + "\n".join(kept)
+        truncated = True
     resp = {"tree": formatted}
     if truncated:
         resp["truncated"] = True
-        resp["hint"] = f"Page has {node_count}+ nodes. Use search param to filter, e.g. search='Item 100'"
+        resp["hint"] = f"Page has {node_count}+ nodes ({len(lines)} lines). Use --search to filter."
     return resp
 
 
@@ -640,6 +658,23 @@ async def scroll(req: Request, sid: str, body: ScrollReq):
     else:
         await page.evaluate(f"window.scrollBy(0, {body.pixels})")
     return {"ok": True}
+
+
+@router.post("/scroll-until")
+async def scroll_until(req: Request, sid: str, body: ScrollUntilReq):
+    session = _get_session(req, sid)
+    page = _get_page(session)
+    for attempt in range(body.max_attempts):
+        try:
+            loc = page.locator(body.until)
+            if await loc.count() > 0 and await loc.first.is_visible():
+                await loc.first.scroll_into_view_if_needed()
+                return {"ok": True, "found": True, "attempts": attempt + 1}
+        except Exception:
+            pass
+        await page.evaluate(f"window.scrollBy(0, {body.pixels})")
+        await page.wait_for_timeout(500)
+    return {"ok": True, "found": False, "attempts": body.max_attempts}
 
 
 @router.post("/drag")
