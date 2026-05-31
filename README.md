@@ -1,5 +1,10 @@
 # brow - agentic browsing
 
+[![CI](https://github.com/detrin/brow/actions/workflows/test.yml/badge.svg)](https://github.com/detrin/brow/actions/workflows/test.yml)
+[![PyPI](https://img.shields.io/pypi/v/brow-cli)](https://pypi.org/project/brow-cli/)
+[![Python](https://img.shields.io/pypi/pyversions/brow-cli)](https://pypi.org/project/brow-cli/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Standalone Playwright CLI for agent browser automation. Launches a real Chromium instance with an agent-friendly API - structured commands for common actions, eval escape hatch for full power.
 
 ![brow demo](https://github.com/user-attachments/assets/27c6114c-451b-4e64-b66d-2268248be79b)
