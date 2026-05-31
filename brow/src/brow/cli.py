@@ -140,6 +140,19 @@ def session_delete(sid: str):
     typer.echo(f"Deleted session {sid}")
 
 
+@session_app.command("cleanup")
+def session_cleanup():
+    ensure_daemon()
+    c = _client()
+    sessions = run_async(c.get("/sessions"))
+    if not sessions:
+        typer.echo("No sessions to clean up")
+        return
+    for s in sessions:
+        run_async(c.delete(f"/sessions/{s['id']}"))
+    typer.echo(f"Cleaned up {len(sessions)} session(s)")
+
+
 @app.command("navigate")
 def navigate(url: str, s: Optional[str] = session_opt, timeout: int = 30000):
     ensure_daemon()
@@ -159,7 +172,12 @@ def wait_cmd(selector: Optional[str] = None, load: bool = False, s: Optional[str
 
 
 @app.command("snapshot")
-def snapshot_cmd(search: Optional[str] = None, locator: Optional[str] = None, s: Optional[str] = session_opt):
+def snapshot_cmd(
+    search: Optional[str] = None,
+    locator: Optional[str] = None,
+    compact: bool = typer.Option(False, "--compact", help="Show only interactive elements"),
+    s: Optional[str] = session_opt,
+):
     ensure_daemon()
     c = _client()
     params = {}
@@ -167,6 +185,8 @@ def snapshot_cmd(search: Optional[str] = None, locator: Optional[str] = None, s:
         params["search"] = search
     if locator:
         params["locator"] = locator
+    if compact:
+        params["compact"] = "true"
     result = run_async(c.get(f"/browser/{s}/snapshot", params=params))
     typer.echo(result["tree"])
 
@@ -444,10 +464,27 @@ def hover_cmd(selector: str, s: Optional[str] = session_opt, timeout: int = 3000
 
 
 @app.command("scroll")
-def scroll_cmd(pixels: int = 0, s: Optional[str] = session_opt):
+def scroll_cmd(
+    pixels: int = 0,
+    until: Optional[str] = typer.Option(None, "--until", help="Scroll until selector is visible"),
+    max_attempts: int = typer.Option(10, "--max-attempts"),
+    s: Optional[str] = session_opt,
+):
     ensure_daemon()
     c = _client()
-    run_async(c.post(f"/browser/{s}/scroll", json={"pixels": pixels}))
+    if until:
+        result = run_async(
+            c.post(
+                f"/browser/{s}/scroll-until",
+                json={"until": until, "pixels": pixels or 800, "max_attempts": max_attempts},
+            )
+        )
+        if result.get("found"):
+            typer.echo(f"Found after {result['attempts']} scroll(s)")
+        else:
+            typer.echo(f"Not found after {result['attempts']} scroll(s)", err=True)
+    else:
+        run_async(c.post(f"/browser/{s}/scroll", json={"pixels": pixels}))
 
 
 @app.command("scroll-to")
@@ -547,13 +584,19 @@ def state_list():
 
 @app.command("eval")
 def eval_cmd(code: str, s: Optional[str] = session_opt, timeout: int = 30000):
+    import json
+
     ensure_daemon()
     c = _client()
     result = run_async(c.post(f"/eval/{s}", json={"code": code, "timeout": timeout}))
     if result.get("stdout"):
         typer.echo(result["stdout"], nl=False)
     if result.get("result") is not None:
-        typer.echo(result["result"])
+        val = result["result"]
+        if isinstance(val, (dict, list)):
+            typer.echo(json.dumps(val, indent=2, ensure_ascii=False))
+        else:
+            typer.echo(str(val))
 
 
 if __name__ == "__main__":
