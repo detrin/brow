@@ -8,7 +8,7 @@ Compares **brow**, **playwright-cli**, **MCP Playwright**, **agent-browser**, an
 
 ```bash
 pip install -r benchmarks/requirements.txt
-playwright install chromium
+patchright install chromium
 
 # All backends, all fixture tasks
 python -m benchmarks.run --backend all --runs 1

@@ -7,7 +7,7 @@ git clone https://github.com/detrin/brow.git
 cd brow
 python -m venv .venv && source .venv/bin/activate
 pip install -e brow/[dev]
-playwright install chromium
+patchright install chromium
 ```
 
 ## Running Tests
