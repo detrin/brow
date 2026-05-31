@@ -1,6 +1,8 @@
 import pytest
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
+
 from brow.daemon import create_app
+
 
 @pytest.fixture
 async def client():
@@ -10,16 +12,19 @@ async def client():
         async with AsyncClient(transport=transport, base_url="http://test") as c:
             yield c
 
+
 @pytest.fixture
 async def session_id(client):
     r = await client.post("/sessions", json={"profile": "test", "headless": True})
     return r.json()["id"]
+
 
 @pytest.mark.asyncio
 async def test_navigate(client, session_id):
     r = await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Hello</h1>"})
     assert r.status_code == 200
     assert "url" in r.json()
+
 
 @pytest.mark.asyncio
 async def test_url(client, session_id):
@@ -28,12 +33,14 @@ async def test_url(client, session_id):
     assert r.status_code == 200
     assert "url" in r.json()
 
+
 @pytest.mark.asyncio
 async def test_snapshot(client, session_id):
     await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Hello</h1>"})
     r = await client.get(f"/browser/{session_id}/snapshot")
     assert r.status_code == 200
     assert "tree" in r.json()
+
 
 @pytest.mark.asyncio
 async def test_click(client, session_id):
@@ -42,12 +49,14 @@ async def test_click(client, session_id):
     r = await client.post(f"/browser/{session_id}/click", json={"selector": "#btn"})
     assert r.status_code == 200
 
+
 @pytest.mark.asyncio
 async def test_fill(client, session_id):
     html = "data:text/html,<input id='inp' type='text'/>"
     await client.post(f"/browser/{session_id}/navigate", json={"url": html})
     r = await client.post(f"/browser/{session_id}/fill", json={"selector": "#inp", "value": "hello"})
     assert r.status_code == 200
+
 
 @pytest.mark.asyncio
 async def test_screenshot(client, session_id):
@@ -56,6 +65,7 @@ async def test_screenshot(client, session_id):
     assert r.status_code == 200
     assert "path" in r.json()
 
+
 @pytest.mark.asyncio
 async def test_html(client, session_id):
     await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<p>Content</p>"})
@@ -63,18 +73,21 @@ async def test_html(client, session_id):
     assert r.status_code == 200
     assert "html" in r.json()
 
+
 @pytest.mark.asyncio
 async def test_logs(client, session_id):
     r = await client.get(f"/browser/{session_id}/logs")
     assert r.status_code == 200
     assert "logs" in r.json()
 
+
 @pytest.mark.asyncio
 async def test_wait(client, session_id):
     await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Test</h1>"})
     r = await client.post(f"/browser/{session_id}/wait", json={"load": True})
     assert r.status_code == 200
-    assert r.json()["ok"] == True
+    assert r.json()["ok"] is True
+
 
 @pytest.mark.asyncio
 async def test_type(client, session_id):
@@ -84,6 +97,7 @@ async def test_type(client, session_id):
     r = await client.post(f"/browser/{session_id}/type", json={"text": "test"})
     assert r.status_code == 200
 
+
 @pytest.mark.asyncio
 async def test_key(client, session_id):
     html = "data:text/html,<input id='inp' type='text'/>"
@@ -92,12 +106,14 @@ async def test_key(client, session_id):
     r = await client.post(f"/browser/{session_id}/key", json={"key": "Enter"})
     assert r.status_code == 200
 
+
 @pytest.mark.asyncio
 async def test_hover(client, session_id):
     html = "data:text/html,<button id='btn'>Hover</button>"
     await client.post(f"/browser/{session_id}/navigate", json={"url": html})
     r = await client.post(f"/browser/{session_id}/hover", json={"selector": "#btn"})
     assert r.status_code == 200
+
 
 @pytest.mark.asyncio
 async def test_scroll(client, session_id):
@@ -106,6 +122,7 @@ async def test_scroll(client, session_id):
     r = await client.post(f"/browser/{session_id}/scroll", json={"pixels": 100})
     assert r.status_code == 200
 
+
 @pytest.mark.asyncio
 async def test_no_active_page(client):
     r = await client.post("/sessions", json={"profile": "nopage", "headless": True})
@@ -113,11 +130,11 @@ async def test_no_active_page(client):
     await client.delete(f"/sessions/{sid}")
     r2 = await client.post("/sessions", json={"profile": "nopage2", "headless": True})
     sid2 = r2.json()["id"]
-    mgr = None
-    async with create_app().router.lifespan_context(create_app()) as state:
+    async with create_app().router.lifespan_context(create_app()):
         pass
     r = await client.get(f"/browser/{sid2}/url")
     assert r.status_code == 200
+
 
 @pytest.mark.asyncio
 async def test_snapshot_has_refs(client, session_id):
@@ -128,8 +145,9 @@ async def test_snapshot_has_refs(client, session_id):
     tree = r.json()["tree"]
     assert "[1]" in tree
     assert "[2]" in tree
-    heading_line = [l for l in tree.strip().split("\n") if "Title" in l][0]
+    heading_line = [line for line in tree.strip().split("\n") if "Title" in line][0]
     assert "[" not in heading_line
+
 
 @pytest.mark.asyncio
 async def test_click_by_ref(client, session_id):
@@ -140,6 +158,7 @@ async def test_click_by_ref(client, session_id):
     assert r.status_code == 200
     assert r.json()["ok"] is True
 
+
 @pytest.mark.asyncio
 async def test_fill_by_ref(client, session_id):
     html = "data:text/html,<body><input id='inp' type='text'/></body>"
@@ -149,22 +168,29 @@ async def test_fill_by_ref(client, session_id):
     assert r.status_code == 200
     assert r.json()["ok"] is True
 
+
 @pytest.mark.asyncio
 async def test_select(client, session_id):
-    html = "data:text/html,<body><select id='sel'><option value='a'>A</option><option value='b'>B</option></select></body>"
+    html = (
+        "data:text/html,<body><select id='sel'><option value='a'>A</option><option value='b'>B</option></select></body>"
+    )
     await client.post(f"/browser/{session_id}/navigate", json={"url": html})
     r = await client.post(f"/browser/{session_id}/select", json={"selector": "#sel", "value": "b"})
     assert r.status_code == 200
     assert r.json()["ok"] is True
 
+
 @pytest.mark.asyncio
 async def test_select_by_ref(client, session_id):
-    html = "data:text/html,<body><select id='sel'><option value='a'>A</option><option value='b'>B</option></select></body>"
+    html = (
+        "data:text/html,<body><select id='sel'><option value='a'>A</option><option value='b'>B</option></select></body>"
+    )
     await client.post(f"/browser/{session_id}/navigate", json={"url": html})
     await client.get(f"/browser/{session_id}/snapshot")
     r = await client.post(f"/browser/{session_id}/select", json={"ref": 3, "value": "b"})
     assert r.status_code == 200
     assert r.json()["ok"] is True
+
 
 @pytest.mark.asyncio
 async def test_click_returns_snapshot(client, session_id):
@@ -177,6 +203,7 @@ async def test_click_returns_snapshot(client, session_id):
     assert "snapshot" in body
     assert "Page2" in body["snapshot"]
 
+
 @pytest.mark.asyncio
 async def test_fill_returns_snapshot(client, session_id):
     html = "data:text/html,<body><input id='inp' type='text'/><p>Label</p></body>"
@@ -187,17 +214,19 @@ async def test_fill_returns_snapshot(client, session_id):
     assert body["ok"] is True
     assert "snapshot" in body
 
+
 @pytest.mark.asyncio
 async def test_navigate_returns_snapshot(client, session_id):
     r = await client.post(
         f"/browser/{session_id}/navigate",
-        json={"url": "data:text/html,<body><h1>Hello</h1><button>Click</button></body>"}
+        json={"url": "data:text/html,<body><h1>Hello</h1><button>Click</button></body>"},
     )
     assert r.status_code == 200
     body = r.json()
     assert "snapshot" in body
     assert "Hello" in body["snapshot"]
     assert "[1]" in body["snapshot"]
+
 
 @pytest.mark.asyncio
 async def test_snapshot_table_compact(client, session_id):
@@ -235,7 +264,7 @@ async def test_snapshot_list_compression(client, session_id):
     tree = r.json()["tree"]
     assert "[1]" in tree
     assert "[7]" in tree
-    lines = [l for l in tree.strip().split("\n") if "Home" in l or "FAQ" in l]
+    lines = [line for line in tree.strip().split("\n") if "Home" in line or "FAQ" in line]
     assert len(lines) == 1
 
 
@@ -254,7 +283,7 @@ async def test_adaptive_cap_many_interactive(client, session_id):
     """Page with many interactive elements gets higher cap and prioritizes them."""
     # Use distinct elements to avoid repetition-dedup (different classes)
     buttons = "".join(f'<button class="b{i}">Btn {i}</button>' for i in range(60))
-    paragraphs = "".join(f'<p>Filler paragraph {i}</p>' for i in range(200))
+    paragraphs = "".join(f"<p>Filler paragraph {i}</p>" for i in range(200))
     html = f"data:text/html,<body>{buttons}{paragraphs}</body>"
     await client.post(f"/browser/{session_id}/navigate", json={"url": html})
     r = await client.get(f"/browser/{session_id}/snapshot")

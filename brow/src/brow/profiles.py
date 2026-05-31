@@ -1,6 +1,8 @@
 import json
 import shutil
+
 import brow.config as cfg
+
 
 class ProfileManager:
     def __init__(self):

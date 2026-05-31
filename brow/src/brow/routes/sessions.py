@@ -1,15 +1,17 @@
 import logging
 from typing import Optional
 
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
+
 
 class CreateSession(BaseModel):
     profile: str = "default"
     headless: bool = True
     url: Optional[str] = None
+
 
 @router.post("")
 async def create(req: Request, body: CreateSession):
@@ -30,6 +32,7 @@ async def create(req: Request, body: CreateSession):
         page = session.page
         if page:
             from brow.routes.browser import _take_snapshot
+
             try:
                 r = await page.goto(body.url, timeout=30000)
                 resp["url"] = page.url
@@ -46,9 +49,11 @@ async def create(req: Request, body: CreateSession):
 
     return resp
 
+
 @router.get("")
 async def list_sessions(req: Request):
     return req.app.state.manager.list()
+
 
 @router.delete("/{sid}")
 async def delete(req: Request, sid: str):

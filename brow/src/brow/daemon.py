@@ -7,8 +7,9 @@ from fastapi import FastAPI
 from patchright.async_api import async_playwright
 
 from brow.config import DAEMON_HOST, DAEMON_PORT, PID_FILE, ensure_dirs
-from brow.session import SessionManager
 from brow.profiles import ProfileManager
+from brow.session import SessionManager
+
 
 def create_app():
     manager = SessionManager()
@@ -26,11 +27,11 @@ def create_app():
 
     app = FastAPI(lifespan=lifespan)
 
-    from brow.routes.sessions import router as sessions_router
     from brow.routes.browser import router as browser_router
+    from brow.routes.eval import router as eval_router
     from brow.routes.pages import router as pages_router
     from brow.routes.profiles import router as profiles_router
-    from brow.routes.eval import router as eval_router
+    from brow.routes.sessions import router as sessions_router
 
     app.include_router(sessions_router)
     app.include_router(browser_router)
@@ -44,6 +45,7 @@ def create_app():
 
     return app
 
+
 def run_daemon(host=None, port=None):
     ensure_dirs()
     host = host or DAEMON_HOST
@@ -53,6 +55,7 @@ def run_daemon(host=None, port=None):
         uvicorn.run(create_app(), host=host, port=port, log_level="warning")
     finally:
         PID_FILE.unlink(missing_ok=True)
+
 
 def stop_daemon():
     if not PID_FILE.exists():
@@ -65,6 +68,7 @@ def stop_daemon():
     PID_FILE.unlink(missing_ok=True)
     return True
 
+
 def daemon_running():
     if not PID_FILE.exists():
         return False
@@ -76,7 +80,9 @@ def daemon_running():
         PID_FILE.unlink(missing_ok=True)
         return False
 
+
 if __name__ == "__main__":
     import sys
+
     port = int(sys.argv[sys.argv.index("--port") + 1]) if "--port" in sys.argv else None
     run_daemon(port=port)

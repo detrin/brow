@@ -1,4 +1,5 @@
 import sys
+
 from brow.daemon import run_daemon
 
 if __name__ == "__main__":

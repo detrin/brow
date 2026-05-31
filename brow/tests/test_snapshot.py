@@ -1,5 +1,4 @@
-import re
-from brow.snapshot import format_tree, filter_lines
+from brow.snapshot import filter_lines, format_tree
 
 SAMPLE_TREE = {
     "role": "WebArea",
@@ -8,8 +7,9 @@ SAMPLE_TREE = {
         {"role": "heading", "name": "Hello", "level": 1},
         {"role": "link", "name": "Click me"},
         {"role": "textbox", "name": "Email"},
-    ]
+    ],
 }
+
 
 def test_format_tree():
     result = format_tree(SAMPLE_TREE)
@@ -17,8 +17,10 @@ def test_format_tree():
     assert "Hello" in result
     assert "link" in result
 
+
 def test_format_tree_none():
     assert format_tree(None) == ""
+
 
 def test_filter_lines():
     text = "line one\nline two\nline three"
@@ -26,12 +28,14 @@ def test_filter_lines():
     assert "two" in result
     assert "one" not in result
 
+
 def test_filter_lines_regex():
     text = "apple 1\nbanana 2\napricot 3"
     result = filter_lines(text, "^ap")
     assert "apple" in result
     assert "apricot" in result
     assert "banana" not in result
+
 
 def test_format_tree_with_ref():
     tree = {"role": "heading", "name": "Title", "level": 1}
@@ -43,9 +47,11 @@ def test_format_tree_with_ref():
     assert "[1]" in result
     assert 'button "Submit"' in result
 
+
 def test_format_tree_multiple_refs():
     tree = {
-        "role": "WebArea", "name": "Page",
+        "role": "WebArea",
+        "name": "Page",
         "children": [
             {"role": "link", "name": "Home", "href": "/", "ref": 1},
             {"role": "heading", "name": "Welcome", "level": 1},
@@ -59,6 +65,7 @@ def test_format_tree_multiple_refs():
     assert "[" not in lines[2]
     assert "[2]" in lines[3]
     assert "[3]" in lines[4]
+
 
 def test_format_tree_table():
     tree = {
@@ -144,5 +151,5 @@ def test_format_tree_inline_list_no_refs():
 def test_filter_lines_limit():
     text = "\n".join(f"match {i}" for i in range(20))
     result = filter_lines(text, "match", limit=10)
-    lines = [l for l in result.strip().split("\n") if l]
+    lines = [line for line in result.strip().split("\n") if line]
     assert len(lines) == 10

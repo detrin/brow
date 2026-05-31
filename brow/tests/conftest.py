@@ -1,5 +1,7 @@
-import pytest
 import sys
+
+import pytest
+
 
 @pytest.fixture(autouse=True)
 def tmp_brow_home(tmp_path, monkeypatch):
@@ -9,6 +11,7 @@ def tmp_brow_home(tmp_path, monkeypatch):
     if "brow.profiles" in sys.modules:
         del sys.modules["brow.profiles"]
     import brow.config as cfg
+
     cfg.BROW_HOME = tmp_path / ".brow"
     cfg.PROFILES_DIR = cfg.BROW_HOME / "profiles"
     cfg.STATES_DIR = cfg.BROW_HOME / "states"
