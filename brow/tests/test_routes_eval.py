@@ -52,6 +52,8 @@ async def test_eval_text_helper(client, session_id):
 @pytest.mark.asyncio
 async def test_eval_coroutine_hint(client, session_id):
     await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Hi</h1>"})
-    r = await client.post(f"/eval/{session_id}", json={"code": "el = page.query_selector('h1')\nresult = el.inner_text()"})
+    r = await client.post(
+        f"/eval/{session_id}", json={"code": "el = page.query_selector('h1')\nresult = el.inner_text()"}
+    )
     assert r.status_code == 400
     assert "await" in r.json()["detail"]
