@@ -22,7 +22,11 @@ brew install brow
 **pip:**
 ```bash
 pip install brow-cli
-brow setup            # installs Chromium (~150MB, one-time)
+```
+
+Then install Chromium once (either method above):
+```bash
+brow setup            # ~150MB, one-time
 ```
 
 **Agent skill:**
