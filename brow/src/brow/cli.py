@@ -121,10 +121,15 @@ def daemon_status():
 
 
 @session_app.command("new")
-def session_new(profile: str = "default", headed: bool = False, url: Optional[str] = None):
+def session_new(
+    profile: str = "default",
+    headed: bool = False,
+    url: Optional[str] = None,
+    reclaim: bool = typer.Option(False, "--reclaim", help="Close any existing session holding this profile"),
+):
     ensure_daemon()
     c = _client()
-    payload = {"profile": profile, "headless": not headed}
+    payload = {"profile": profile, "headless": not headed, "reclaim": reclaim}
     if url:
         payload["url"] = url
     result = run_async(c.post("/sessions", json=payload))
@@ -167,10 +172,15 @@ def session_cleanup():
 
 
 @app.command("navigate")
-def navigate(url: str, s: Optional[str] = session_opt, timeout: int = 30000):
+def navigate(
+    url: str,
+    s: Optional[str] = session_opt,
+    timeout: int = 30000,
+    wait: str = typer.Option("load", "--wait", help="Settle strategy: domcontentloaded | load | networkidle"),
+):
     ensure_daemon()
     c = _client()
-    result = run_async(c.post(f"/browser/{s}/navigate", json={"url": url, "timeout": timeout}))
+    result = run_async(c.post(f"/browser/{s}/navigate", json={"url": url, "timeout": timeout, "wait": wait}))
     typer.echo(f"{result['url']} [{result.get('status', '')}]")
     if result.get("snapshot"):
         typer.echo(result["snapshot"])

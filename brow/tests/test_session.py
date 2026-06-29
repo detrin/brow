@@ -71,3 +71,15 @@ def test_duplicate_profile(manager):
 )
 def test_is_browser_missing_error(msg, expected):
     assert is_browser_missing_error(Exception(msg)) is expected
+
+
+def test_find_by_profile(manager):
+    sid = manager.create("gmail", headless=True)
+    assert manager.find_by_profile("gmail").id == sid
+    assert manager.find_by_profile("nope") is None
+
+
+def test_conflict_message_suggests_recovery(manager):
+    sid = manager.create("gmail", headless=True)
+    with pytest.raises(RuntimeError, match=f"session delete {sid}"):
+        manager.create("gmail", headless=True)

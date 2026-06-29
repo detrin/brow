@@ -9,10 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `brow setup` command to install Chromium (no more manual `patchright install`)
+- `session new --reclaim` closes a stale session holding the profile and takes it over (#31)
+- `navigate --wait domcontentloaded|load|networkidle` settle strategy (#33)
+- `eval` namespace helpers `text(sel)` and `texts(sel)` for quick extraction (#32)
 
 ### Changed
 - License reverted to MIT (was Elastic License 2.0)
 - `session new` returns a clear "Chromium is not installed" message instead of a raw 500 when the browser binary is missing
+- click/fill/select accept a snapshot ref directly: `click "[1]"` resolves to `--ref 1` (#30)
+- Profile-conflict error now suggests `--reclaim` and the exact `session delete` command (#31)
+- `eval` errors involving an un-awaited coroutine now hint to add `await` (#32)
 
 ## [1.1.0] - 2026-04-08
 
