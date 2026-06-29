@@ -15,6 +15,7 @@ class CreateSession(BaseModel):
     profile: str = "default"
     headless: bool = True
     url: Optional[str] = None
+    reclaim: bool = False
 
 
 @router.post("")
@@ -22,6 +23,11 @@ async def create(req: Request, body: CreateSession):
     mgr = req.app.state.manager
     profiles = req.app.state.profiles
     pw = req.app.state.pw
+    if body.reclaim:
+        stale = mgr.find_by_profile(body.profile)
+        if stale:
+            await stale.close()
+            mgr.delete(stale.id)
     try:
         sid = mgr.create(body.profile, body.headless)
     except RuntimeError as e:

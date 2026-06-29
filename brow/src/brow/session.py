@@ -102,12 +102,21 @@ class SessionManager:
         self.sessions: dict[str, Session] = {}
         self._counter = 0
 
+    def find_by_profile(self, profile):
+        for s in self.sessions.values():
+            if s.profile == profile:
+                return s
+        return None
+
     def create(self, profile, headless=True):
         if len(self.sessions) >= MAX_SESSIONS:
             raise RuntimeError(f"Max sessions ({MAX_SESSIONS}) reached")
-        for s in self.sessions.values():
-            if s.profile == profile:
-                raise RuntimeError(f"Profile '{profile}' already in use by session {s.id}")
+        existing = self.find_by_profile(profile)
+        if existing:
+            raise RuntimeError(
+                f"Profile '{profile}' already in use by session {existing.id}. "
+                f"Retry with reclaim, or run: brow session delete {existing.id}"
+            )
         self._counter += 1
         sid = str(self._counter)
         self.sessions[sid] = Session(id=sid, profile=profile, headless=headless)

@@ -29,6 +29,26 @@ async def test_list_sessions(client):
 
 
 @pytest.mark.asyncio
+async def test_profile_conflict(client):
+    await client.post("/sessions", json={"profile": "dup", "headless": True})
+    r = await client.post("/sessions", json={"profile": "dup", "headless": True})
+    assert r.status_code == 400
+    assert "already in use" in r.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_reclaim_profile(client):
+    r1 = await client.post("/sessions", json={"profile": "dup", "headless": True})
+    old = r1.json()["id"]
+    r2 = await client.post("/sessions", json={"profile": "dup", "headless": True, "reclaim": True})
+    assert r2.status_code == 200
+    sessions = (await client.get("/sessions")).json()
+    ids = [s["id"] for s in sessions]
+    assert old not in ids
+    assert r2.json()["id"] in ids
+
+
+@pytest.mark.asyncio
 async def test_delete_session(client):
     r = await client.post("/sessions", json={"profile": "default", "headless": True})
     sid = r.json()["id"]

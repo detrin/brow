@@ -24,6 +24,14 @@ async def eval_code(req: Request, sid: str, body: EvalReq):
 
     page = session.page
     context = session.context
+
+    async def text(selector):
+        el = await page.query_selector(selector)
+        return (await el.inner_text()).strip() if el else None
+
+    async def texts(selector):
+        return [(await el.inner_text()).strip() for el in await page.query_selector_all(selector)]
+
     sandbox = {
         "page": page,
         "context": context,
@@ -31,6 +39,8 @@ async def eval_code(req: Request, sid: str, body: EvalReq):
         "state": session.state,
         "pages": session.pages,
         "asyncio": asyncio,
+        "text": text,
+        "texts": texts,
     }
 
     stdout_capture = io.StringIO()
@@ -50,7 +60,10 @@ async def eval_code(req: Request, sid: str, body: EvalReq):
     except asyncio.TimeoutError:
         raise HTTPException(408, "Eval timed out")
     except Exception as e:
-        raise HTTPException(400, str(e))
+        msg = str(e)
+        if "'coroutine' object" in msg:
+            msg += " — page methods are async; did you forget 'await'? (or use the text()/texts() helpers)"
+        raise HTTPException(400, msg)
 
     return {
         "result": sandbox.get("result"),

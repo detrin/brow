@@ -51,7 +51,7 @@ brow session delete 1
 | `websocket -s <id> [--count N] [--search <str>] [--clear]` | Get WebSocket messages |
 | `actions -s <id> [--json] [--clear]` | View recorded action log for current session |
 | `replay -s <id> <playbook.yaml> [--var k=v]` | Replay a playbook YAML (with optional var overrides) |
-| `eval -s <id> <code>` | Run Playwright Python (side effects only — no stdout return) |
+| `eval -s <id> <code>` | Run Playwright Python; returns `result` + stdout. Helpers: `text(sel)`, `texts(sel)` |
 
 ## Scrolling
 
@@ -128,13 +128,15 @@ brow session delete 1
 brow session new --profile gmail
 ```
 
-**Profile conflict:** `session new` fails if the profile is already in use: `Profile 'default' already in use by session N`. Fix: use a unique `--profile <name>` per concurrent session.
+**Profile conflict:** `session new` fails if the profile is already in use: `Profile 'default' already in use by session N`. Fix: use a unique `--profile <name>` per concurrent session, or pass `--reclaim` to close the stale session and take over the profile.
 
 ## Tips
 
 - Use `--headed` to see the browser while debugging
 - Use `snapshot` over `screenshot` — it's faster and uses fewer tokens
-- `eval` runs arbitrary Playwright Python but output is not returned to stdout — use for side effects only
+- Click/fill accept the snapshot ref directly: `click "[1]"` works (same as `click --ref 1`)
+- `eval` returns `result` and stdout. `page` is async — `await` everything, or use the `text(sel)` / `texts(sel)` helpers for quick extraction
+- `navigate --wait networkidle` for JS-heavy pages instead of guessing with `sleep`
 - Session IDs are simple integers: 1, 2, 3...
 
 ## API Scouting

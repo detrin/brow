@@ -170,6 +170,24 @@ async def test_fill_by_ref(client, session_id):
 
 
 @pytest.mark.asyncio
+async def test_click_bracket_ref_as_selector(client, session_id):
+    html = "data:text/html,<body><button id='btn' onclick='document.title=\"clicked\"'>Click</button></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    await client.get(f"/browser/{session_id}/snapshot")
+    r = await client.post(f"/browser/{session_id}/click", json={"selector": "[1]"})
+    assert r.status_code == 200
+    assert r.json()["ok"] is True
+
+
+@pytest.mark.asyncio
+async def test_navigate_wait_networkidle(client, session_id):
+    r = await client.post(
+        f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>Hi</h1>", "wait": "networkidle"}
+    )
+    assert r.status_code == 200
+
+
+@pytest.mark.asyncio
 async def test_select(client, session_id):
     html = (
         "data:text/html,<body><select id='sel'><option value='a'>A</option><option value='b'>B</option></select></body>"

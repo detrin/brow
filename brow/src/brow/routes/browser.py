@@ -1,3 +1,4 @@
+import re
 import time
 from pathlib import Path
 from typing import Optional
@@ -236,10 +237,16 @@ def _get_page(session):
     return page
 
 
+_REF_RE = re.compile(r"^\s*\[?(\d+)\]?\s*$")
+
+
 def _resolve_selector(body):
     if hasattr(body, "ref") and body.ref is not None:
         return f'[data-brow-ref="{body.ref}"]'
     if hasattr(body, "selector") and body.selector is not None:
+        m = _REF_RE.match(body.selector)
+        if m:
+            return f'[data-brow-ref="{m.group(1)}"]'
         return body.selector
     raise HTTPException(400, "Either 'ref' or 'selector' must be provided")
 
@@ -254,6 +261,7 @@ def _log_action(session, action: str, **kwargs):
 class NavigateReq(BaseModel):
     url: str
     timeout: int = DEFAULT_TIMEOUT
+    wait: str = "load"
 
 
 class WaitReq(BaseModel):
@@ -341,6 +349,11 @@ async def navigate(req: Request, sid: str, body: NavigateReq):
         logging.error(f"Navigate to {body.url} failed: {e}")
         raise HTTPException(502, f"Navigation failed: {e}")
     status = r.status if r else None
+    if body.wait in ("load", "networkidle"):
+        try:
+            await page.wait_for_load_state(body.wait, timeout=min(body.timeout, 10000))
+        except Exception:
+            pass
     _log_action(session, "navigate", url=body.url, status=status)
     formatted, truncated, node_count = await _take_snapshot(page)
     resp = {"url": page.url, "status": status, "snapshot": formatted}
