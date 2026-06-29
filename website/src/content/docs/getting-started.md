@@ -9,7 +9,7 @@ Install the Python package and the Chromium browser:
 
 ```bash
 pip install brow-cli
-patchright install chromium
+brow setup
 ```
 
 Verify the installation:

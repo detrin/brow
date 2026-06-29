@@ -1,11 +1,13 @@
-# brow - agentic browsing
+# brow — browser automation for AI agents
 
 [![CI](https://github.com/detrin/brow/actions/workflows/test.yml/badge.svg)](https://github.com/detrin/brow/actions/workflows/test.yml)
 [![PyPI](https://img.shields.io/pypi/v/brow-cli)](https://pypi.org/project/brow-cli/)
 [![Python](https://img.shields.io/pypi/pyversions/brow-cli)](https://pypi.org/project/brow-cli/)
-[![License: ELv2](https://img.shields.io/badge/license-Elastic%202.0-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Standalone Playwright CLI for agent browser automation. Launches a real Chromium instance with an agent-friendly API - structured commands for common actions, eval escape hatch for full power.
+**The browser tool agents win with: 82% task success at ~$0.22/task — beating browser-use, playwright-mcp, and agent-browser on [22 benchmark tasks](#benchmarks).**
+
+A standalone Playwright CLI that gives your agent a real Chromium instance with an agent-friendly API — structured commands for common actions, plus an `eval` escape hatch for full power.
 
 ![brow demo](https://github.com/user-attachments/assets/27c6114c-451b-4e64-b66d-2268248be79b)
 
@@ -20,7 +22,11 @@ brew install brow
 **pip:**
 ```bash
 pip install brow-cli
-patchright install chromium
+```
+
+Then install Chromium once (either method above):
+```bash
+brow setup            # ~150MB, one-time
 ```
 
 **Agent skill:**

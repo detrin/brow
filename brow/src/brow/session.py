@@ -2,6 +2,13 @@ from dataclasses import dataclass, field
 
 from brow.config import MAX_SESSIONS
 
+_MISSING_BROWSER_HINTS = ("Executable doesn't exist", "playwright install", "patchright install", "BrowserType.launch")
+
+
+def is_browser_missing_error(e):
+    msg = str(e)
+    return any(h in msg for h in _MISSING_BROWSER_HINTS)
+
 
 @dataclass
 class Session:

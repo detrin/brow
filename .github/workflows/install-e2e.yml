@@ -1,0 +1,31 @@
+name: Install E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  install-e2e:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Build wheel
+        run: |
+          pip install build
+          python -m build --wheel brow/ -o dist
+      - name: Install from wheel
+        run: pip install dist/*.whl
+      - name: Run e2e
+        run: bash scripts/e2e.sh
+        env:
+          BROW_SETUP_ARGS: ${{ runner.os == 'Linux' && '--with-deps' || '' }}

@@ -10,7 +10,7 @@ WORKDIR /app
 COPY brow/ /app/brow/
 RUN pip install --no-cache-dir /app/brow/
 
-RUN playwright install --with-deps chromium
+RUN brow setup --with-deps
 
 COPY benchmarks/ /app/benchmarks/
 RUN pip install --no-cache-dir -r /app/benchmarks/requirements.txt

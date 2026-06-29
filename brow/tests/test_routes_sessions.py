@@ -50,6 +50,18 @@ async def test_status(client):
 
 
 @pytest.mark.asyncio
+async def test_create_session_browser_missing(client, monkeypatch):
+    async def _fail(self, *a, **k):
+        raise Exception("Executable doesn't exist at /chromium. Run playwright install")
+
+    monkeypatch.setattr("brow.session.Session.launch", _fail)
+    r = await client.post("/sessions", json={"profile": "missing", "headless": True})
+    assert r.status_code == 503
+    assert "brow setup" in r.json()["detail"]
+    assert (await client.get("/sessions")).json() == []
+
+
+@pytest.mark.asyncio
 async def test_create_session_with_url(client):
     r = await client.post(
         "/sessions",
