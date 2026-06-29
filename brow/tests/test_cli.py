@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from typer.testing import CliRunner
 
@@ -75,6 +75,20 @@ def test_fill_with_selector():
 def test_fill_no_args():
     result = runner.invoke(app, ["fill", "-s", "1"])
     assert result.exit_code != 0
+
+
+def test_setup_runs_patchright():
+    with patch("brow.cli.subprocess.run", return_value=MagicMock(returncode=0)) as mock_run:
+        result = runner.invoke(app, ["setup"])
+        assert result.exit_code == 0
+        assert "chromium" in mock_run.call_args[0][0]
+        assert "Setup complete" in result.output
+
+
+def test_setup_failure():
+    with patch("brow.cli.subprocess.run", return_value=MagicMock(returncode=1)):
+        result = runner.invoke(app, ["setup"])
+        assert result.exit_code == 1
 
 
 def test_api_error_surfaced():

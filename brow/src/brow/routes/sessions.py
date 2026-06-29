@@ -4,7 +4,11 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
+from brow.session import is_browser_missing_error
+
 router = APIRouter(prefix="/sessions", tags=["sessions"])
+
+_BROWSER_MISSING_MSG = "Chromium is not installed. Run: brow setup  (or: patchright install chromium)"
 
 
 class CreateSession(BaseModel):
@@ -24,7 +28,13 @@ async def create(req: Request, body: CreateSession):
         raise HTTPException(400, str(e))
     session = mgr.get(sid)
     user_data_dir = profiles.get_profile_dir(body.profile)
-    await session.launch(pw, user_data_dir)
+    try:
+        await session.launch(pw, user_data_dir)
+    except Exception as e:
+        mgr.delete(sid)
+        if is_browser_missing_error(e):
+            raise HTTPException(503, _BROWSER_MISSING_MSG)
+        raise HTTPException(500, f"Failed to launch browser: {e}")
 
     resp = {"id": sid, "profile": body.profile}
 

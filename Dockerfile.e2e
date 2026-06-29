@@ -1,0 +1,11 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+COPY brow/ /app/brow/
+COPY scripts/e2e.sh /app/scripts/e2e.sh
+
+RUN pip install --no-cache-dir build && python -m build --wheel brow/ -o /app/dist
+RUN pip install --no-cache-dir /app/dist/*.whl
+
+ENV BROW_SETUP_ARGS=--with-deps
+ENTRYPOINT ["bash", "scripts/e2e.sh"]

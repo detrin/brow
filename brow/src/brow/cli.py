@@ -65,6 +65,19 @@ def ensure_daemon():
     raise typer.Exit(1)
 
 
+@app.command("setup")
+def setup_cmd(with_deps: bool = typer.Option(False, "--with-deps", help="Also install OS-level dependencies")):
+    cmd = [sys.executable, "-m", "patchright", "install"]
+    if with_deps:
+        cmd.append("--with-deps")
+    cmd.append("chromium")
+    typer.echo("Installing Chromium for brow (~150MB, one-time)...")
+    if subprocess.run(cmd).returncode != 0:
+        typer.echo("Setup failed. Try: patchright install chromium", err=True)
+        raise typer.Exit(1)
+    typer.echo("Setup complete. Try: brow session new")
+
+
 @daemon_app.command("start")
 def daemon_start(
     port: int = DAEMON_PORT, wait: bool = typer.Option(False, "--wait", help="Block until daemon is ready")

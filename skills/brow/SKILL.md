@@ -11,7 +11,7 @@ Control a real Chromium browser from Claude Code. Navigate pages, click buttons,
 
 ```bash
 pip install brow-cli
-patchright install chromium
+brow setup
 ```
 
 ## Usage

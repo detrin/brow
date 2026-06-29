@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `brow setup` command to install Chromium (no more manual `patchright install`)
+
+### Changed
+- License reverted to MIT (was Elastic License 2.0)
+- `session new` returns a clear "Chromium is not installed" message instead of a raw 500 when the browser binary is missing
+
 ## [1.1.0] - 2026-04-08
 
 ### Added

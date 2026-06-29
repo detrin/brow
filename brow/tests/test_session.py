@@ -1,6 +1,6 @@
 import pytest
 
-from brow.session import SessionManager
+from brow.session import SessionManager, is_browser_missing_error
 
 
 @pytest.fixture
@@ -57,3 +57,17 @@ def test_duplicate_profile(manager):
     manager.create("gmail", headless=True)
     with pytest.raises(RuntimeError, match="already in use"):
         manager.create("gmail", headless=True)
+
+
+@pytest.mark.parametrize(
+    "msg,expected",
+    [
+        ("Executable doesn't exist at /path/chromium", True),
+        ("looks like Playwright was just installed. Run playwright install", True),
+        ("please run patchright install chromium", True),
+        ("Timeout 30000ms exceeded", False),
+        ("Session 1 not found", False),
+    ],
+)
+def test_is_browser_missing_error(msg, expected):
+    assert is_browser_missing_error(Exception(msg)) is expected
