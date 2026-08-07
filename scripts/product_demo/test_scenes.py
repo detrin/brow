@@ -11,9 +11,7 @@ from scripts.product_demo.scenes import (
 def test_storyboard_duration_and_required_beats():
     assert 75 <= total_duration(SCENES) <= 90
 
-    visible_copy = (
-        (scene.caption, *scene.claude_lines) for scene in SCENES
-    )
+    visible_copy = ((scene.caption, *scene.claude_lines) for scene in SCENES)
     joined = " ".join(part for group in visible_copy for part in group).lower()
     for phrase in ("real browser", "persistent", "snapshot", "record", "replay"):
         assert phrase in joined

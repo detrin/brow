@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, fields
 import re
-from typing import Iterable
+from collections.abc import Iterable
+from dataclasses import dataclass, fields
 
 
 @dataclass(frozen=True)
@@ -45,8 +45,8 @@ SCENES = (
         duration=14,
         caption="Navigate, then inspect a compact snapshot.",
         claude_lines=(
-            "brow navigate -s 1 \"https://maps.google.com\"",
-            "brow snapshot -s 1 --search \"rating|reviews\"",
+            'brow navigate -s 1 "https://maps.google.com"',
+            'brow snapshot -s 1 --search "rating|reviews"',
             "The browser stays real; the context stays compact.",
         ),
         browser_asset="times-square.png",
@@ -127,5 +127,7 @@ def assert_privacy_safe(scenes: Iterable[Scene]) -> None:
             if isinstance((value := getattr(scene, field.name)), (str, tuple))
         )
         lowered = visible.lower()
-        if any(forbidden in lowered for forbidden in _FORBIDDEN) or _EMAIL.search(visible):
+        if any(forbidden in lowered for forbidden in _FORBIDDEN) or _EMAIL.search(
+            visible
+        ):
             raise ValueError(f"Scene {scene.slug!r} is not privacy-safe")

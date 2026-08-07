@@ -5,17 +5,16 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Callable
+from collections.abc import Callable
+from pathlib import Path
 from urllib.parse import quote_plus
 
 from PIL import Image
-
 
 Runner = Callable[..., object]
 
@@ -118,9 +117,22 @@ def capture_demo_assets(
                 "await page.set_viewport_size({'width': 1440, 'height': 900})",
             )
 
-            run("navigate", "-s", session_id, _maps_url("highly rated bars near Times Square New York"))
+            run(
+                "navigate",
+                "-s",
+                session_id,
+                _maps_url("highly rated bars near Times Square New York"),
+            )
             run("wait", "-s", session_id, "--selector", "[role='feed']")
-            run("screenshot", "-s", session_id, "--quality", "high", "--path", str(times_square))
+            run(
+                "screenshot",
+                "-s",
+                session_id,
+                "--quality",
+                "high",
+                "--path",
+                str(times_square),
+            )
 
             playbook = temp_root / "places.yaml"
             playbook.write_text(
@@ -134,7 +146,15 @@ def capture_demo_assets(
             run("actions", "-s", session_id)
             run("replay", str(playbook), "-s", session_id, "--var", "city=Prague")
             run("wait", "-s", session_id, "--selector", "[role='feed']")
-            run("screenshot", "-s", session_id, "--quality", "high", "--path", str(prague))
+            run(
+                "screenshot",
+                "-s",
+                session_id,
+                "--quality",
+                "high",
+                "--path",
+                str(prague),
+            )
         finally:
             if session_id is not None:
                 run("session", "delete", session_id)

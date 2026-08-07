@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import subprocess
-from typing import Callable, Sequence
+from collections.abc import Callable, Sequence
+from pathlib import Path
 
 from scripts.product_demo.scenes import SCENES, Scene, total_duration
-
 
 VOICEOVER = (
     "Here’s brow: a small command-line tool that gives coding agents direct control of a real Chromium browser.",
@@ -34,7 +33,9 @@ def write_srt(scenes: Sequence[Scene], output_path: Path) -> Path:
         raise ValueError("voiceover and scene counts must match")
     cursor = 0.0
     cues = []
-    for index, (scene, narration) in enumerate(zip(scenes, VOICEOVER, strict=True), start=1):
+    for index, (scene, narration) in enumerate(
+        zip(scenes, VOICEOVER, strict=True), start=1
+    ):
         end = cursor + scene.duration
         cues.append(
             f"{index}\n{_srt_timestamp(cursor)} --> {_srt_timestamp(end)}\n{narration}\n"
@@ -52,8 +53,10 @@ def write_voiceover(scenes: Sequence[Scene], output_path: Path) -> Path:
     sections = [
         "# brow product demo — voiceover guide",
         "",
-        "Target pace: conversational, confident, about 145 words per minute. "
-        "The clean master is silent so this can be recorded in your own voice.",
+        (
+            "Target pace: conversational, confident, about 145 words per minute. "
+            "The clean master is silent so this can be recorded in your own voice."
+        ),
         "",
     ]
     for scene, narration in zip(scenes, VOICEOVER, strict=True):
@@ -86,7 +89,16 @@ def build_ffmpeg_command(
     filters = []
     for index, (frame, duration) in enumerate(zip(frames, durations, strict=True)):
         command.extend(
-            ("-loop", "1", "-framerate", "30", "-t", f"{duration:.3f}", "-i", str(frame))
+            (
+                "-loop",
+                "1",
+                "-framerate",
+                "30",
+                "-t",
+                f"{duration:.3f}",
+                "-i",
+                str(frame),
+            )
         )
         frame_count = round(duration * 30)
         fade_out = max(0.0, duration - 0.25)
@@ -145,7 +157,9 @@ def encode_video(
     if missing:
         raise ValueError(f"missing rendered frame: {missing[0].name}")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    command = build_ffmpeg_command(frames, [scene.duration for scene in scenes], output_path)
+    command = build_ffmpeg_command(
+        frames, [scene.duration for scene in scenes], output_path
+    )
     result = runner(
         command,
         check=True,
@@ -161,7 +175,12 @@ def encode_video(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", type=Path, required=True, help="Directory containing rendered scene frames")
+    parser.add_argument(
+        "--input",
+        type=Path,
+        required=True,
+        help="Directory containing rendered scene frames",
+    )
     parser.add_argument("--output", type=Path, required=True, help="Output MP4 path")
     args = parser.parse_args()
     frames = [args.input / f"{scene.slug}.png" for scene in SCENES]

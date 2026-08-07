@@ -2,8 +2,8 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
-from PIL import Image
 import pytest
+from PIL import Image
 
 from scripts.product_demo.capture_assets import (
     build_capture_env,

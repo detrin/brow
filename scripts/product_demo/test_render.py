@@ -1,7 +1,5 @@
-from pathlib import Path
-
-from PIL import Image
 import pytest
+from PIL import Image
 
 from scripts.product_demo.render import (
     BROWSER_BOX,

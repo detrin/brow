@@ -1,4 +1,3 @@
-from pathlib import Path
 import re
 
 from scripts.product_demo.encode import (
@@ -52,7 +51,10 @@ def test_ffmpeg_command_strips_metadata_and_encodes_silent_1080p_h264(tmp_path):
     command = build_ffmpeg_command(frames, [scene.duration for scene in SCENES], output)
 
     assert command[0] == "ffmpeg"
-    assert "-map_metadata" in command and command[command.index("-map_metadata") + 1] == "-1"
+    assert (
+        "-map_metadata" in command
+        and command[command.index("-map_metadata") + 1] == "-1"
+    )
     assert "-an" in command
     assert command[command.index("-c:v") + 1] == "libx264"
     assert command[command.index("-pix_fmt") + 1] == "yuv420p"

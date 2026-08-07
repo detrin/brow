@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Mapping
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageStat
 
 from scripts.product_demo.scenes import SCENES, Scene
-
 
 FRAME_SIZE = (1920, 1080)
 THUMBNAIL_SIZE = (1280, 720)
@@ -26,9 +25,15 @@ PURPLE = "#9b87f5"
 ORANGE = "#ff6b35"
 
 
-def _font(size: int, *, mono: bool = True) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+def _font(
+    size: int, *, mono: bool = True
+) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     candidates = (
-        (Path("/System/Library/Fonts/SFNSMono.ttf") if mono else Path("/System/Library/Fonts/SFNS.ttf")),
+        (
+            Path("/System/Library/Fonts/SFNSMono.ttf")
+            if mono
+            else Path("/System/Library/Fonts/SFNS.ttf")
+        ),
         Path("/System/Library/Fonts/Supplemental/Andale Mono.ttf"),
         Path("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"),
     )
@@ -79,7 +84,7 @@ def _draw_terminal(image: Image.Image, scene: Scene) -> None:
     draw.text((94, 332), "CLAUDE", font=_font(18), fill=scene.accent)
     y = 376
     for index, line in enumerate(scene.claude_lines):
-        if line.startswith("brow ") or line.startswith("pip "):
+        if line.startswith(("brow ", "pip ")):
             draw.rounded_rectangle((88, y - 9, 928, y + 41), radius=10, fill="#121b29")
             draw.text((106, y), line, font=_font(21), fill="#b9f6df")
         elif line.startswith("✓"):
@@ -91,7 +96,12 @@ def _draw_terminal(image: Image.Image, scene: Scene) -> None:
         y += 62
 
     draw.line((94, 844, 925, 844), fill="#202d40", width=1)
-    draw.text((94, 865), "brow · browser automation for coding agents", font=_font(17), fill="#657489")
+    draw.text(
+        (94, 865),
+        "brow · browser automation for coding agents",
+        font=_font(17),
+        fill="#657489",
+    )
 
 
 def _draw_camera_safe_area(image: Image.Image) -> None:
@@ -139,9 +149,13 @@ def render_scene(
     caption_font = _font(29, mono=False)
     caption_box = draw.textbbox((0, 0), scene.caption, font=caption_font)
     caption_width = caption_box[2] - caption_box[0]
-    draw.rounded_rectangle((48, 960, 1872, 1032), radius=22, fill="#0d1420", outline="#1c293b")
+    draw.rounded_rectangle(
+        (48, 960, 1872, 1032), radius=22, fill="#0d1420", outline="#1c293b"
+    )
     draw.rectangle((48, 960, 58, 1032), fill=scene.accent)
-    draw.text(((1920 - caption_width) // 2, 979), scene.caption, font=caption_font, fill=TEXT)
+    draw.text(
+        ((1920 - caption_width) // 2, 979), scene.caption, font=caption_font, fill=TEXT
+    )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     image.save(output_path, optimize=True)
@@ -159,11 +173,18 @@ def render_all(assets: Mapping[str, Path], output_dir: Path) -> list[Path]:
 def render_thumbnail(assets: Mapping[str, Path], output_path: Path) -> Path:
     full = Image.new("RGB", THUMBNAIL_SIZE, BACKGROUND)
     draw = ImageDraw.Draw(full)
-    draw.rounded_rectangle((34, 32, 1246, 688), radius=28, fill="#0d1420", outline=BORDER, width=2)
+    draw.rounded_rectangle(
+        (34, 32, 1246, 688), radius=28, fill="#0d1420", outline=BORDER, width=2
+    )
     draw.text((74, 78), "brow", font=_font(47, mono=False), fill=TEXT)
     draw.text((74, 165), "ONE CLI.", font=_font(62, mono=False), fill=ORANGE)
     draw.text((74, 235), "A REAL BROWSER.", font=_font(62, mono=False), fill=TEXT)
-    draw.text((78, 330), "Browser automation built for AI coding agents.", font=_font(25, mono=False), fill="#aebbd0")
+    draw.text(
+        (78, 330),
+        "Browser automation built for AI coding agents.",
+        font=_font(25, mono=False),
+        fill="#aebbd0",
+    )
 
     with Image.open(assets["times-square.png"]) as source:
         browser = ImageOps.fit(
@@ -188,12 +209,11 @@ def main() -> None:
     parser.add_argument("--assets", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    assets = {
-        name: args.assets / name
-        for name in ("times-square.png", "prague.png")
-    }
+    assets = {name: args.assets / name for name in ("times-square.png", "prague.png")}
     outputs = render_all(assets, args.output / "frames")
-    thumbnail = render_thumbnail(assets, args.output / "brow-product-demo-thumbnail.png")
+    thumbnail = render_thumbnail(
+        assets, args.output / "brow-product-demo-thumbnail.png"
+    )
     for path in (*outputs, thumbnail):
         print(path)
 
