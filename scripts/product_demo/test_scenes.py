@@ -50,3 +50,14 @@ def test_storyboard_slugs_and_timing_are_valid():
     assert len(SCENES) == 7
     assert len({scene.slug for scene in SCENES}) == len(SCENES)
     assert all(scene.duration > 0 for scene in SCENES)
+
+
+def test_visible_browser_commands_target_the_demo_session():
+    commands = (
+        line
+        for scene in SCENES
+        for line in scene.claude_lines
+        if line.startswith("brow ") and not line.startswith("brow session ")
+    )
+
+    assert all("-s 1" in command for command in commands)

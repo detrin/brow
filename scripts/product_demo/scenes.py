@@ -84,7 +84,7 @@ SCENES = (
         duration=15,
         caption="Replay the workflow with a different location.",
         claude_lines=(
-            "brow replay places.yaml --var city=Prague",
+            "brow replay -s 1 places.yaml --var city=Prague",
             "✓ replay complete",
             "Same workflow. New city. Real browser.",
         ),
