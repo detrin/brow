@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:07,000
+Here’s brow: a small command-line tool that gives coding agents direct control of a real Chromium browser.
+
+2
+00:00:07,000 --> 00:00:18,000
+The agent starts an isolated session with a persistent local profile. The browser stays alive across commands, just like the rest of the coding workflow.
+
+3
+00:00:18,000 --> 00:00:32,000
+It navigates to a public Maps search, then reads a compact accessibility snapshot. That gives the agent useful page structure and stable references without dumping an entire DOM into context.
+
+4
+00:00:32,000 --> 00:00:48,000
+Now the live page becomes an answer: real nearby venues, visible ratings, and a clean table. The browser remains on screen, so every result is easy to verify against the source.
+
+5
+00:00:48,000 --> 00:01:02,000
+The successful browser actions are recorded. Instead of rebuilding the workflow from scratch, the agent can turn those steps into a small, reusable playbook.
+
+6
+00:01:02,000 --> 00:01:17,000
+Change one variable and replay the same workflow for Prague. The public page updates, and the agent can repeat the task without fragile browser glue.
+
+7
+00:01:17,000 --> 00:01:27,000
+That’s brow: real browser automation for AI coding agents. Install it from PyPI, explore the MIT-licensed project on GitHub, and build your own workflow.
