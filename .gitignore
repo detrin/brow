@@ -20,5 +20,6 @@ website/node_modules/
 website/dist/
 website/.astro/
 .superpowers/
+.worktrees/
 benchmarks/results_*/
 benchmarks/results/new-tasks-run/
