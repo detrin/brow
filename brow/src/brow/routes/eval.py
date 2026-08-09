@@ -58,7 +58,20 @@ async def eval_code(req: Request, sid: str, body: EvalReq):
         finally:
             sys.stdout = old_stdout
     except asyncio.TimeoutError:
-        raise HTTPException(408, "Eval timed out")
+        # Name the knob and hand back whatever the job already printed. A bare
+        # "Eval timed out" reads as a hard ceiling, which pushes callers into
+        # writing their own batching/staging machinery for jobs that would fit
+        # fine with a larger timeout; and dropping the partial stdout means a run
+        # that completed most of its work reports nothing to resume from.
+        partial = stdout_capture.getvalue()
+        msg = (
+            f"Eval timed out after {body.timeout}ms. "
+            f"Raise it with --timeout <ms> (e.g. --timeout {max(body.timeout * 4, 120000)}) "
+            f"for long jobs, or split the work across calls."
+        )
+        if partial:
+            msg += f"\nPartial stdout before the timeout:\n{partial}"
+        raise HTTPException(408, msg)
     except Exception as e:
         msg = str(e)
         if "'coroutine' object" in msg:

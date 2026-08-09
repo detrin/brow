@@ -46,16 +46,23 @@ brow hover -s <id> <selector>
 brow scroll -s <id> [--pixels N]
 brow upload -s <id> <selector> <filepath>   # use CSS selector, not ref id
 
+# Repeat a click until the work runs out (pagination, "load more", batch actions)
+brow click-until -s <id> <selector> [--until-gone <selector>] [--max-iterations N]
+# Prints the click count; if it stopped early the reason goes to stderr.
+
 # Fetch (uses browser cookies — bypasses auth walls)
 brow fetch -s <id> <url> [-X POST] [-H "Header: val"] [-d '{"body":"json"}']
+# Body goes to stdout; a non-2xx status is reported on stderr.
 
-# Eval (Playwright Python, no stdout return)
-brow eval -s <id> "<python code>"           # vars: page, context, browser
+# Eval (Playwright Python)
+brow eval -s <id> "<python code>"           # vars: page, context, browser, state, pages
+brow eval -s <id> "<code>" --timeout 300000 # default 30s — RAISE IT for long jobs
+# print() output IS returned, and `result = ...` is returned as JSON.
 
 # Pages (tabs)
-brow page list -s <id>
+brow page list -s <id>                      # '*' marks the active tab
 brow page new -s <id> [url]
-brow page switch -s <id> <index>
+brow page switch -s <id> <index>            # retargets all later commands
 brow page close -s <id> [index]
 ```
 
@@ -116,4 +123,36 @@ brow session delete 1
 - Prefer `snapshot` over `screenshot` — faster, token-efficient, AI-readable
 - `network --clear` before navigation to isolate requests for a specific page
 - `fetch` uses the browser's real cookies — use it to call authenticated APIs
-- `eval` output is not returned to stdout — use only for side effects
+- `eval` returns both `print()` output and `result` — read it, don't just use it for side effects
+- **Long jobs: raise `--timeout` instead of batching.** Draining work a few items
+  per call (staging state on `window.*` and looping) is slower and loses progress
+  when a call dies. One `--timeout 300000` call does the same work in one shot.
+- **Bulk work belongs in one `eval`, not N CLI calls.** Each `brow` invocation is a
+  fresh process plus an HTTP round trip. A loop inside a single `eval` avoids both.
+- **Draining a paginated list: use `click-until`.** "Act on the visible batch, the
+  list refills, act again" is one command, not a shell loop. Always read the exit
+  reason — `--max-iterations` stopping early looks the same as finishing otherwise.
+
+## Driving an app's own API
+
+Often faster and far more reliable than clicking through a UI: read the app's
+network traffic, then call the same endpoints with the browser's cookies.
+
+```bash
+brow network -s 1 --search "api" --response   # find the endpoint
+brow fetch -s 1 "/api/v4/items?limit=100"     # relative URLs resolve against the page
+```
+
+If you get a 401/403 that the UI clearly doesn't get:
+
+- The app may require custom headers (an app-version or client-id header is
+  common). Pass them with `-H`; they are forwarded as-is.
+- The request may need to originate from the app's own origin. `fetch` runs in the
+  active page, so `navigate` to the app first — the same call from a different
+  page of the same product can fail.
+
+## Working with several tabs
+
+`page switch` sets the target for every later command, and `page list` marks the
+active tab with `*`. Check it after anything that might open a tab (OAuth popups,
+`target=_blank`) so you know where the next command will land.

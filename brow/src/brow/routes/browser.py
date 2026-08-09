@@ -312,6 +312,14 @@ class ScrollUntilReq(BaseModel):
     timeout: int = DEFAULT_TIMEOUT
 
 
+class ClickUntilReq(BaseModel):
+    selector: str
+    until_gone: Optional[str] = None
+    max_iterations: int = 25
+    settle_ms: int = 500
+    timeout: int = DEFAULT_TIMEOUT
+
+
 class DragReq(BaseModel):
     source: str
     target: str
@@ -688,6 +696,71 @@ async def scroll_until(req: Request, sid: str, body: ScrollUntilReq):
         await page.evaluate(f"window.scrollBy(0, {body.pixels})")
         await page.wait_for_timeout(500)
     return {"ok": True, "found": False, "attempts": body.max_attempts}
+
+
+@router.post("/click-until")
+async def click_until(req: Request, sid: str, body: ClickUntilReq):
+    """Click a selector repeatedly until the work runs out.
+
+    Bulk UI work is nearly always this shape: act on the visible batch, the list
+    refills, act again. Driving that from outside costs a process launch plus an
+    HTTP round trip per iteration and needs hand-written stop conditions, so this
+    keeps the loop next to the browser.
+
+    Stops on `until_gone` disappearing, on the clickable itself vanishing, or on
+    max_iterations. `done` distinguishes "finished" from "gave up", and `reason`
+    says which, so a truncated sweep is never mistaken for a complete one.
+    """
+    session = _get_session(req, sid)
+    page = _get_page(session)
+
+    iterations = 0
+    reason = "until_gone cleared"
+    done = False
+
+    for _ in range(body.max_iterations):
+        if body.until_gone:
+            try:
+                if await page.locator(body.until_gone).count() == 0:
+                    done = True
+                    break
+            except Exception as e:
+                raise HTTPException(400, f"Invalid until_gone selector '{body.until_gone}': {e}")
+
+        target = page.locator(body.selector)
+        try:
+            if await target.count() == 0:
+                done = True
+                reason = "clickable is gone"
+                break
+        except Exception as e:
+            raise HTTPException(400, f"Invalid selector '{body.selector}': {e}")
+
+        try:
+            await target.first.click(timeout=body.timeout)
+        except Exception as e:
+            # Report progress made so far rather than losing it to an exception.
+            return {
+                "ok": False,
+                "done": False,
+                "iterations": iterations,
+                "reason": f"click failed on iteration {iterations + 1}: {e}",
+            }
+        iterations += 1
+        await page.wait_for_timeout(body.settle_ms)
+    else:
+        reason = f"hit max_iterations ({body.max_iterations}) — work may remain, re-run to continue"
+
+    if body.until_gone and not done:
+        try:
+            done = await page.locator(body.until_gone).count() == 0
+            if done:
+                reason = "until_gone cleared"
+        except Exception:
+            pass
+
+    _log_action(session, "click-until", selector=body.selector, iterations=iterations)
+    return {"ok": True, "done": done, "iterations": iterations, "reason": reason}
 
 
 @router.post("/drag")

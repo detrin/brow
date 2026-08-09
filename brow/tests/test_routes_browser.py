@@ -315,3 +315,64 @@ async def test_adaptive_cap_many_interactive(client, session_id):
 async def test_session_not_found(client):
     r = await client.get("/browser/999/url")
     assert r.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_fetch_reports_status_for_empty_error_body(client, session_id):
+    """An auth failure must be visible, not silent.
+
+    The daemon has always returned the status; the CLI printed only the body. A
+    401 with an empty body therefore printed nothing at all, which is
+    indistinguishable from success-with-no-content and sends you guessing at
+    headers, cookies and origins instead of reading the code.
+    """
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>x</h1>"})
+    r = await client.post(
+        f"/browser/{session_id}/fetch",
+        json={"url": "https://httpbin.org/status/401", "method": "GET", "no_cookies": True},
+    )
+    assert r.status_code == 200
+    assert r.json()["status"] == 401
+
+
+@pytest.mark.asyncio
+async def test_click_until_drains_a_queue(client, session_id):
+    """Repeat a click until the work runs out, in ONE call.
+
+    This is the shape of every bulk UI job: act on the visible batch, the list
+    refills, act again. Done from the outside it costs a fresh process plus an
+    HTTP round trip per iteration (~250ms each) and needs hand-rolled
+    loop-guard logic to know when to stop.
+    """
+    html = """data:text/html,<body>
+    <div id=list>item item item item item</div>
+    <button id=go onclick="
+      var l=document.getElementById('list');
+      var w=l.textContent.trim().split(/\\s+/);
+      w.pop(); l.textContent=w.join(' ');
+    ">Go</button></body>"""
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.post(
+        f"/browser/{session_id}/click-until",
+        json={"selector": "#go", "until_gone": "#list:has-text('item')", "max_iterations": 20},
+    )
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["iterations"] == 5, f"should click exactly until drained: {data}"
+    assert data["done"] is True
+
+
+@pytest.mark.asyncio
+async def test_click_until_reports_hitting_the_cap(client, session_id):
+    """Stopping early must be loud, so a partial sweep is never read as complete."""
+    html = "data:text/html,<body><div id=x>never goes away</div><button id=go>Go</button></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    r = await client.post(
+        f"/browser/{session_id}/click-until",
+        json={"selector": "#go", "until_gone": "#x", "max_iterations": 3},
+    )
+    assert r.status_code == 200
+    data = r.json()
+    assert data["done"] is False
+    assert data["iterations"] == 3
+    assert "max_iterations" in data.get("reason", "")

@@ -24,17 +24,28 @@ class SwitchPageReq(BaseModel):
 @router.get("")
 async def list_pages(req: Request, sid: str):
     session = _get_session(req, sid)
-    pages = [{"index": i, "url": p.url} for i, p in enumerate(session.pages)]
+    active = session.page
+    # Marking the active tab matters: without it there is no way to tell where
+    # the next command will land, which is the whole trap this used to create.
+    pages = [
+        {"index": i, "url": p.url, "active": p is active} for i, p in enumerate(session.pages)
+    ]
     return {"pages": pages}
 
 
 @router.post("/new")
 async def new_page(req: Request, sid: str, body: NewPageReq):
     session = _get_session(req, sid)
+    had_explicit_target = session._active is not None
     page = await session.context.new_page()
     if body.url:
         await page.goto(body.url)
-    return {"index": len(session.pages) - 1, "url": page.url}
+    # Only take over as the target if the caller had not deliberately chosen one.
+    # Otherwise an explicit `page switch` would be undone by any tab that opens
+    # afterwards.
+    if not had_explicit_target:
+        session.set_active(page)
+    return {"index": session.pages.index(page), "url": page.url, "active": session.pages.index(session.page)}
 
 
 @router.post("/close")
@@ -54,5 +65,9 @@ async def switch_page(req: Request, sid: str, body: SwitchPageReq):
     pages = session.pages
     if body.index < 0 or body.index >= len(pages):
         raise HTTPException(400, f"Page index {body.index} out of range")
-    await pages[body.index].bring_to_front()
-    return {"active": body.index, "url": pages[body.index].url}
+    target = pages[body.index]
+    await target.bring_to_front()
+    # bring_to_front only affects what the human sees. Recording the choice is
+    # what actually retargets subsequent commands.
+    session.set_active(target)
+    return {"active": body.index, "url": target.url}

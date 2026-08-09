@@ -18,6 +18,10 @@ class Session:
     browser: object = None
     context: object = None
     state: dict = field(default_factory=dict)
+    # Explicitly-chosen target page. None means "no choice made, use the newest
+    # tab". Tracked as an object rather than an index so it stays correct when
+    # other tabs open or close and shift the indices around.
+    _active: object = None
 
     @property
     def pages(self):
@@ -25,8 +29,21 @@ class Session:
 
     @property
     def page(self):
+        """The page commands act on.
+
+        Falls back to the newest tab when nothing was explicitly selected, or
+        when the selected page has since been closed. Without the explicit
+        `_active`, `page switch` was a no-op: every command targeted the
+        last-opened tab, so a background popup would silently steal the target.
+        """
         pages = self.pages
+        if self._active is not None and self._active in pages:
+            return self._active
+        self._active = None
         return pages[-1] if pages else None
+
+    def set_active(self, page):
+        self._active = page
 
     async def launch(self, playwright, user_data_dir):
         self.browser = None

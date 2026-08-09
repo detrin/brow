@@ -301,7 +301,21 @@ def fetch_cmd(
         headers[k.strip()] = v.strip()
     payload = {"url": url, "method": method, "headers": headers, "body": data, "no_cookies": no_cookies}
     result = run_async(c.post(f"/browser/{s}/fetch", json=payload))
-    typer.echo(result.get("body", ""))
+    body = result.get("body", "")
+    typer.echo(body)
+    # Non-2xx has to be visible. Printing only the body meant an empty-bodied 401
+    # printed nothing, which looks exactly like a successful empty response and
+    # hides the one fact that explains the failure. Goes to stderr so it never
+    # pollutes piped output.
+    status = result.get("status")
+    if status is not None and not (200 <= int(status) < 300):
+        hint = ""
+        if int(status) in (401, 403):
+            hint = (
+                "  (auth failed: the app may require custom headers, or the request "
+                "must originate from the app's own origin — navigate there first)"
+            )
+        typer.echo(f"[brow] HTTP {status}{' — empty body' if not body.strip() else ''}{hint}", err=True)
 
 
 @app.command("actions")
@@ -403,6 +417,40 @@ def click_cmd(
     result = run_async(c.post(f"/browser/{s}/click", json=payload))
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
+
+
+@app.command("click-until")
+def click_until_cmd(
+    selector: str = typer.Argument(..., help="Selector to click each iteration"),
+    s: Optional[str] = session_opt,
+    until_gone: Optional[str] = typer.Option(
+        None, "--until-gone", help="Stop once this selector has no matches left"
+    ),
+    max_iterations: int = typer.Option(25, "--max-iterations", help="Safety cap on clicks"),
+    settle_ms: int = typer.Option(500, "--settle-ms", help="Wait after each click for the page to refill"),
+    timeout: int = typer.Option(30000, "--timeout", help="Per-click timeout in ms"),
+):
+    """Click a selector repeatedly until the work runs out (paginated/batched UI)."""
+    ensure_daemon()
+    c = _client()
+    result = run_async(
+        c.post(
+            f"/browser/{s}/click-until",
+            json={
+                "selector": selector,
+                "until_gone": until_gone,
+                "max_iterations": max_iterations,
+                "settle_ms": settle_ms,
+                "timeout": timeout,
+            },
+        )
+    )
+    iterations = result.get("iterations", 0)
+    typer.echo(f"Clicked {iterations} time(s)")
+    if not result.get("done"):
+        # A capped or failed sweep looks identical to a finished one unless the
+        # reason is surfaced, and reading it as finished leaves work undone.
+        typer.echo(f"[brow] not done: {result.get('reason')}", err=True)
 
 
 @app.command("fill")
@@ -537,11 +585,16 @@ def page_list(s: Optional[str] = session_opt):
     c = _client()
     result = run_async(c.get(f"/pages/{s}"))
     for p in result["pages"]:
-        typer.echo(f"{p['index']}\t{p['url']}")
+        # The marker answers "where will my next command land?", which is
+        # otherwise invisible.
+        typer.echo(f"{p['index']}\t{'*' if p.get('active') else ' '}\t{p['url']}")
 
 
 @page_app.command("new")
-def page_new(url: Optional[str] = None, s: Optional[str] = session_opt):
+def page_new(
+    url: Optional[str] = typer.Argument(None, help="URL to open in the new tab"),
+    s: Optional[str] = session_opt,
+):
     ensure_daemon()
     c = _client()
     result = run_async(c.post(f"/pages/{s}/new", json={"url": url}))
@@ -606,7 +659,13 @@ def state_list():
 
 
 @app.command("eval")
-def eval_cmd(code: str, s: Optional[str] = session_opt, timeout: int = 30000):
+def eval_cmd(
+    code: str,
+    s: Optional[str] = session_opt,
+    timeout: int = typer.Option(
+        30000, "--timeout", help="Max run time in ms. Raise it for long jobs instead of batching them."
+    ),
+):
     import json
 
     ensure_daemon()
