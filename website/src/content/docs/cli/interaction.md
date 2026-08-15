@@ -27,6 +27,35 @@ brow click -s 1 --ref 5               # use ref from snapshot
 
 After clicking, the command returns the updated snapshot.
 
+## `brow click-until`
+
+Repeat a click until a selector clears (or work runs out) — "load more"
+pagination, batch-dismiss actions, draining a queue. One call instead of a
+shell loop guessing when to stop.
+
+```
+brow click-until -s <id> <selector> [--until-gone <selector>] [--max-iterations <n>]
+```
+
+| Argument/Flag | Default | Description |
+|---------------|---------|-------------|
+| `<selector>` | — | Element to click repeatedly |
+| `--until-gone` | — | Stop once this selector has no matches left |
+| `--max-iterations` | `25` | Safety cap on clicks |
+
+```bash
+brow click-until -s 1 "button.load-more" --until-gone "button.load-more"
+# Clicked 4 time(s)
+```
+
+Always check *why* it stopped — hitting the cap looks identical to "nothing
+left to click" unless you read the reason, which goes to stderr:
+
+```bash
+brow click-until -s 1 "button.next" --until-gone ".row" --max-iterations 3
+# stderr: hit max_iterations (3) — work may remain, re-run to continue
+```
+
 ## `brow fill`
 
 Fill an input field with a value.

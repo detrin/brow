@@ -21,7 +21,10 @@ export default defineConfig({
             { label: 'Navigation', link: '/cli/navigation/' },
             { label: 'Interaction', link: '/cli/interaction/' },
             { label: 'Observation', link: '/cli/observation/' },
+            { label: 'Pages', link: '/cli/pages/' },
+            { label: 'Profiles & State', link: '/cli/profiles-state/' },
             { label: 'Actions & Replay', link: '/cli/actions-replay/' },
+            { label: 'Eval & Run', link: '/cli/eval-run/' },
           ],
         },
         {

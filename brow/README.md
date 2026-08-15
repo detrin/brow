@@ -164,13 +164,14 @@ brow state restore <name> -s <id>
 brow state list
 ```
 
-### Eval
+### Eval & Run
 
 ```bash
-brow -s <id> eval <code>
+brow eval -s <id> <code>              # inline, one-off
+brow run -s <id> workflow.py --arg k=v  # reusable, from a file
 ```
 
-Variables available in eval: `page`, `context`, `browser`, `state`, `pages`.
+Variables available: `page`, `context`, `browser`, `state`, `pages`, plus `args` (from `--arg`) for `run`.
 
 ## Selectors
 

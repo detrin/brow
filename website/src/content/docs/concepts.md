@@ -89,7 +89,7 @@ brow network -s 1 --response         # include response body preview
 
 Static assets (images, fonts, CSS, JS) are filtered out by default. Use `--include-static` to see them.
 
-The network log is the starting point for [API scouting](tutorials/api-scouting.md) — watching what requests the page makes lets you call those endpoints directly.
+The network log is the starting point for [API scouting](/brow/tutorials/api-scouting/) — watching what requests the page makes lets you call those endpoints directly.
 
 ## Action log
 
@@ -100,7 +100,7 @@ brow actions -s 1           # human-readable
 brow actions -s 1 --json    # machine-readable
 ```
 
-This is the input for the [Playbook Writer](tutorials/playbook-writer.md): review the action log, keep the essential steps, write a YAML playbook, and generate a standalone Python script.
+This is the input for the [Playbook Writer](/brow/tutorials/playbook-writer/): review the action log, keep the essential steps, write a YAML playbook, and generate a standalone Python script.
 
 ## Playbooks
 
@@ -128,7 +128,7 @@ Run it:
 brow replay search-hn.yaml -s 1 --var query=playwright
 ```
 
-Playbooks are the bridge between an exploratory LLM-driven session and a production script. See the [Playbook Writer tutorial](tutorials/playbook-writer.md).
+Playbooks are the bridge between an exploratory LLM-driven session and a production script. See the [Playbook Writer tutorial](/brow/tutorials/playbook-writer/).
 
 ## Auth strategies
 

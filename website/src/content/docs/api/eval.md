@@ -20,14 +20,20 @@ Executes arbitrary Python code in a sandboxed environment with access to the ses
 
 ### Sandbox globals
 
+brow bundles [`patchright`](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright-python)
+(a stealth-patched fork of Playwright), not `playwright` itself — the objects
+below are `patchright` instances, API-compatible with Playwright's.
+
 | Name | Type | Description |
 |------|------|-------------|
-| `page` | `playwright.async_api.Page` | Active page |
-| `context` | `playwright.async_api.BrowserContext` | Browser context |
-| `browser` | `playwright.async_api.Browser` | Browser instance |
+| `page` | `patchright.async_api.Page` | Active page |
+| `context` | `patchright.async_api.BrowserContext` | Browser context |
+| `browser` | `patchright.async_api.Browser` | Browser instance |
 | `state` | `dict` | Session state (console_logs, network_requests, etc.) |
 | `pages` | `list` | All pages in the session |
 | `asyncio` | module | asyncio module |
+| `text` | function | `await text(selector)` — inner text of the first match, or `None` |
+| `texts` | function | `await texts(selector)` — inner text of every match |
 
 **Response:**
 
@@ -38,14 +44,18 @@ Executes arbitrary Python code in a sandboxed environment with access to the ses
 }
 ```
 
-`result` is the value of the last expression evaluated (if any). `stdout` captures any `print()` output.
+`result` is whatever you assign to a variable named `result` — there's no
+implicit "value of the last expression" the way a REPL works, so a bare
+`await page.title()` with no assignment returns nothing. `stdout` always
+captures anything printed with `print()`, whether or not you also set
+`result`.
 
 ### Examples
 
 **Get page title:**
 
 ```python
-await page.title()
+result = await page.title()
 ```
 
 **Extract all links:**
@@ -81,3 +91,11 @@ await page.set_geolocation({"latitude": 48.1, "longitude": 17.1})
 
 !!! note "Async functions"
     The sandbox is async — you can `await` any Playwright coroutine directly.
+
+!!! tip "Long jobs: raise `timeout`, don't batch"
+    A timed-out call still returns whatever stdout was printed before the
+    cutoff, so raising `timeout` for a long job loses less than staging
+    progress across many short calls.
+
+For a reusable version of the same sandbox — a `.py` file executed once
+instead of an inline code string — see [`brow run`](/brow/cli/eval-run/).

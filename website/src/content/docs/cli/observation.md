@@ -124,7 +124,7 @@ POST   200  application/json    https://api.example.com/v2/search
 GET    200  application/json    https://api.example.com/v2/user/profile
 ```
 
-This command is the foundation of API scouting. See the [API Scouting tutorial](../tutorials/api-scouting.md).
+This command is the foundation of API scouting. See the [API Scouting tutorial](/brow/tutorials/api-scouting/).
 
 ## `brow fetch`
 

@@ -40,11 +40,11 @@ All errors follow FastAPI's standard format:
 
 | Section | Prefix | Description |
 |---------|--------|-------------|
-| [Sessions](sessions.md) | `/sessions` | Create and manage browser sessions |
-| [Browser Actions](browser.md) | `/browser/{sid}` | Navigate, click, fill, inspect |
-| [Pages](pages.md) | `/pages/{sid}` | Multi-tab management |
-| [Profiles & States](profiles.md) | `/profiles`, `/states` | Login persistence |
-| [Eval](eval.md) | `/eval/{sid}` | Execute arbitrary Python |
+| [Sessions](/brow/api/sessions/) | `/sessions` | Create and manage browser sessions |
+| [Browser Actions](/brow/api/browser/) | `/browser/{sid}` | Navigate, click, fill, inspect |
+| [Pages](/brow/api/pages/) | `/pages/{sid}` | Multi-tab management |
+| [Profiles & States](/brow/api/profiles/) | `/profiles`, `/states` | Login persistence |
+| [Eval](/brow/api/eval/) | `/eval/{sid}` | Execute arbitrary Python |
 
 ## Health check
 

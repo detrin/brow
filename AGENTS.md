@@ -47,7 +47,7 @@ brow scroll -s <id> [--pixels N]
 brow upload -s <id> <selector> <filepath>   # use CSS selector, not ref id
 
 # Repeat a click until the work runs out (pagination, "load more", batch actions)
-brow click-until -s <id> <selector> [--until-gone <selector>] [--max-iterations N]
+brow click-until -s <id> <selector> [--until-gone <selector>] [--max-iterations N] [--settle-ms N]
 # Prints the click count; if it stopped early the reason goes to stderr.
 
 # Fetch (uses browser cookies — bypasses auth walls)

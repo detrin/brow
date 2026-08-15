@@ -26,6 +26,21 @@ async def test_delete_profile_nonexistent(client):
 
 
 @pytest.mark.asyncio
+async def test_delete_profile_refuses_while_a_session_holds_it(client):
+    """Deleting a profile out from under a live session would rip its
+    on-disk user-data directory away mid-use — refuse instead, same as the
+    conflict check `session new` already does for the reverse case.
+    """
+    r = await client.post("/sessions", json={"profile": "in-use-profile", "headless": True})
+    sid = r.json()["id"]
+    r = await client.delete("/profiles/in-use-profile")
+    assert r.status_code == 409, r.text
+    assert sid in r.text
+    r = await client.get("/profiles")
+    assert "in-use-profile" in r.json()["profiles"]
+
+
+@pytest.mark.asyncio
 async def test_list_states(client):
     r = await client.get("/states")
     assert r.status_code == 200

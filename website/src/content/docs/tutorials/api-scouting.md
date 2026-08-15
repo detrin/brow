@@ -110,10 +110,13 @@ if __name__ == "__main__":
 
 ### Authenticated API (cookies required)
 
+brow bundles `patchright`, not `playwright` — `import playwright` fails in
+brow's own environment. `patchright.sync_api` is drop-in compatible:
+
 ```python
 import httpx
 import json
-from playwright.sync_api import sync_playwright
+from patchright.sync_api import sync_playwright
 
 BASE = "https://example.com"
 

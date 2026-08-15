@@ -53,7 +53,7 @@ Look at the `no_cookies` results:
 
 - Seq 5 returned 200 with `no_cookies: true` → **auth: none** → pure httpx, no browser needed
 - If seq 5 returned 401/403 → **auth: browser-session** → need cookies
-- If no API was found and you need UI → **auth: browser** → full Playwright
+- If no API was found and you need UI → **auth: browser** → skip the YAML, write a [`brow run`](/brow/cli/eval-run/) script instead
 
 ## Step 3: Write the playbook
 
@@ -110,10 +110,13 @@ python example-products.py electronics
 
 ### auth: browser-session — cookie harvest + httpx
 
+brow bundles `patchright`, not `playwright` — `import playwright` fails in
+brow's own environment. `patchright.sync_api` is drop-in compatible:
+
 ```python
 import httpx
 import json
-from playwright.sync_api import sync_playwright
+from patchright.sync_api import sync_playwright
 
 BASE = "https://example.com"
 
@@ -148,41 +151,33 @@ if __name__ == "__main__":
     print(json.dumps(result, indent=2, ensure_ascii=False))
 ```
 
-### auth: browser — full Playwright interaction
+### auth: browser — don't generate a second script, use `brow run`
+
+A pure-UI task needs the live, already-authenticated session — that's what
+`brow run` gives you directly, without spinning up a second browser context
+and re-solving cookies/profile setup the session already has. Skip the YAML
+and the standalone script; write the steps as a `.py` file instead:
 
 ```python
-import json
-from playwright.sync_api import sync_playwright
-
-BASE = "https://example.com"
-
-def scrape_products(category="all"):
-    with sync_playwright() as p:
-        ctx = p.chromium.launch_persistent_context(
-            user_data_dir="/Users/you/.brow/profiles/mysite",
-            headless=True,
-            args=["--disable-blink-features=AutomationControlled"],
-            ignore_default_args=["--enable-automation"],
-        )
-        page = ctx.new_page()
-        page.goto(f"{BASE}/products")
-        page.click(f"text={category}")
-        page.wait_for_selector(".product-grid")
-        data = page.evaluate("""() =>
-            Array.from(document.querySelectorAll('.product-card'))
-                 .map(el => ({
-                     name: el.querySelector('.name').textContent,
-                     price: el.querySelector('.price').textContent
-                 }))
-        """)
-        ctx.close()
-    return data
-
-if __name__ == "__main__":
-    import sys
-    result = scrape_products(*sys.argv[1:])
-    print(json.dumps(result, indent=2, ensure_ascii=False))
+# scrape_products.py — page/context/browser/state/pages/args already in scope
+await page.goto(f"{args['base_url']}/products")
+await page.click(f"text={args['category']}")
+await page.wait_for_selector(".product-grid")
+result = await page.evaluate("""() =>
+    Array.from(document.querySelectorAll('.product-card'))
+         .map(el => ({
+             name: el.querySelector('.name').textContent,
+             price: el.querySelector('.price').textContent
+         }))
+""")
 ```
+
+```bash
+brow run scrape_products.py -s 1 --arg category=electronics --arg base_url=https://example.com
+```
+
+One artifact, no cookie harvesting, no separate context to keep in sync with
+the live session. See [`brow run`](/brow/cli/eval-run/) for more.
 
 ## Tips
 

@@ -21,7 +21,8 @@ GET /profiles
 DELETE /profiles/{name}
 ```
 
-Deletes the profile directory and all its data.
+Deletes the profile directory and all its data. Fails with `409` if a
+session currently holds that profile — delete the session first.
 
 **Response:** `{"deleted": "gmail"}`
 

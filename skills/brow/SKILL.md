@@ -42,7 +42,7 @@ brow session delete 1
 | `snapshot -s <id>` | Get accessibility tree (best for understanding page) |
 | `screenshot -s <id>` | Capture screenshot |
 | `click -s <id> <selector>` | Click element |
-| `click-until -s <id> <selector> [--until-gone <sel>] [--max-iterations N]` | Click repeatedly until a selector clears — pagination/"load more" in one call |
+| `click-until -s <id> <selector> [--until-gone <sel>] [--max-iterations N] [--settle-ms N]` | Click repeatedly until a selector clears — pagination/"load more" in one call |
 | `fill -s <id> <selector> <value>` | Fill input field |
 | `select -s <id> <selector> <value>` | Choose an `<option>` in a `<select>` |
 | `type -s <id> <text>` | Type with keyboard |

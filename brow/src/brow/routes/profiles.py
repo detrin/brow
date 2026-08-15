@@ -11,6 +11,13 @@ async def list_profiles(req: Request):
 
 @router.delete("/profiles/{name}")
 async def delete_profile(req: Request, name: str):
+    existing = req.app.state.manager.find_by_profile(name)
+    if existing:
+        raise HTTPException(
+            409,
+            f"Profile '{name}' is in use by session {existing.id}. "
+            f"Delete the session first: brow session delete {existing.id}",
+        )
     try:
         req.app.state.profiles.delete(name)
     except KeyError:

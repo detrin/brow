@@ -76,4 +76,4 @@ The `snapshot` command annotates interactive elements with a numeric `ref`. You 
 
 ## Persistent profiles
 
-Log in once, reuse forever. See the [Persistent Login tutorial](tutorials/persistent-login.md) for a complete walkthrough.
+Log in once, reuse forever. See the [Persistent Login tutorial](/brow/tutorials/persistent-login/) for a complete walkthrough.

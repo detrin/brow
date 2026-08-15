@@ -53,3 +53,13 @@ brow session delete <session-id>
 brow session delete 1
 # Deleted session 1
 ```
+
+## `brow session cleanup`
+
+Close every active session in one call — for when you've lost track of how
+many you opened.
+
+```bash
+brow session cleanup
+# Cleaned up 3 session(s)
+```

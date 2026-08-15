@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `stop_on_failure` now actually halts a run when the failure is inside a `for_each` — previously it only stopped the current iteration's remaining steps, and later iterations and outer steps kept going
 - A playbook-level `auth: none` is now inherited by `fetch` steps that don't set their own `auth` — previously only a per-step `auth` was ever checked
 - `state restore` now restores localStorage in addition to cookies — previously it silently dropped the `origins` half of `storage_state()`, so a restored login failed for any site keeping its auth token in localStorage instead of a cookie
+- `profile delete` now refuses (`409`) while a live session holds that profile, instead of deleting the on-disk directory out from under it
+- Docs site: every internal cross-reference link used a relative `.md` path that Astro never resolves and rendered as a literal broken href in the built site (e.g. `href="daemon.md"`) — converted site-wide to the resolved `/brow/...` paths the sidebar itself uses
 
 ## [1.2.0] - 2026-08-15
 

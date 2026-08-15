@@ -32,7 +32,7 @@ brow actions -s 1 --json
 # ]
 ```
 
-The action log is the input for the [Playbook Writer workflow](../tutorials/playbook-writer.md). After an exploratory session, review the log to identify the minimal set of steps needed, then write a playbook YAML from them.
+The action log is the input for the [Playbook Writer workflow](/brow/tutorials/playbook-writer/). After an exploratory session, review the log to identify the minimal set of steps needed, then write a playbook YAML from them.
 
 ## `brow replay`
 

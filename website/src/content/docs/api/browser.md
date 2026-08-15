@@ -40,7 +40,9 @@ POST /browser/{sid}/wait
 {"selector": ".results", "load": false, "timeout": 30000}
 ```
 
-Pass `"selector"` to wait for an element, or `"load": true` to wait for network idle.
+Pass `"selector"` to wait for an element, or `"load": true` to wait for the
+page's `load` event (not network-idle — use `navigate`'s `wait:
+"networkidle"` for that).
 
 **Response:** `{"ok": true}`
 
@@ -201,6 +203,40 @@ Provide either `selector` or `ref` (element ref from snapshot). `retry` attempts
 ```json
 {"ok": true, "snapshot": "...", "truncated": false}
 ```
+
+---
+
+## Click-until
+
+Repeat a click until a selector clears, or a safety cap is hit — pagination,
+"load more", batch-dismiss actions.
+
+```
+POST /browser/{sid}/click-until
+```
+
+```json
+{
+  "selector": "button.load-more",
+  "until_gone": "button.load-more",
+  "max_iterations": 25,
+  "settle_ms": 500,
+  "timeout": 30000
+}
+```
+
+`settle_ms` is a pause after each click for the page to refill before the
+next `until_gone` check.
+
+**Response:**
+
+```json
+{"iterations": 4, "done": true, "reason": "until_gone cleared"}
+```
+
+`done: false` means the cap was hit (or the selector never appeared) with
+work possibly still remaining — always check `reason`, since a capped sweep
+looks identical to a finished one until you read it.
 
 ---
 
@@ -377,18 +413,45 @@ POST /browser/{sid}/replay
   "playbook": {
     "name": "my-playbook",
     "base_url": "https://example.com",
+    "auth": "none",
+    "stop_on_failure": false,
     "vars": {"query": "test"},
     "steps": [
       {"action": "navigate", "url": "/search"},
       {"action": "fill", "selector": "input", "value": "{query}"},
-      {"action": "key", "key": "Enter"}
+      {"action": "key", "key": "Enter"},
+      {"action": "wait", "selector": "#results", "state": "visible", "timeout": 10000},
+      {"action": "assert", "selector": ".result-count"},
+      {
+        "action": "fetch",
+        "url": "/api/results?q={query}",
+        "headers": {"X-Api-Key": "{api_key}"},
+        "output": "results"
+      },
+      {
+        "action": "for_each",
+        "var": "item",
+        "items": "results",
+        "steps": [{"action": "navigate", "url": "/item/{item[id]}"}]
+      }
     ]
   },
   "vars": {"query": "override"}
 }
 ```
 
-Variables in `vars` override those in `playbook.vars`.
+Variables in `vars` override those in `playbook.vars`. A top-level `auth:
+"none"` applies to every `fetch` step that doesn't set its own `auth`.
+`stop_on_failure: true` halts the whole run — including out of a `for_each`
+— after the first failed step, instead of the default "record it and keep
+going."
+
+Supported `action`s: `navigate`, `click`, `fill`, `key`, `select`, `fetch`
+(`method`, `headers`, `auth`, `output` — captured JSON becomes `{name}` and
+`{name[key]}` in later steps, `expect_status` to override the default
+`ok = status < 400`), `wait` (`selector`+`state`, or `ms` for a fixed
+sleep), `assert` (same shape as `wait`, but a non-match fails the step), and
+`for_each` (loop nested `steps` over a literal or captured list).
 
 **Response:**
 
@@ -398,6 +461,8 @@ Variables in `vars` override those in `playbook.vars`.
     {"action": "navigate", "ok": true, "url": "https://example.com/search", "status": 200},
     {"action": "fill", "ok": true},
     {"action": "key", "ok": true},
+    {"action": "wait", "ok": true},
+    {"action": "assert", "ok": true},
     {"action": "fetch", "ok": true, "url": "...", "status": 200, "data": {...}}
   ]
 }
