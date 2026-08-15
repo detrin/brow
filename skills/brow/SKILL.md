@@ -35,20 +35,31 @@ brow session delete 1
 | Command | Description |
 |---------|-------------|
 | `session new [--headed] [--profile <name>]` | Start browser session |
-| `navigate -s <id> <url>` | Go to URL |
+| `session list` / `session delete <id>` / `session cleanup` | List sessions / close one / close all |
+| `navigate -s <id> <url> [--wait load\|domcontentloaded\|networkidle]` | Go to URL |
+| `wait -s <id> <selector> [--load] [--timeout ms]` | Wait for a selector or the load event — use instead of guessing with `sleep` |
+| `url -s <id>` | Get the current page URL |
 | `snapshot -s <id>` | Get accessibility tree (best for understanding page) |
 | `screenshot -s <id>` | Capture screenshot |
 | `click -s <id> <selector>` | Click element |
+| `click-until -s <id> <selector> [--until-gone <sel>] [--max-iterations N]` | Click repeatedly until a selector clears — pagination/"load more" in one call |
 | `fill -s <id> <selector> <value>` | Fill input field |
+| `select -s <id> <selector> <value>` | Choose an `<option>` in a `<select>` |
 | `type -s <id> <text>` | Type with keyboard |
 | `key -s <id> <key>` | Press key (Enter, Tab, Space, PageDown, End, Home) |
+| `hover -s <id> <selector>` | Hover an element |
+| `drag -s <id> <source> <target>` | Drag source selector onto target selector |
 | `scroll -s <id> [--pixels <n>]` | Scroll the outermost page |
+| `scroll-to -s <id> <selector>` | Scroll a specific element into view |
 | `upload -s <id> <selector> <file>` | Upload file (use CSS selector, not numeric ID) |
 | `html -s <id>` | Get page HTML |
 | `logs -s <id> [--count N] [--search <str>]` | Get console logs |
 | `network -s <id> [--count N] [--search <str>] [--response] [--clear]` | Get network requests |
 | `fetch -s <id> <url> [-X method] [-H header] [-d body] [--no-cookies]` | Browser fetch → stdout; `--no-cookies` does plain HTTP to test auth requirement |
 | `websocket -s <id> [--count N] [--search <str>] [--clear]` | Get WebSocket messages |
+| `page list\|new\|switch\|close -s <id>` | Manage tabs — see "Working with Multiple Tabs" below |
+| `profile list` / `profile delete <name>` | List/delete saved persistent-profile directories |
+| `state save\|restore <name> -s <id>` / `state list` | Save/restore cookies + localStorage independent of a profile — see below |
 | `actions -s <id> [--json] [--clear]` | View recorded action log for current session |
 | `replay -s <id> <playbook.yaml> [--var k=v]` | Replay a playbook YAML (with optional var overrides) |
 | `eval -s <id> <code>` | Run Python inline; returns `result` + stdout. Helpers: `text(sel)`, `texts(sel)` |
@@ -184,6 +195,71 @@ brow session new --profile gmail
 ```
 
 **Profile conflict:** `session new` fails if the profile is already in use: `Profile 'default' already in use by session N`. Fix: use a unique `--profile <name>` per concurrent session, or pass `--reclaim` to close the stale session and take over the profile.
+
+## Saving & Restoring Login State
+
+A `--profile` is a whole persistent Chromium user-data directory. `state
+save`/`state restore` is lighter-weight: it snapshots just cookies +
+localStorage from one session and can drop them into a different, unrelated
+session — useful for sharing a login across sessions without tying them to
+the same profile directory, or for capturing "logged in" state once and
+reusing it in short-lived headless sessions:
+
+```bash
+brow session new --profile scratch --headed
+brow navigate -s 1 "https://example.com/login"
+# ... log in by hand ...
+brow state save -s 1 example-login
+brow session delete 1
+
+# Later, in a different (even headless) session:
+brow session new
+brow state restore -s 2 example-login
+brow navigate -s 2 "https://example.com/dashboard"   # already authenticated
+```
+
+`state list` shows saved snapshots; `state save`/`restore` both take `-s
+<id>` for which session to snapshot from / apply to. This restores both
+cookies and localStorage — many sites keep an auth token in localStorage
+rather than a cookie, so verify with `brow eval -s <id> "result = await
+page.evaluate('() => Object.keys(localStorage)')"` if a restored login
+doesn't seem to take.
+
+## Draining Paginated Lists (`click-until`)
+
+"Click Next/Load-more, the list refills, click again" is one command, not a
+loop of clicks with guessed sleeps in between:
+
+```bash
+brow click-until -s 1 "button.load-more" --until-gone "button.load-more" --max-iterations 25
+# Clicked 4 time(s)
+```
+
+Always check *why* it stopped — hitting `--max-iterations` looks identical to
+"nothing left to click" unless you read the reason:
+
+```bash
+brow click-until -s 1 "button.next" --until-gone ".row" --max-iterations 3
+# stderr: hit max_iterations (3) — work may remain, re-run to continue
+```
+
+## Working with Multiple Tabs
+
+`page switch` retargets every later command to that tab; `page list` marks
+the active one with `*` so you always know where the next command lands —
+check it after anything that might open a tab (OAuth popups, `target=_blank`
+links):
+
+```bash
+brow page new -s 1 "https://example.com/popup"   # opens tab 1, becomes active
+brow page list -s 1
+# 0     https://example.com
+# 1  *  https://example.com/popup
+brow page switch -s 1 0                          # back to the first tab
+brow page list -s 1
+# 0  *  https://example.com
+# 1     https://example.com/popup
+```
 
 ## Tips
 

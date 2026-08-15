@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - An unknown playbook step `action` now reports a clear error instead of failing silently with no explanation
 - `stop_on_failure` now actually halts a run when the failure is inside a `for_each` — previously it only stopped the current iteration's remaining steps, and later iterations and outer steps kept going
 - A playbook-level `auth: none` is now inherited by `fetch` steps that don't set their own `auth` — previously only a per-step `auth` was ever checked
+- `state restore` now restores localStorage in addition to cookies — previously it silently dropped the `origins` half of `storage_state()`, so a restored login failed for any site keeping its auth token in localStorage instead of a cookie
 
 ## [1.2.0] - 2026-08-15
 

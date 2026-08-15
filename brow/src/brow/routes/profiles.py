@@ -54,6 +54,19 @@ async def restore_state(req: Request, body: RestoreStateReq):
         raise HTTPException(404, f"State '{body.name}' not found")
     if state.get("cookies"):
         await session.context.add_cookies(state["cookies"])
+    for origin in state.get("origins", []):
+        local_storage = origin.get("localStorage", [])
+        if not local_storage:
+            continue
+        page = await session.context.new_page()
+        try:
+            await page.goto(origin["origin"])
+            await page.evaluate(
+                "(items) => { for (const {name, value} of items) localStorage.setItem(name, value) }",
+                local_storage,
+            )
+        finally:
+            await page.close()
     return {"restored": body.name}
 
 
