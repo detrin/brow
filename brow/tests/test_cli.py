@@ -169,3 +169,56 @@ def test_page_list_marks_active_tab():
         inactive_line = [ln for ln in result.stdout.splitlines() if "a.example" in ln][0]
         assert "*" in active_line
         assert "*" not in inactive_line
+
+
+def test_replay_exits_nonzero_on_a_failed_step(tmp_path):
+    """A playbook with a failed step must not look like success to a caller checking $?."""
+    pb = tmp_path / "pb.yaml"
+    pb.write_text("steps:\n  - action: click\n    selector: '#x'\n")
+    with patch("brow.cli.ensure_daemon"), patch("brow.cli.run_async") as mock_run:
+        mock_run.return_value = {"results": [{"action": "click", "ok": False, "error": "not found"}]}
+        result = runner.invoke(app, ["replay", str(pb), "-s", "1"])
+        assert result.exit_code == 1
+
+
+def test_replay_exits_zero_when_all_steps_succeed(tmp_path):
+    pb = tmp_path / "pb.yaml"
+    pb.write_text("steps:\n  - action: click\n    selector: '#x'\n")
+    with patch("brow.cli.ensure_daemon"), patch("brow.cli.run_async") as mock_run:
+        mock_run.return_value = {"results": [{"action": "click", "ok": True}]}
+        result = runner.invoke(app, ["replay", str(pb), "-s", "1"])
+        assert result.exit_code == 0
+
+
+def test_run_sends_file_contents_as_eval_code(tmp_path):
+    script = tmp_path / "workflow.py"
+    script.write_text("result = {'processed': 1}\n")
+    posted = {}
+    with (
+        patch("brow.cli.ensure_daemon"),
+        patch("brow.cli._client") as mock_client,
+        patch("brow.cli.run_async") as mock_run,
+    ):
+        mock_client.return_value.post = lambda path, json=None: posted.update(json or {}) or json
+        mock_run.return_value = {"stdout": "", "result": {"processed": 1}}
+        result = runner.invoke(app, ["run", str(script), "-s", "1"])
+        assert result.exit_code == 0
+        assert "processed" in result.stdout
+        assert "result = {'processed': 1}" in posted["code"]
+
+
+def test_run_passes_args_into_the_script_namespace(tmp_path):
+    script = tmp_path / "workflow.py"
+    script.write_text("print(args['query'])\n")
+    posted = {}
+    with (
+        patch("brow.cli.ensure_daemon"),
+        patch("brow.cli._client") as mock_client,
+        patch("brow.cli.run_async") as mock_run,
+    ):
+        mock_client.return_value.post = lambda path, json=None: posted.update(json or {}) or json
+        mock_run.side_effect = lambda x: {"stdout": "", "result": None}
+        result = runner.invoke(app, ["run", str(script), "-s", "1", "--arg", "query=widgets"])
+        assert result.exit_code == 0
+        assert 'args = {"query": "widgets"}' in posted["code"]
+        assert "print(args['query'])" in posted["code"]

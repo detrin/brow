@@ -525,3 +525,86 @@ async def test_replay_fetch_step_supports_custom_headers(client, session_id, mon
     assert r.status_code == 200, r.text
     assert r.json()["results"][0]["ok"] is True
     assert captured["headers"] == {"X-Api-Key": "secret"}
+
+
+@pytest.mark.asyncio
+async def test_replay_marks_http_error_status_as_failed(client, session_id, monkeypatch):
+    """A 500 is not success. Silently marking it ok=True hides real failures."""
+    import httpx as _httpx
+
+    def patched_init(self, *args, **kwargs):
+        kwargs["transport"] = _httpx.MockTransport(lambda request: _httpx.Response(500))
+        original_init(self, *args, **kwargs)
+
+    original_init = _httpx.AsyncClient.__init__
+    monkeypatch.setattr(_httpx.AsyncClient, "__init__", patched_init)
+
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<body></body>"})
+    playbook = {"steps": [{"action": "fetch", "url": "https://example.invalid/thing", "auth": "none"}]}
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    entry = r.json()["results"][0]
+    assert entry["ok"] is False
+    assert entry.get("error")
+
+
+@pytest.mark.asyncio
+async def test_replay_unknown_action_reports_an_error(client, session_id):
+    html = "data:text/html,<body></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    playbook = {"steps": [{"action": "clik", "selector": "#x"}]}
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    entry = r.json()["results"][0]
+    assert entry["ok"] is False
+    assert "clik" in entry.get("error", "")
+
+
+@pytest.mark.asyncio
+async def test_replay_stop_on_failure_escapes_nested_for_each(client, session_id):
+    """A failure inside a for_each must stop later iterations AND later outer steps."""
+    html = "data:text/html,<body></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    playbook = {
+        "stop_on_failure": True,
+        "steps": [
+            {
+                "action": "for_each",
+                "var": "n",
+                "items": ["a", "b", "c"],
+                "steps": [
+                    {"action": "assert", "selector": "#never-exists", "timeout": 100},
+                    {"action": "navigate", "url": "data:text/html,<h1>after-assert-{n}</h1>"},
+                ],
+            },
+            {"action": "navigate", "url": "data:text/html,<h1>should not run</h1>"},
+        ],
+    }
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    results = r.json()["results"]
+    assert len(results) == 1, f"must stop after the first failed assert, got {results}"
+    assert results[0]["ok"] is False
+
+
+@pytest.mark.asyncio
+async def test_replay_top_level_auth_none_is_inherited_by_steps(client, session_id, monkeypatch):
+    """Documented `auth: none` at the playbook level must apply when a step omits `auth`."""
+    import httpx as _httpx
+
+    used_no_cookies_client = {"called": False}
+    original_init = _httpx.AsyncClient.__init__
+
+    def patched_init(self, *args, **kwargs):
+        used_no_cookies_client["called"] = True
+        kwargs["transport"] = _httpx.MockTransport(lambda request: _httpx.Response(200, text="ok"))
+        original_init(self, *args, **kwargs)
+
+    monkeypatch.setattr(_httpx.AsyncClient, "__init__", patched_init)
+
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<body></body>"})
+    playbook = {"auth": "none", "steps": [{"action": "fetch", "url": "https://example.invalid/thing"}]}
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    assert used_no_cookies_client["called"] is True
+    assert r.json()["results"][0]["ok"] is True

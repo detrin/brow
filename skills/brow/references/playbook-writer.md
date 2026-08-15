@@ -33,8 +33,8 @@ Read every entry. Classify each action:
 Look at `fetch` actions and their `no_cookies` results:
 
 - All needed fetches work with `no_cookies: true` → **auth: none** → pure httpx script, no browser
-- Some fetches need `no_cookies: false` → **auth: browser-session** → Playwright for cookie harvest + httpx
-- Task is pure UI interaction (no API found) → **auth: browser** → full Playwright script
+- Some fetches need `no_cookies: false` → **auth: browser-session** → cookie harvest (patchright) + httpx
+- Task is pure UI interaction (no API found) → **auth: browser** → `brow run` script against the live session, no separate script
 
 ---
 
@@ -131,10 +131,13 @@ if __name__ == "__main__":
 
 ### auth: browser-session — cookie harvest + httpx
 
+brow bundles `patchright`, not `playwright` — `import playwright` will fail in
+brow's own environment. Use `patchright.sync_api` (drop-in compatible):
+
 ```python
 import httpx
 import json
-from playwright.sync_api import sync_playwright
+from patchright.sync_api import sync_playwright
 
 BASE = "https://target-site.com"
 
@@ -169,47 +172,36 @@ if __name__ == "__main__":
     print(json.dumps(result, indent=2, ensure_ascii=False))
 ```
 
-### auth: browser — full Playwright interaction
+### auth: browser — don't generate a second script, use `brow run`
+
+A pure-UI task (no API found) needs the live, already-authenticated session —
+that's exactly what `brow run` gives you, without spinning up a second
+Playwright/patchright context and re-solving cookies/profile setup that the
+session already has. Skip the YAML entirely for this case and write the steps
+directly as a `.py` file:
 
 ```python
-import json
-from playwright.sync_api import sync_playwright
+# workflow.py — vars already in scope: page, context, browser, state, pages, args
+await page.goto(f"{args['base_url']}/path")
+await page.click("selector")
+await page.fill("#field", args["param_name"])
+await page.keyboard.press("Enter")
+await page.wait_for_selector(".results")
 
-BASE = "https://target-site.com"
-
-def main(param_name="default_value"):
-    with sync_playwright() as p:
-        ctx = p.chromium.launch_persistent_context(
-            user_data_dir="/tmp/brow-profile-<name>",
-            headless=True,
-            args=["--disable-blink-features=AutomationControlled"],
-            ignore_default_args=["--enable-automation"],
-        )
-        page = ctx.new_page()
-
-        # steps from playbook
-        page.goto(f"{BASE}/path")
-        page.click("selector")
-        page.fill("#field", param_name)
-        page.keyboard.press("Enter")
-        page.wait_for_selector(".results")
-
-        # extract data
-        data = page.evaluate("() => { /* extract */ }")
-        ctx.close()
-    return data
-
-if __name__ == "__main__":
-    import sys
-    result = main(*sys.argv[1:])
-    print(json.dumps(result, indent=2, ensure_ascii=False))
+result = await page.evaluate("() => { /* extract */ }")
 ```
+
+```bash
+brow run workflow.py -s <id> --arg param_name=other_value --arg base_url=https://target-site.com
+```
+
+One artifact, no cookie harvesting, no separate browser context to keep in
+sync with the live session.
 
 ---
 
 ## Output
 
-Deliver:
-1. `<name>.yaml` — the playbook
-2. `<name>.py` — the generated script
-3. Brief note on what was discarded and why (for the user's understanding)
+- `auth: none` or `auth: browser-session` → deliver `<name>.yaml` (playbook) and
+  `<name>.py` (the standalone script), plus a brief note on what was discarded.
+- `auth: browser` → deliver just `<name>.py` written for `brow run` — no YAML.

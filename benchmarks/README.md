@@ -240,6 +240,29 @@ Cross-reference vacuum robots on [alza.cz](https://www.alza.cz/roboticke-vysavac
 
 brow was the only backend to produce usable output — scraped all Valetudo-supported models before hitting alza.cz's bot protection (403). playwright-cli's unfiltered 92KB snapshot exceeded Bedrock's context window on the second turn. MCP crashed with JSON parse errors after the first navigation.
 
+## Microbenchmark: `brow run` vs a shell loop of `brow eval`
+
+`microbench_run_vs_loop.sh` is a separate, deterministic (no LLM) benchmark
+isolating the process-spawn + HTTP round trip cost of driving `brow` from a
+shell loop, one call per item, versus one `brow run <file.py>` call doing the
+same N-item loop server-side inside the session:
+
+```bash
+./benchmarks/microbench_run_vs_loop.sh 30
+```
+
+Measured on this machine, 30 items:
+
+| Approach | Total | Per item |
+|---|---|---|
+| `for i in ...; do brow eval ...; done` | 7.75s | 258ms |
+| `brow run workflow.py` (one call) | 0.38s | — |
+
+The shell-loop cost scales linearly with item count; `brow run`'s cost is
+flat regardless of N (dominated by the single process + HTTP round trip, not
+the loop body). This is the concrete cost behind AGENTS.md's "never shell-loop
+`brow eval`" guidance.
+
 ## Architecture
 
 ```

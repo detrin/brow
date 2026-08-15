@@ -24,7 +24,7 @@ The `-s` / `--session` flag is required for any command that operates on a sessi
 | Pages | `page list`, `page new`, `page close`, `page switch` |
 | Profiles | `profile list`, `profile delete` |
 | States | `state save`, `state restore`, `state list` |
-| Eval | `eval` |
+| Eval & Run | `eval`, `run` |
 
 ## Auto-start
 

@@ -54,10 +54,14 @@ brow click-until -s <id> <selector> [--until-gone <selector>] [--max-iterations 
 brow fetch -s <id> <url> [-X POST] [-H "Header: val"] [-d '{"body":"json"}']
 # Body goes to stdout; a non-2xx status is reported on stderr.
 
-# Eval (Playwright Python)
+# Eval (one-off Python, inline)
 brow eval -s <id> "<python code>"           # vars: page, context, browser, state, pages
 brow eval -s <id> "<code>" --timeout 300000 # default 30s — RAISE IT for long jobs
 # print() output IS returned, and `result = ...` is returned as JSON.
+
+# Run (reusable Python, from a file — same vars as eval, plus args)
+brow run -s <id> workflow.py [--arg key=value] [--timeout 300000]
+# args['key'] is available in the script for each --arg passed.
 
 # Pages (tabs)
 brow page list -s <id>                      # '*' marks the active tab
@@ -127,20 +131,55 @@ brow session delete 1
 - **Long jobs: raise `--timeout` instead of batching.** Draining work a few items
   per call (staging state on `window.*` and looping) is slower and loses progress
   when a call dies. One `--timeout 300000` call does the same work in one shot.
-- **Bulk work belongs in one `eval`, not N CLI calls.** Each `brow` invocation is a
-  fresh process plus an HTTP round trip. A loop inside a single `eval` avoids both.
+- **Bulk work belongs in one `eval`/`run`, not N CLI calls.** Each `brow` invocation
+  is a fresh process plus an HTTP round trip. A loop inside one call avoids both.
 - **Draining a paginated list: use `click-until`.** "Act on the visible batch, the
   list refills, act again" is one command, not a shell loop. Always read the exit
   reason — `--max-iterations` stopping early looks the same as finishing otherwise.
-- **Doing the same thing N times: write a playbook, don't shell-loop `eval`.** A
-  `for id in ...; do brow eval ...; done` in your own shell costs a process +
-  round trip per item and gives up all the DSL's retry/check/chain features. See
-  "Scripting a workflow" below.
+- **Never `for id in ...; do brow eval ...; done` from your own shell.** That's a
+  process + round trip per item, thrown away the moment the task ends. Use one of
+  the two mechanisms below instead, chosen by whether you'll need it again:
+
+| Need | Use |
+|---|---|
+| Looking around, one command at a time | Individual commands (`click`, `fill`, `snapshot`, ...) |
+| A one-off bulk operation, never reused | Inline `brow eval "<code>"` |
+| Python you might rerun, tweak, or hand to someone else | `brow run workflow.py` (below) |
+| A short, declarative, auditable sequence (no branching/loops in your head) | YAML `brow replay` (further below) |
+
+## Running a script in the session (`brow run`)
+
+For anything reusable, write a `.py` file and run it once inside the session —
+same variables as `eval` (`page`, `context`, `browser`, `state`, `pages`), plus
+`args` from `--arg key=value`:
+
+```bash
+brow run -s 1 workflow.py --arg query=widgets --timeout 300000
+```
+
+```python
+# workflow.py
+items = await page.locator(".item").all()
+
+for item in items:
+    await item.click()
+    await page.wait_for_selector(".saved")
+
+result = {"processed": len(items)}   # returned as JSON; print() is also returned
+```
+
+This is plain Python with Playwright semantics — loops, conditionals, retries,
+functions, whatever the task needs — running as ONE call against the live,
+already-authenticated session, instead of a shell loop re-invoking `brow`
+per item. Prefer it over shell-looping `eval`/CLI calls for anything with more
+than a couple of iterations, and over YAML playbooks once the logic needs a
+branch or a loop body more complex than "repeat these steps."
 
 ## Scripting a workflow (playbooks)
 
-For anything you'd otherwise repeat as a shell loop of near-identical `brow`
-calls, write a YAML playbook once and run it with `brow replay`:
+For a short, declarative, auditable sequence — no real branching, just steps —
+write a YAML playbook once and run it with `brow replay`. For anything with
+loop bodies more complex than a few flat steps, prefer `brow run` above.
 
 ```bash
 brow replay playbook.yaml -s 1 [--var key=value]

@@ -85,13 +85,17 @@ steps:
   - action: key
     key: Enter
 
-  - action: wait
-    ms: 1000
+  - action: wait               # by condition, not just a fixed sleep
+    selector: "#results"
+    state: visible             # visible | hidden | attached | detached
+    timeout: 10000
 
   - action: fetch
     url: /api/results?q={query}
     method: GET
-    output: results            # store parsed JSON in results entry
+    headers:
+      X-Api-Key: "{api_key}"
+    output: results            # captured JSON becomes {results} (and {results[key]}) in later steps
 ```
 
 ### Supported step actions
@@ -103,8 +107,21 @@ steps:
 | `fill` | `selector`, `value` | — |
 | `key` | `key` | — |
 | `select` | `selector`, `value` | — |
-| `fetch` | `url` | `method`, `auth`, `output` |
-| `wait` | `ms` | — |
+| `fetch` | `url` | `method`, `headers`, `auth`, `output`, `expect_status` |
+| `wait` | — | `selector`+`state`, or `ms` for a fixed sleep |
+| `assert` | `selector` | `state` — fails the step (not the run, unless `stop_on_failure`) if unmet |
+| `for_each` | `var`, `items`, `steps` | loop nested `steps` over a literal or captured list |
+
+A top-level `auth: none` on the playbook applies to every `fetch` step that
+doesn't set its own `auth`. Add `stop_on_failure: true` at the top level to
+halt the whole run (including out of a `for_each`) after the first failed
+step, instead of the default "record it and keep going."
+
+For anything needing real branching or a loop body more complex than a few
+flat steps, prefer `brow run <file.py>` — a Python file executed once against
+the live session, with the same `page`/`context`/`browser`/`state`/`pages`
+variables as `eval`, plus `args` from `--arg key=value` — over growing this
+YAML further.
 
 ### Variable substitution
 

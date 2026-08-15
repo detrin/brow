@@ -860,7 +860,7 @@ def _sub(val, variables):
     return re.sub(r"\{([^{}]+)\}", repl, val)
 
 
-async def _run_replay_steps(page, session, steps, variables, base_url, stop_on_failure=False):
+async def _run_replay_steps(page, session, steps, variables, base_url, stop_on_failure=False, default_auth=None):
     def sub(val):
         return _sub(val, variables)
 
@@ -897,7 +897,7 @@ async def _run_replay_steps(page, session, steps, variables, base_url, stop_on_f
             elif act == "fetch":
                 url = resolve_url(step["url"])
                 method = step.get("method", "GET")
-                no_cookies = step.get("auth") == "none"
+                no_cookies = step.get("auth", default_auth) == "none"
                 headers = {k: sub(v) for k, v in step.get("headers", {}).items()}
                 if no_cookies:
                     import httpx
@@ -914,7 +914,11 @@ async def _run_replay_steps(page, session, steps, variables, base_url, stop_on_f
                     r = await page.evaluate(js, {"url": url, "method": method, "headers": headers})
                     data_text, status = r["body"], r["status"]
                 _log_action(session, "fetch", url=url, method=method, no_cookies=no_cookies, status=status)
-                entry.update({"url": url, "status": status, "ok": True})
+                expect_status = step.get("expect_status")
+                ok = status in expect_status if expect_status else status < 400
+                entry.update({"url": url, "status": status, "ok": ok})
+                if not ok:
+                    entry["error"] = f"HTTP {status}"
                 if step.get("output"):
                     import json as _json
 
@@ -942,13 +946,22 @@ async def _run_replay_steps(page, session, steps, variables, base_url, stop_on_f
                 items = step.get("items")
                 if isinstance(items, str):
                     items = variables.get(items, [])
+                nested_failed = False
                 for item in items:
                     variables[var] = item
-                    results.extend(
-                        await _run_replay_steps(page, session, step["steps"], variables, base_url, stop_on_failure)
+                    nested_results = await _run_replay_steps(
+                        page, session, step["steps"], variables, base_url, stop_on_failure, default_auth
                     )
+                    results.extend(nested_results)
+                    if stop_on_failure and any(not r["ok"] for r in nested_results):
+                        nested_failed = True
+                        break
                 variables.pop(var, None)
+                if nested_failed:
+                    break
                 continue
+            else:
+                entry["error"] = f"unknown action: {act!r}"
         except Exception as e:
             entry["error"] = str(e)
         results.append(entry)
@@ -971,5 +984,6 @@ async def replay(req: Request, sid: str, body: ReplayReq):
         variables,
         base_url,
         stop_on_failure=bool(body.playbook.get("stop_on_failure")),
+        default_auth=body.playbook.get("auth"),
     )
     return {"results": results}

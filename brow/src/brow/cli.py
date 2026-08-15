@@ -373,6 +373,8 @@ def replay_cmd(
         typer.echo(f"{ok}  {act:<10} {url}  {status}  {err}")
         if r.get("data"):
             typer.echo(f"   → {json.dumps(r['data'])[:200]}")
+    if any(not r["ok"] for r in result["results"]):
+        raise typer.Exit(1)
 
 
 @app.command("websocket")
@@ -665,6 +667,40 @@ def eval_cmd(
     ),
 ):
     import json
+
+    ensure_daemon()
+    c = _client()
+    result = run_async(c.post(f"/eval/{s}", json={"code": code, "timeout": timeout}))
+    if result.get("stdout"):
+        typer.echo(result["stdout"], nl=False)
+    if result.get("result") is not None:
+        val = result["result"]
+        if isinstance(val, (dict, list)):
+            typer.echo(json.dumps(val, indent=2, ensure_ascii=False))
+        else:
+            typer.echo(str(val))
+
+
+@app.command("run")
+def run_cmd(
+    file: str = typer.Argument(..., help="Path to a Python file to run against the session in one call"),
+    s: Optional[str] = session_opt,
+    timeout: int = typer.Option(
+        30000, "--timeout", help="Max run time in ms. Raise it for long jobs instead of batching them."
+    ),
+    arg: Optional[list[str]] = typer.Option(None, "--arg", help="key=value, available as args['key'] in the script"),
+):
+    """Run a Python file once inside the session — vars: page, context, browser, state, pages, args."""
+    import json
+
+    with open(file) as f:
+        code = f.read()
+
+    args = {}
+    for a in arg or []:
+        k, _, v = a.partition("=")
+        args[k.strip()] = v.strip()
+    code = f"args = {json.dumps(args)}\n" + code
 
     ensure_daemon()
     c = _client()

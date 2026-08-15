@@ -8,11 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `run -s <id> <file.py> [--arg k=v]` — execute a reusable Python file once against the live session (same vars as `eval`, plus `args`), instead of shell-looping `eval`/CLI calls over a list. ~20x faster than a shell loop for 30 items (7.75s → 0.38s; see `benchmarks/microbench_run_vs_loop.sh`)
 - `replay` playbooks gained `wait` (by selector/state, not just a fixed sleep), `assert` (fail a step when a condition doesn't hold), `for_each` (loop nested steps over a literal or captured list), and `headers` on `fetch` steps
-- `stop_on_failure: true` playbook option halts remaining steps after the first failed one
+- `stop_on_failure: true` playbook option halts remaining steps after the first failed one, including out of a nested `for_each`
 
 ### Fixed
 - `fetch` steps' `output: name` now actually populates `{name}` (and `{name[key]}`) for later steps, as the playbook-writer docs always claimed — previously it was only recorded in the run's result log and never fed back into substitution
+- `replay` CLI now exits nonzero when any step failed — previously it always exited 0 regardless of step outcomes
+- `fetch` steps with an HTTP 4xx/5xx response are now marked as failed (`expect_status` opts out) — previously any response, including a 500, was reported `ok: true`
+- An unknown playbook step `action` now reports a clear error instead of failing silently with no explanation
+- `stop_on_failure` now actually halts a run when the failure is inside a `for_each` — previously it only stopped the current iteration's remaining steps, and later iterations and outer steps kept going
+- A playbook-level `auth: none` is now inherited by `fetch` steps that don't set their own `auth` — previously only a per-step `auth` was ever checked
 
 ## [1.2.0] - 2026-08-15
 

@@ -51,7 +51,8 @@ brow session delete 1
 | `websocket -s <id> [--count N] [--search <str>] [--clear]` | Get WebSocket messages |
 | `actions -s <id> [--json] [--clear]` | View recorded action log for current session |
 | `replay -s <id> <playbook.yaml> [--var k=v]` | Replay a playbook YAML (with optional var overrides) |
-| `eval -s <id> <code>` | Run Playwright Python; returns `result` + stdout. Helpers: `text(sel)`, `texts(sel)` |
+| `eval -s <id> <code>` | Run Python inline; returns `result` + stdout. Helpers: `text(sel)`, `texts(sel)` |
+| `run -s <id> <file.py> [--arg k=v]` | Run a reusable Python file in the session; same vars as `eval`, plus `args` |
 
 ## Scrolling
 
