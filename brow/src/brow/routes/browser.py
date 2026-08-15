@@ -835,26 +835,41 @@ class ReplayReq(BaseModel):
     vars: dict = {}
 
 
-@router.post("/replay")
-async def replay(req: Request, sid: str, body: ReplayReq):
-    session = _get_session(req, sid)
-    page = _get_page(session)
-    base_url = body.playbook.get("base_url", "")
-    variables = {**body.playbook.get("vars", {}), **body.vars}
-
-    def sub(val):
-        if not isinstance(val, str):
-            return val
-        for k, v in variables.items():
-            val = val.replace(f"{{{k}}}", str(v))
+def _sub(val, variables):
+    if not isinstance(val, str):
         return val
+
+    def repl(m):
+        name, _, key = m.group(1).partition("[")
+        v = variables.get(name)
+        if key:
+            key = key.rstrip("]")
+            if isinstance(v, dict):
+                v = v.get(key)
+            elif isinstance(v, list):
+                try:
+                    v = v[int(key)]
+                except (ValueError, IndexError):
+                    v = None
+            else:
+                v = None
+        if v is None and name not in variables:
+            return m.group(0)
+        return str(v)
+
+    return re.sub(r"\{([^{}]+)\}", repl, val)
+
+
+async def _run_replay_steps(page, session, steps, variables, base_url, stop_on_failure=False):
+    def sub(val):
+        return _sub(val, variables)
 
     def resolve_url(u):
         u = sub(u)
         return u if u.startswith("http") else base_url + u
 
     results = []
-    for step in body.playbook.get("steps", []):
+    for step in steps:
         act = step["action"]
         entry = {"action": act, "ok": False}
         try:
@@ -883,15 +898,20 @@ async def replay(req: Request, sid: str, body: ReplayReq):
                 url = resolve_url(step["url"])
                 method = step.get("method", "GET")
                 no_cookies = step.get("auth") == "none"
+                headers = {k: sub(v) for k, v in step.get("headers", {}).items()}
                 if no_cookies:
                     import httpx
 
-                    async with httpx.AsyncClient(follow_redirects=True, timeout=30) as client:
+                    async with httpx.AsyncClient(follow_redirects=True, timeout=30, headers=headers) as client:
                         r = await client.request(method, url)
                     data_text, status = r.text, r.status_code
                 else:
-                    js = "async ({url,method})=>{const r=await fetch(url,{method});return {status:r.status,body:await r.text()}}"
-                    r = await page.evaluate(js, {"url": url, "method": method})
+                    js = (
+                        "async ({url,method,headers})=>{"
+                        "const r=await fetch(url,{method,headers});"
+                        "return {status:r.status,body:await r.text()}}"
+                    )
+                    r = await page.evaluate(js, {"url": url, "method": method, "headers": headers})
                     data_text, status = r["body"], r["status"]
                 _log_action(session, "fetch", url=url, method=method, no_cookies=no_cookies, status=status)
                 entry.update({"url": url, "status": status, "ok": True})
@@ -899,13 +919,57 @@ async def replay(req: Request, sid: str, body: ReplayReq):
                     import json as _json
 
                     try:
-                        entry["data"] = _json.loads(data_text)
+                        data = _json.loads(data_text)
                     except Exception:
-                        entry["data"] = data_text
+                        data = data_text
+                    entry["data"] = data
+                    variables[step["output"]] = data
             elif act == "wait":
-                await page.wait_for_timeout(step.get("ms", 1000))
+                if step.get("selector"):
+                    await page.wait_for_selector(
+                        sub(step["selector"]), state=step.get("state", "visible"), timeout=step.get("timeout", 30000)
+                    )
+                else:
+                    await page.wait_for_timeout(step.get("ms", 1000))
                 entry["ok"] = True
+            elif act == "assert":
+                await page.wait_for_selector(
+                    sub(step["selector"]), state=step.get("state", "visible"), timeout=step.get("timeout", 5000)
+                )
+                entry["ok"] = True
+            elif act == "for_each":
+                var = step["var"]
+                items = step.get("items")
+                if isinstance(items, str):
+                    items = variables.get(items, [])
+                for item in items:
+                    variables[var] = item
+                    results.extend(
+                        await _run_replay_steps(page, session, step["steps"], variables, base_url, stop_on_failure)
+                    )
+                variables.pop(var, None)
+                continue
         except Exception as e:
             entry["error"] = str(e)
         results.append(entry)
+        if not entry["ok"] and stop_on_failure:
+            break
+    return results
+
+
+@router.post("/replay")
+async def replay(req: Request, sid: str, body: ReplayReq):
+    session = _get_session(req, sid)
+    page = _get_page(session)
+    base_url = body.playbook.get("base_url", "")
+    variables = {**body.playbook.get("vars", {}), **body.vars}
+
+    results = await _run_replay_steps(
+        page,
+        session,
+        body.playbook.get("steps", []),
+        variables,
+        base_url,
+        stop_on_failure=bool(body.playbook.get("stop_on_failure")),
+    )
     return {"results": results}

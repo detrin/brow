@@ -389,3 +389,139 @@ async def test_click_until_reports_hitting_the_cap(client, session_id):
     assert data["done"] is False
     assert data["iterations"] == 3
     assert "max_iterations" in data.get("reason", "")
+
+
+@pytest.mark.asyncio
+async def test_replay_fetch_output_is_usable_as_a_variable_in_later_steps(client, session_id):
+    """A captured fetch result must be substitutable into later steps.
+
+    The playbook-writer docs teach `output: name` then `{name}` in a later
+    step's url/selector/value. Capturing into the result entry only (not the
+    substitution table) makes every documented chaining example silently do
+    nothing on the second step.
+    """
+    html = "data:text/html,<script>window.got=null</script><body></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    playbook = {
+        "base_url": "",
+        "steps": [
+            {"action": "fetch", "url": 'data:application/json,{"id":"42"}', "output": "item"},
+            {"action": "navigate", "url": "data:text/html,<h1>id-{item[id]}</h1>"},
+        ],
+    }
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    results = r.json()["results"]
+    assert all(x["ok"] for x in results), results
+    assert "id-42" in results[1]["url"]
+
+
+@pytest.mark.asyncio
+async def test_replay_wait_step_supports_selector(client, session_id):
+    """`wait` must be able to wait for a condition, not just a fixed sleep."""
+    html = """data:text/html,<body>
+    <script>setTimeout(() => { document.body.innerHTML += '<div id=ready>ok</div>' }, 50)</script>
+    </body>"""
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    playbook = {"steps": [{"action": "wait", "selector": "#ready", "timeout": 2000}]}
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    assert r.json()["results"][0]["ok"] is True
+
+
+@pytest.mark.asyncio
+async def test_replay_assert_step_passes_when_condition_holds(client, session_id):
+    html = "data:text/html,<body><h1 id=title>Loaded</h1></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    playbook = {"steps": [{"action": "assert", "selector": "#title", "state": "visible"}]}
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    assert r.json()["results"][0]["ok"] is True
+
+
+@pytest.mark.asyncio
+async def test_replay_assert_step_fails_loudly_when_condition_does_not_hold(client, session_id):
+    """A playbook must be able to check its own work, not just hope it worked."""
+    html = "data:text/html,<body><h1 id=title>Loaded</h1></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    playbook = {"steps": [{"action": "assert", "selector": "#does-not-exist", "state": "visible", "timeout": 200}]}
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    entry = r.json()["results"][0]
+    assert entry["ok"] is False
+    assert entry.get("error")
+
+
+@pytest.mark.asyncio
+async def test_replay_stop_on_failure_halts_remaining_steps(client, session_id):
+    html = "data:text/html,<body><h1 id=title>Loaded</h1></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    playbook = {
+        "stop_on_failure": True,
+        "steps": [
+            {"action": "assert", "selector": "#does-not-exist", "timeout": 200},
+            {"action": "navigate", "url": "data:text/html,<h1>should not run</h1>"},
+        ],
+    }
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    results = r.json()["results"]
+    assert len(results) == 1, "later steps must not run once stop_on_failure trips"
+    assert results[0]["ok"] is False
+
+
+@pytest.mark.asyncio
+async def test_replay_for_each_repeats_nested_steps_per_item(client, session_id):
+    """The recurring shape across real sessions is 'do this for every item in a
+    list' via N nearly-identical CLI calls. A playbook must express that as
+    one loop, not N steps.
+    """
+    html = "data:text/html,<body></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    playbook = {
+        "steps": [
+            {
+                "action": "for_each",
+                "var": "n",
+                "items": ["a", "b", "c"],
+                "steps": [{"action": "navigate", "url": "data:text/html,<h1>item-{n}</h1>"}],
+            }
+        ],
+    }
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    results = r.json()["results"]
+    assert len(results) == 3
+    assert [f"item-{c}" in x["url"] for c, x in zip(["a", "b", "c"], results)] == [True, True, True]
+
+
+@pytest.mark.asyncio
+async def test_replay_fetch_step_supports_custom_headers(client, session_id, monkeypatch):
+    import httpx as _httpx
+
+    captured = {}
+    original_init = _httpx.AsyncClient.__init__
+
+    def patched_init(self, *args, **kwargs):
+        captured["headers"] = kwargs.get("headers")
+        kwargs["transport"] = _httpx.MockTransport(lambda request: _httpx.Response(200, text="ok"))
+        original_init(self, *args, **kwargs)
+
+    monkeypatch.setattr(_httpx.AsyncClient, "__init__", patched_init)
+
+    html = "data:text/html,<body></body>"
+    await client.post(f"/browser/{session_id}/navigate", json={"url": html})
+    playbook = {
+        "steps": [
+            {
+                "action": "fetch",
+                "url": "https://example.invalid/thing",
+                "auth": "none",
+                "headers": {"X-Api-Key": "secret"},
+            }
+        ],
+    }
+    r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    assert r.status_code == 200, r.text
+    assert r.json()["results"][0]["ok"] is True
+    assert captured["headers"] == {"X-Api-Key": "secret"}

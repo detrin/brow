@@ -132,6 +132,68 @@ brow session delete 1
 - **Draining a paginated list: use `click-until`.** "Act on the visible batch, the
   list refills, act again" is one command, not a shell loop. Always read the exit
   reason — `--max-iterations` stopping early looks the same as finishing otherwise.
+- **Doing the same thing N times: write a playbook, don't shell-loop `eval`.** A
+  `for id in ...; do brow eval ...; done` in your own shell costs a process +
+  round trip per item and gives up all the DSL's retry/check/chain features. See
+  "Scripting a workflow" below.
+
+## Scripting a workflow (playbooks)
+
+For anything you'd otherwise repeat as a shell loop of near-identical `brow`
+calls, write a YAML playbook once and run it with `brow replay`:
+
+```bash
+brow replay playbook.yaml -s 1 [--var key=value]
+```
+
+```yaml
+base_url: https://example.com
+vars:
+  query: widgets
+
+steps:
+  - action: navigate
+    url: /search?q={query}
+
+  - action: wait                    # wait for a condition, not a guessed sleep
+    selector: "#results"
+    state: visible                  # visible | hidden | attached | detached
+    timeout: 10000
+
+  - action: assert                  # fail loudly if a precondition doesn't hold
+    selector: ".result-count"
+    state: visible
+
+  - action: fetch
+    url: /api/items?q={query}
+    headers:
+      X-Api-Key: "{api_key}"
+    output: items                   # captured JSON becomes {items} in later steps
+
+  - action: for_each                # replaces "N near-identical CLI calls"
+    var: item
+    items: items                    # a captured variable (must be a list)...
+    # items: [1, 2, 3]              # ...or an inline literal list
+    steps:
+      - action: navigate
+        url: /item/{item[id]}       # dict/list indexing into captured JSON
+      - action: click
+        selector: "text=Save"
+```
+
+Supported step actions: `navigate`, `click`, `fill`, `key`, `select`, `fetch`
+(`headers`, `auth: none` for cookie-less, `output: name` to capture JSON for
+later steps), `wait` (`selector`+`state`, or `ms` for a fixed sleep), `assert`
+(same shape as `wait`, but a non-match is reported as a failed step), and
+`for_each` (loop a nested `steps` list over a literal or captured list).
+
+By default a failed step is recorded but the playbook keeps going. Add
+`stop_on_failure: true` at the top level to halt on the first failure — use
+this when a later step's `{var}` substitution depends on an earlier one
+having actually run.
+
+`brow actions -s <id> --json` shows the raw action log for a live session if
+you want to crystallize what you just did by hand into a playbook.
 
 ## Driving an app's own API
 

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `replay` playbooks gained `wait` (by selector/state, not just a fixed sleep), `assert` (fail a step when a condition doesn't hold), `for_each` (loop nested steps over a literal or captured list), and `headers` on `fetch` steps
+- `stop_on_failure: true` playbook option halts remaining steps after the first failed one
+
+### Fixed
+- `fetch` steps' `output: name` now actually populates `{name}` (and `{name[key]}`) for later steps, as the playbook-writer docs always claimed — previously it was only recorded in the run's result log and never fed back into substitution
+
 ## [1.2.0] - 2026-08-15
 
 ### Added
