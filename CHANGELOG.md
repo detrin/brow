@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.0] - 2026-08-15
 
 ### Added
 - `run -s <id> <file.py> [--arg k=v]` — execute a reusable Python file once against the live session (same vars as `eval`, plus `args`), instead of shell-looping `eval`/CLI calls over a list. ~20x faster than a shell loop for 30 items (7.75s → 0.38s; see `benchmarks/microbench_run_vs_loop.sh`)
