@@ -66,15 +66,39 @@ def ensure_daemon():
 
 
 @app.command("setup")
-def setup_cmd(with_deps: bool = typer.Option(False, "--with-deps", help="Also install OS-level dependencies")):
+def setup_cmd(
+    with_deps: bool = typer.Option(False, "--with-deps", help="Also install OS-level dependencies"),
+    upgrade: bool = typer.Option(
+        False, "--upgrade", help="Upgrade patchright first, then install the Chromium build it now expects"
+    ),
+):
+    if upgrade:
+        typer.echo("Upgrading patchright...")
+        pip_cmd = [sys.executable, "-m", "pip", "install", "--upgrade", "patchright"]
+        if subprocess.run(pip_cmd).returncode != 0:
+            typer.echo("Failed to upgrade patchright. Try: pip install --upgrade patchright", err=True)
+            raise typer.Exit(1)
+
     cmd = [sys.executable, "-m", "patchright", "install"]
     if with_deps:
         cmd.append("--with-deps")
     cmd.append("chromium")
-    typer.echo("Installing Chromium for brow (~150MB, one-time)...")
+    typer.echo(
+        "Installing the Chromium build patchright now expects..."
+        if upgrade
+        else "Installing Chromium for brow (~150MB, one-time)..."
+    )
     if subprocess.run(cmd).returncode != 0:
         typer.echo("Setup failed. Try: patchright install chromium", err=True)
         raise typer.Exit(1)
+
+    if upgrade and daemon_running():
+        # The daemon already imported the old patchright in memory and is
+        # driving Chromium via the old binary path — an upgrade on disk does
+        # nothing for it until it's restarted.
+        stop_daemon()
+        typer.echo("Stopped the running daemon so it restarts fresh on your next command.")
+
     typer.echo("Setup complete. Try: brow session new")
 
 

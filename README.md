@@ -29,6 +29,11 @@ Then install Chromium once (either method above):
 brow setup            # ~150MB, one-time
 ```
 
+Update patchright and its matching Chromium build later with:
+```bash
+brow setup --upgrade
+```
+
 **Agent skill:**
 ```bash
 # For most agents (Cline, Cursor, Amp, Gemini CLI, etc.)

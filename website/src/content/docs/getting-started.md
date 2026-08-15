@@ -18,6 +18,22 @@ Verify the installation:
 brow --help
 ```
 
+### Updating
+
+`pip install --upgrade brow-cli` updates the CLI itself. To pick up a newer
+`patchright` and the Chromium build it drives:
+
+```bash
+brow setup --upgrade
+```
+
+This upgrades the `patchright` pip package first, then installs the
+Chromium build that new version expects — running `brow setup` again on its
+own would just re-fetch the build for whatever version was already pinned,
+not actually upgrade anything. It also stops a running daemon, since it
+already imported the old `patchright` in memory and won't pick up the
+upgrade until it restarts.
+
 ## Configuration
 
 brow reads a small set of environment variables:

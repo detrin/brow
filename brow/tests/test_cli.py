@@ -91,6 +91,57 @@ def test_setup_failure():
         assert result.exit_code == 1
 
 
+def test_setup_upgrade_bumps_patchright_before_installing_chromium():
+    """`--upgrade` must update the pip package first, then fetch the Chromium
+    build that new version expects — installing chromium alone would just
+    re-fetch the build for whatever version was already pinned.
+    """
+    with (
+        patch("brow.cli.subprocess.run", return_value=MagicMock(returncode=0)) as mock_run,
+        patch("brow.cli.daemon_running", return_value=False),
+    ):
+        result = runner.invoke(app, ["setup", "--upgrade"])
+        assert result.exit_code == 0
+        calls = [c.args[0] for c in mock_run.call_args_list]
+        assert any("pip" in c and "--upgrade" in c and "patchright" in c for c in calls)
+        assert any("chromium" in c for c in calls)
+        # pip upgrade must run before the chromium install picks up the new version
+        pip_idx = next(i for i, c in enumerate(calls) if "pip" in c)
+        chromium_idx = next(i for i, c in enumerate(calls) if "chromium" in c)
+        assert pip_idx < chromium_idx
+
+
+def test_setup_upgrade_restarts_a_running_daemon():
+    """The daemon is a separate process that already imported the old
+    patchright — it won't pick up an upgrade without a restart.
+    """
+    with (
+        patch("brow.cli.subprocess.run", return_value=MagicMock(returncode=0)),
+        patch("brow.cli.daemon_running", return_value=True),
+        patch("brow.cli.stop_daemon") as mock_stop,
+    ):
+        result = runner.invoke(app, ["setup", "--upgrade"])
+        assert result.exit_code == 0
+        mock_stop.assert_called_once()
+
+
+def test_setup_upgrade_failure_stops_before_installing_chromium():
+    with (
+        patch("brow.cli.subprocess.run", return_value=MagicMock(returncode=1)) as mock_run,
+        patch("brow.cli.daemon_running", return_value=False),
+    ):
+        result = runner.invoke(app, ["setup", "--upgrade"])
+        assert result.exit_code == 1
+        assert mock_run.call_count == 1
+
+
+def test_setup_without_upgrade_does_not_touch_pip():
+    with patch("brow.cli.subprocess.run", return_value=MagicMock(returncode=0)) as mock_run:
+        runner.invoke(app, ["setup"])
+        calls = [c.args[0] for c in mock_run.call_args_list]
+        assert not any("pip" in c for c in calls)
+
+
 def test_api_error_surfaced():
     """Test that BrowAPIError from the client is caught and printed cleanly."""
 

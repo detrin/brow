@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `run -s <id> <file.py> [--arg k=v]` — execute a reusable Python file once against the live session (same vars as `eval`, plus `args`), instead of shell-looping `eval`/CLI calls over a list. ~20x faster than a shell loop for 30 items (7.75s → 0.38s; see `benchmarks/microbench_run_vs_loop.sh`)
 - `replay` playbooks gained `wait` (by selector/state, not just a fixed sleep), `assert` (fail a step when a condition doesn't hold), `for_each` (loop nested steps over a literal or captured list), and `headers` on `fetch` steps
 - `stop_on_failure: true` playbook option halts remaining steps after the first failed one, including out of a nested `for_each`
+- `setup --upgrade` bumps the `patchright` pip package and installs the Chromium build it now expects, and restarts a running daemon so it stops driving the old binary from memory. Previously there was no command for this — `brow setup` alone just re-fetched the build for whatever version was already pinned
 
 ### Fixed
 - `fetch` steps' `output: name` now actually populates `{name}` (and `{name[key]}`) for later steps, as the playbook-writer docs always claimed — previously it was only recorded in the run's result log and never fed back into substitution

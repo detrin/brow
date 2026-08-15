@@ -14,6 +14,18 @@ pip install brow-cli
 brow setup
 ```
 
+To update patchright and the Chromium build it drives:
+
+```bash
+brow setup --upgrade
+```
+
+This upgrades the `patchright` pip package, then installs the Chromium
+build that new version expects — installing Chromium alone would just
+re-fetch the build for whatever version was already pinned. It also stops
+a running daemon so it restarts with the upgrade instead of continuing to
+drive the old binary from memory.
+
 ## Usage
 
 Syntax is **subcommand-first**, with `-s <id>` on the subcommand:
