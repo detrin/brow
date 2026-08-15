@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `setup --upgrade` bumps the `patchright` pip package and installs the Chromium build it now expects, and restarts a running daemon so it stops driving the old binary from memory. Previously there was no command for this — `brow setup` alone just re-fetched the build for whatever version was already pinned
 - Update-available check: most commands now print a one-line `[brow] brow X.Y.Z is available ...` notice to stderr when a newer `brow-cli` is on PyPI, cached once a day (hourly retry on failure) so it almost never touches the network. Fails silently on any error and never blocks a command. Disable with `BROW_NO_UPDATE_CHECK=1`
 
+### Changed
+- License reverted to Elastic License 2.0 (was MIT) — permits free use, modification, and distribution, but not offering brow as a hosted/managed service. Releases up to and including 1.2.0 remain MIT-licensed; this applies to releases after 1.2.0
+
 ### Fixed
 - `fetch` steps' `output: name` now actually populates `{name}` (and `{name[key]}`) for later steps, as the playbook-writer docs always claimed — previously it was only recorded in the run's result log and never fed back into substitution
 - `replay` CLI now exits nonzero when any step failed — previously it always exited 0 regardless of step outcomes

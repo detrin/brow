@@ -264,4 +264,4 @@ brow leads on success rate across both suites. On token efficiency, brow leads t
 
 ## License
 
-MIT
+Elastic License 2.0 (releases <=1.2.0 remain MIT-licensed).

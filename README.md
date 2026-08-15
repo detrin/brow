@@ -3,7 +3,7 @@
 [![CI](https://github.com/detrin/brow/actions/workflows/test.yml/badge.svg)](https://github.com/detrin/brow/actions/workflows/test.yml)
 [![PyPI](https://img.shields.io/pypi/v/brow-cli)](https://pypi.org/project/brow-cli/)
 [![Python](https://img.shields.io/pypi/pyversions/brow-cli)](https://pypi.org/project/brow-cli/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License: ELv2](https://img.shields.io/badge/license-Elastic%202.0-blue.svg)](LICENSE)
 
 **The browser tool agents win with: 82% task success at ~$0.22/task — beating browser-use, playwright-mcp, and agent-browser on [22 benchmark tasks](#benchmarks).**
 
@@ -276,4 +276,4 @@ Playwright selector syntax:
 
 ## License
 
-MIT
+Elastic License 2.0 (releases <=1.2.0 remain MIT-licensed).
