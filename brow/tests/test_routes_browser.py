@@ -318,7 +318,7 @@ async def test_session_not_found(client):
 
 
 @pytest.mark.asyncio
-async def test_fetch_reports_status_for_empty_error_body(client, session_id):
+async def test_fetch_reports_status_for_empty_error_body(client, session_id, monkeypatch):
     """An auth failure must be visible, not silent.
 
     The daemon has always returned the status; the CLI printed only the body. A
@@ -326,10 +326,23 @@ async def test_fetch_reports_status_for_empty_error_body(client, session_id):
     indistinguishable from success-with-no-content and sends you guessing at
     headers, cookies and origins instead of reading the code.
     """
+    import httpx as _httpx
+
+    def handler(request):
+        return _httpx.Response(401)
+
+    original_init = _httpx.AsyncClient.__init__
+
+    def patched_init(self, *args, **kwargs):
+        kwargs["transport"] = _httpx.MockTransport(handler)
+        original_init(self, *args, **kwargs)
+
+    monkeypatch.setattr(_httpx.AsyncClient, "__init__", patched_init)
+
     await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<h1>x</h1>"})
     r = await client.post(
         f"/browser/{session_id}/fetch",
-        json={"url": "https://httpbin.org/status/401", "method": "GET", "no_cookies": True},
+        json={"url": "https://example.invalid/status/401", "method": "GET", "no_cookies": True},
     )
     assert r.status_code == 200
     assert r.json()["status"] == 401
