@@ -26,6 +26,11 @@ re-fetch the build for whatever version was already pinned. It also stops
 a running daemon so it restarts with the upgrade instead of continuing to
 drive the old binary from memory.
 
+Most commands check once a day for a newer `brow-cli` release and print a
+`[brow] brow X.Y.Z is available ...` notice to stderr if one exists — this
+is informational only, not an error; ignore it or run `pip install
+--upgrade brow-cli`. Set `BROW_NO_UPDATE_CHECK=1` to disable it.
+
 ## Usage
 
 Syntax is **subcommand-first**, with `-s <id>` on the subcommand:

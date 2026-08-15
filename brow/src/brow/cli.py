@@ -9,6 +9,7 @@ import typer
 from brow.client import BrowAPIError, BrowClient
 from brow.config import DAEMON_HOST, DAEMON_PORT
 from brow.daemon import daemon_running, stop_daemon
+from brow.update_check import check_for_update
 
 app = typer.Typer(name="brow", no_args_is_help=True)
 daemon_app = typer.Typer(name="daemon", no_args_is_help=True)
@@ -49,6 +50,9 @@ def _daemon_healthy():
 
 
 def ensure_daemon():
+    notice = check_for_update()
+    if notice:
+        typer.echo(f"[brow] {notice}", err=True)
     if _daemon_healthy():
         return
     subprocess.Popen(

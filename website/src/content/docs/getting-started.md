@@ -43,6 +43,21 @@ brow reads a small set of environment variables:
 | `BROW_HOME` | `~/.brow` | Data directory (profiles, states, screenshots) |
 | `BROW_PORT` | `19987` | Daemon HTTP port |
 | `BROW_MAX_SESSIONS` | `10` | Maximum concurrent browser sessions |
+| `BROW_NO_UPDATE_CHECK` | unset | Set to disable the update-available check below |
+
+### Update notices
+
+Most commands check once a day (cached in `~/.brow/update_check.json`) whether
+a newer `brow-cli` is on PyPI, and print a one-line notice to stderr if so:
+
+```
+[brow] brow 1.3.0 is available (you have 1.2.0). Update with: pip install --upgrade brow-cli
+```
+
+The check has a short timeout and never fails or blocks a command — if PyPI
+is unreachable it just retries sooner (hourly instead of daily) and stays
+silent otherwise. Set `BROW_NO_UPDATE_CHECK=1` to disable it entirely, e.g.
+for offline or sandboxed environments.
 
 ## Your first session
 

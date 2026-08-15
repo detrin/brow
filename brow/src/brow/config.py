@@ -7,6 +7,7 @@ STATES_DIR = BROW_HOME / "states"
 SCREENSHOTS_DIR = BROW_HOME / "screenshots"
 PID_FILE = BROW_HOME / "daemon.pid"
 LOG_FILE = BROW_HOME / "daemon.log"
+UPDATE_CHECK_FILE = BROW_HOME / "update_check.json"
 
 DAEMON_HOST = "127.0.0.1"
 DAEMON_PORT = int(os.environ.get("BROW_PORT", "19987"))

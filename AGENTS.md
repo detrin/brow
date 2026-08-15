@@ -124,6 +124,8 @@ brow session delete 1
 
 ## Tips
 
+- A `[brow] brow X.Y.Z is available ...` line on stderr is an informational
+  update notice, not an error — safe to ignore. Disable with `BROW_NO_UPDATE_CHECK=1`.
 - Prefer `snapshot` over `screenshot` — faster, token-efficient, AI-readable
 - `network --clear` before navigation to isolate requests for a specific page
 - `fetch` uses the browser's real cookies — use it to call authenticated APIs

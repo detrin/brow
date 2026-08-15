@@ -15,6 +15,30 @@ def test_daemon_status():
         assert result.exit_code == 0
 
 
+def test_ensure_daemon_surfaces_an_available_update():
+    with (
+        patch("brow.cli.check_for_update", return_value="brow 1.3.0 is available (you have 1.2.0)."),
+        patch("brow.cli._daemon_healthy", return_value=True),
+        patch("brow.cli.run_async") as mock_run,
+    ):
+        mock_run.return_value = [{"id": "1", "profile": "default", "headless": True, "pages": 1}]
+        result = runner.invoke(app, ["session", "list"])
+        assert result.exit_code == 0
+        assert "1.3.0 is available" in (result.stderr or result.output)
+
+
+def test_ensure_daemon_stays_quiet_when_up_to_date():
+    with (
+        patch("brow.cli.check_for_update", return_value=None),
+        patch("brow.cli._daemon_healthy", return_value=True),
+        patch("brow.cli.run_async") as mock_run,
+    ):
+        mock_run.return_value = [{"id": "1", "profile": "default", "headless": True, "pages": 1}]
+        result = runner.invoke(app, ["session", "list"])
+        assert result.exit_code == 0
+        assert "is available" not in (result.stderr or result.output)
+
+
 def test_session_new():
     with patch("brow.cli.ensure_daemon"), patch("brow.cli.run_async") as mock_run:
         mock_run.return_value = {"id": "1", "profile": "default"}

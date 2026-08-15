@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `replay` playbooks gained `wait` (by selector/state, not just a fixed sleep), `assert` (fail a step when a condition doesn't hold), `for_each` (loop nested steps over a literal or captured list), and `headers` on `fetch` steps
 - `stop_on_failure: true` playbook option halts remaining steps after the first failed one, including out of a nested `for_each`
 - `setup --upgrade` bumps the `patchright` pip package and installs the Chromium build it now expects, and restarts a running daemon so it stops driving the old binary from memory. Previously there was no command for this — `brow setup` alone just re-fetched the build for whatever version was already pinned
+- Update-available check: most commands now print a one-line `[brow] brow X.Y.Z is available ...` notice to stderr when a newer `brow-cli` is on PyPI, cached once a day (hourly retry on failure) so it almost never touches the network. Fails silently on any error and never blocks a command. Disable with `BROW_NO_UPDATE_CHECK=1`
 
 ### Fixed
 - `fetch` steps' `output: name` now actually populates `{name}` (and `{name[key]}`) for later steps, as the playbook-writer docs always claimed — previously it was only recorded in the run's result log and never fed back into substitution
