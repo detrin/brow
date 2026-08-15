@@ -423,9 +423,7 @@ def click_cmd(
 def click_until_cmd(
     selector: str = typer.Argument(..., help="Selector to click each iteration"),
     s: Optional[str] = session_opt,
-    until_gone: Optional[str] = typer.Option(
-        None, "--until-gone", help="Stop once this selector has no matches left"
-    ),
+    until_gone: Optional[str] = typer.Option(None, "--until-gone", help="Stop once this selector has no matches left"),
     max_iterations: int = typer.Option(25, "--max-iterations", help="Safety cap on clicks"),
     settle_ms: int = typer.Option(500, "--settle-ms", help="Wait after each click for the page to refill"),
     timeout: int = typer.Option(30000, "--timeout", help="Per-click timeout in ms"),

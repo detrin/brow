@@ -5,13 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.0] - 2026-08-15
 
 ### Added
 - `brow setup` command to install Chromium (no more manual `patchright install`)
 - `session new --reclaim` closes a stale session holding the profile and takes it over (#31)
 - `navigate --wait domcontentloaded|load|networkidle` settle strategy (#33)
 - `eval` namespace helpers `text(sel)` and `texts(sel)` for quick extraction (#32)
+- `click-until` repeats a click until a selector clears or work runs out, for draining paginated lists/batch actions without a shell loop around `brow`
 
 ### Changed
 - License reverted to MIT (was Elastic License 2.0)
@@ -19,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - click/fill/select accept a snapshot ref directly: `click "[1]"` resolves to `--ref 1` (#30)
 - Profile-conflict error now suggests `--reclaim` and the exact `session delete` command (#31)
 - `eval` errors involving an un-awaited coroutine now hint to add `await` (#32)
+- `page switch` now actually retargets later commands to the chosen tab instead of only changing which tab is visually focused
+- `page new` no longer silently steals the active tab when one was deliberately chosen; `page list` marks the active tab with `*`
+- `eval` timeout errors name `--timeout`, suggest a value, and return stdout printed before the cutoff instead of discarding it
+- `fetch` prints the non-2xx status to stderr (stdout stays pipeable to jq), with a hint on 401/403
 
 ## [1.1.0] - 2026-04-08
 

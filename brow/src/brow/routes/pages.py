@@ -27,9 +27,7 @@ async def list_pages(req: Request, sid: str):
     active = session.page
     # Marking the active tab matters: without it there is no way to tell where
     # the next command will land, which is the whole trap this used to create.
-    pages = [
-        {"index": i, "url": p.url, "active": p is active} for i, p in enumerate(session.pages)
-    ]
+    pages = [{"index": i, "url": p.url, "active": p is active} for i, p in enumerate(session.pages)]
     return {"pages": pages}
 
 

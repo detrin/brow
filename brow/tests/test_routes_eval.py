@@ -68,7 +68,9 @@ async def test_eval_timeout_message_is_actionable(client, session_id):
 @pytest.mark.asyncio
 async def test_eval_honours_raised_timeout(client, session_id):
     """The escape hatch the message points at has to actually work."""
-    r = await client.post(f"/eval/{session_id}", json={"code": "await asyncio.sleep(1)\nresult = 'done'", "timeout": 15000})
+    r = await client.post(
+        f"/eval/{session_id}", json={"code": "await asyncio.sleep(1)\nresult = 'done'", "timeout": 15000}
+    )
     assert r.status_code == 200
     assert r.json()["result"] == "done"
 
