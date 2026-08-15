@@ -95,6 +95,60 @@ brow fetch -s 1 "/rest/offer/v2/competitions/136806/matches" | jq
 brow fetch -s 1 "https://example.com/api/data" -X POST -d '{"key":"val"}' -H "Content-Type: application/json"
 ```
 
+## Running Python Workflows (`run`)
+
+`eval` is for one-off inline snippets. `run` is for anything with a loop or a
+condition — write it as a `.py` file and it executes once inside the live
+session (same `page`/`context`/`browser`/`state`/`pages` vars as `eval`, plus
+`args` from `--arg key=value`):
+
+```bash
+brow run -s 1 workflow.py --arg query=widgets
+```
+
+**Where this earns its keep over the alternatives:** scraping a paginated
+listing whose pages are rendered by JS (not real navigations) — the loop has
+to wait for each page's render, validate what it got before trusting it, and
+decide per-item whether to keep going, none of which a flat list of steps or
+a shell loop of `brow eval` calls does well:
+
+```python
+# scrape_paginated.py
+results = []
+page_num = 1
+while True:
+    await page.wait_for_selector(".product-row", timeout=10000)   # wait for render, not a guessed sleep
+    for row in await page.locator(".product-row").all():
+        price_text = await row.locator(".price").inner_text()
+        price = float(price_text.strip("$"))
+        if price <= 0:                                            # a check, not just hope
+            raise ValueError(f"page {page_num}: bad price {price_text!r} — stopping before bad data spreads")
+        results.append({"name": await row.locator(".name").inner_text(), "price": price})
+
+    next_btn = page.locator("#next")
+    if await next_btn.count() == 0 or not await next_btn.is_visible():
+        break                                                     # loop until the data says stop, not a fixed N
+    await next_btn.click()
+    await page.wait_for_timeout(150)
+    page_num += 1
+
+result = {"pages": page_num, "items": len(results), "data": results}
+```
+
+```bash
+brow run -s 1 scrape_paginated.py
+# {"pages": 3, "items": 5, "data": [...]}
+```
+
+Why not the alternatives here: a shell loop of `brow eval` per page costs a
+process + HTTP round trip per page and still has to guess how long to sleep
+after each click; a YAML `replay` playbook has no way to say "keep clicking
+Next until the button is gone AND validate every row before trusting the
+page," since `for_each` needs the item count known up front. One `run` call
+does the wait, the check, and the open-ended loop natively, and a bad page
+aborts the whole call with a clear error instead of silently returning
+partial or wrong data.
+
 ## WebSocket Inspection
 
 Live sites push updates over WebSocket (socket.io, etc.). Capture and inspect frames:
