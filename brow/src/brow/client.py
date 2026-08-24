@@ -1,6 +1,6 @@
 import httpx
 
-from brow.config import DAEMON_URL
+from brow.config import get_daemon_url
 
 
 class BrowAPIError(Exception):
@@ -28,7 +28,7 @@ def _raise_api_error(r: httpx.Response):
 class BrowClient:
     def __init__(self, base_url=None):
         self._client = httpx.AsyncClient(
-            base_url=base_url or DAEMON_URL,
+            base_url=base_url or get_daemon_url(),
             timeout=60.0,
         )
 

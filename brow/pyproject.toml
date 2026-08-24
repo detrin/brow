@@ -18,6 +18,7 @@ dependencies = [
     "httpx>=0.25",
     "pillow>=10.0",
     "pyyaml>=6.0",
+    "packaging>=23.0",
 ]
 
 [project.optional-dependencies]

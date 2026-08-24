@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from brow.config import DEFAULT_TIMEOUT, SCREENSHOTS_DIR, ensure_dirs
 from brow.snapshot import filter_lines, format_tree
@@ -162,7 +162,10 @@ SNAPSHOT_JS = """
             if (txt) obj.name = txt;
         }
         if (placeholder && !obj.name) obj.name = placeholder;
-        if (node.value !== undefined && node.value !== '') obj.value = String(node.value).substring(0, 80);
+        const inputType = tag === 'input' ? (node.getAttribute('type') || 'text').toLowerCase() : '';
+        if (inputType !== 'password' && node.value !== undefined && node.value !== '') {
+            obj.value = String(node.value).substring(0, 80);
+        }
         if (node.checked !== undefined) obj.checked = node.checked;
         if (node.disabled) obj.disabled = true;
         if (tag === 'a' && node.href) obj.href = node.href;
@@ -625,7 +628,7 @@ async def fill(req: Request, sid: str, body: FillReq):
                 await page.wait_for_selector(selector, timeout=body.timeout, state="visible")
 
             await page.fill(selector, body.value, timeout=body.timeout)
-            _log_action(session, "fill", selector=selector, value=body.value)
+            _log_action(session, "fill", selector=selector)
             formatted, truncated, _ = await _take_snapshot(page)
             resp = {"ok": True, "snapshot": formatted}
             if truncated:
@@ -811,7 +814,7 @@ async def get_actions(req: Request, sid: str, as_json: bool = False):
         elif act == "click":
             lines.append(f"{s:<3} click     {a.get('selector', '')}")
         elif act == "fill":
-            lines.append(f"{s:<3} fill      {a.get('selector', '')}  value={str(a.get('value', ''))[:40]!r}")
+            lines.append(f"{s:<3} fill      {a.get('selector', '')}  value=<redacted>")
         elif act == "key":
             lines.append(f"{s:<3} key       {a.get('key', '')}")
         elif act == "select":
@@ -832,7 +835,136 @@ async def clear_actions(req: Request, sid: str):
 
 class ReplayReq(BaseModel):
     playbook: dict
-    vars: dict = {}
+    vars: dict = Field(default_factory=dict)
+
+
+_PLAYBOOK_FIELDS = {"name", "description", "base_url", "auth", "vars", "steps", "stop_on_failure"}
+_REPLAY_AUTH_MODES = {"none", "browser-session", "browser"}
+_REPLAY_STATES = {"visible", "hidden", "attached", "detached"}
+_STEP_FIELDS = {
+    "navigate": ({"url"}, {"timeout"}),
+    "click": ({"selector"}, set()),
+    "fill": ({"selector", "value"}, set()),
+    "key": ({"key"}, set()),
+    "select": ({"selector", "value"}, set()),
+    "fetch": ({"url"}, {"method", "headers", "auth", "output", "expect_status"}),
+    "wait": (set(), {"selector", "state", "timeout", "ms"}),
+    "assert": ({"selector"}, {"state", "timeout"}),
+    "for_each": ({"var", "items", "steps"}, set()),
+}
+
+
+def _replay_validation_error(path: str, message: str):
+    raise HTTPException(status_code=422, detail=f"{path}: {message}")
+
+
+def _require_replay_type(value, expected_type, path: str):
+    if expected_type is int:
+        valid = isinstance(value, int) and not isinstance(value, bool)
+    else:
+        valid = isinstance(value, expected_type)
+    if not valid:
+        _replay_validation_error(path, f"must be {expected_type.__name__}")
+
+
+def _validate_replay_steps(steps, path: str = "steps"):
+    if not isinstance(steps, list):
+        _replay_validation_error(path, "must be a list")
+
+    for index, step in enumerate(steps):
+        step_path = f"{path}[{index}]"
+        if not isinstance(step, dict):
+            _replay_validation_error(step_path, "must be an object")
+        if "action" not in step:
+            _replay_validation_error(f"{step_path}.action", "is required")
+        action = step["action"]
+        if not isinstance(action, str) or action not in _STEP_FIELDS:
+            _replay_validation_error(f"{step_path}.action", f"unknown action {action!r}")
+
+        required, optional = _STEP_FIELDS[action]
+        allowed = {"action", "note", *required, *optional}
+        unknown = set(step) - allowed
+        if unknown:
+            field = sorted(unknown)[0]
+            _replay_validation_error(f"{step_path}.{field}", "is not supported")
+        missing = required - set(step)
+        if missing:
+            field = sorted(missing)[0]
+            _replay_validation_error(f"{step_path}.{field}", "is required")
+
+        for field in required & {"url", "selector", "value", "key", "var"}:
+            _require_replay_type(step[field], str, f"{step_path}.{field}")
+        if "note" in step:
+            _require_replay_type(step["note"], str, f"{step_path}.note")
+        if "timeout" in step:
+            _require_replay_type(step["timeout"], int, f"{step_path}.timeout")
+            if step["timeout"] < 0:
+                _replay_validation_error(f"{step_path}.timeout", "must be non-negative")
+        if "state" in step:
+            _require_replay_type(step["state"], str, f"{step_path}.state")
+            if step["state"] not in _REPLAY_STATES:
+                _replay_validation_error(f"{step_path}.state", f"must be one of {sorted(_REPLAY_STATES)}")
+
+        if action == "wait":
+            has_selector = "selector" in step
+            has_ms = "ms" in step
+            if has_selector == has_ms:
+                _replay_validation_error(step_path, "must contain exactly one of selector or ms")
+            if has_selector:
+                _require_replay_type(step["selector"], str, f"{step_path}.selector")
+            if has_ms:
+                _require_replay_type(step["ms"], int, f"{step_path}.ms")
+                if step["ms"] < 0:
+                    _replay_validation_error(f"{step_path}.ms", "must be non-negative")
+            if "state" in step and not has_selector:
+                _replay_validation_error(f"{step_path}.state", "requires selector")
+        elif action == "fetch":
+            if "method" in step:
+                _require_replay_type(step["method"], str, f"{step_path}.method")
+            if "headers" in step:
+                _require_replay_type(step["headers"], dict, f"{step_path}.headers")
+                for key, value in step["headers"].items():
+                    if not isinstance(key, str) or not isinstance(value, str):
+                        _replay_validation_error(f"{step_path}.headers", "keys and values must be strings")
+            if "auth" in step:
+                _require_replay_type(step["auth"], str, f"{step_path}.auth")
+                if step["auth"] not in _REPLAY_AUTH_MODES:
+                    _replay_validation_error(f"{step_path}.auth", f"must be one of {sorted(_REPLAY_AUTH_MODES)}")
+            if "output" in step:
+                _require_replay_type(step["output"], str, f"{step_path}.output")
+            if "expect_status" in step:
+                statuses = step["expect_status"]
+                if not isinstance(statuses, list) or any(
+                    not isinstance(status, int) or isinstance(status, bool) or not 100 <= status <= 599
+                    for status in statuses
+                ):
+                    _replay_validation_error(f"{step_path}.expect_status", "must be a list of HTTP status integers")
+        elif action == "for_each":
+            items = step["items"]
+            if not isinstance(items, (str, list)):
+                _replay_validation_error(f"{step_path}.items", "must be a variable name or list")
+            _validate_replay_steps(step["steps"], f"{step_path}.steps")
+
+
+def _validate_playbook(playbook: dict):
+    unknown = set(playbook) - _PLAYBOOK_FIELDS
+    if unknown:
+        field = sorted(unknown)[0]
+        _replay_validation_error(field, "is not supported")
+    if "steps" not in playbook:
+        _replay_validation_error("steps", "is required")
+    for field in ("name", "description", "base_url"):
+        if field in playbook:
+            _require_replay_type(playbook[field], str, field)
+    if "auth" in playbook:
+        _require_replay_type(playbook["auth"], str, "auth")
+        if playbook["auth"] not in _REPLAY_AUTH_MODES:
+            _replay_validation_error("auth", f"must be one of {sorted(_REPLAY_AUTH_MODES)}")
+    if "vars" in playbook:
+        _require_replay_type(playbook["vars"], dict, "vars")
+    if "stop_on_failure" in playbook:
+        _require_replay_type(playbook["stop_on_failure"], bool, "stop_on_failure")
+    _validate_replay_steps(playbook["steps"])
 
 
 def _sub(val, variables):
@@ -884,7 +1016,7 @@ async def _run_replay_steps(page, session, steps, variables, base_url, stop_on_f
                 entry["ok"] = True
             elif act == "fill":
                 await page.fill(sub(step["selector"]), sub(step["value"]))
-                _log_action(session, "fill", selector=sub(step["selector"]), value=sub(step["value"]))
+                _log_action(session, "fill", selector=sub(step["selector"]))
                 entry["ok"] = True
             elif act == "key":
                 await page.keyboard.press(sub(step["key"]))
@@ -943,9 +1075,13 @@ async def _run_replay_steps(page, session, steps, variables, base_url, stop_on_f
                 entry["ok"] = True
             elif act == "for_each":
                 var = step["var"]
-                items = step.get("items")
+                items = step["items"]
                 if isinstance(items, str):
-                    items = variables.get(items, [])
+                    if items not in variables:
+                        raise ValueError(f"for_each items variable {items!r} is not defined")
+                    items = variables[items]
+                if not isinstance(items, list):
+                    raise TypeError(f"for_each items must resolve to a list, got {type(items).__name__}")
                 nested_failed = False
                 for item in items:
                     variables[var] = item
@@ -972,6 +1108,7 @@ async def _run_replay_steps(page, session, steps, variables, base_url, stop_on_f
 
 @router.post("/replay")
 async def replay(req: Request, sid: str, body: ReplayReq):
+    _validate_playbook(body.playbook)
     session = _get_session(req, sid)
     page = _get_page(session)
     base_url = body.playbook.get("base_url", "")

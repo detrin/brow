@@ -29,8 +29,7 @@ async def test_login_flow(server):
     async with httpx.AsyncClient() as client:
         r = await client.post(f"{server.base_url}/login", data={"username": "admin", "password": "password123"})
         assert r.status_code == 200
-        cookies = r.cookies
-        r2 = await client.get(f"{server.base_url}/dashboard", cookies=cookies)
+        r2 = await client.get(f"{server.base_url}/dashboard")
         assert r2.status_code == 200
         assert "dashboard" in r2.text.lower()
 

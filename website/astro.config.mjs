@@ -7,9 +7,9 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'brow',
-      social: {
-        github: 'https://github.com/detrin/brow',
-      },
+      social: [
+        { icon: 'github', label: 'GitHub', href: 'https://github.com/detrin/brow' },
+      ],
       sidebar: [
         { label: 'Getting Started', link: '/getting-started/' },
         {

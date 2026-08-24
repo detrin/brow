@@ -6,7 +6,7 @@ import uvicorn
 from fastapi import FastAPI
 from patchright.async_api import async_playwright
 
-from brow.config import DAEMON_HOST, DAEMON_PORT, PID_FILE, ensure_dirs
+from brow.config import DAEMON_HOST, PID_FILE, ensure_dirs, get_daemon_port, set_daemon_port
 from brow.profiles import ProfileManager
 from brow.session import SessionManager
 
@@ -49,7 +49,8 @@ def create_app():
 def run_daemon(host=None, port=None):
     ensure_dirs()
     host = host or DAEMON_HOST
-    port = port or DAEMON_PORT
+    port = get_daemon_port() if port is None else port
+    set_daemon_port(port)
     PID_FILE.write_text(str(os.getpid()))
     try:
         uvicorn.run(create_app(), host=host, port=port, log_level="warning")

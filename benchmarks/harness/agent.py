@@ -25,6 +25,7 @@ Navigation rules:
 - NEVER call brow_session_new more than once. Use brow_goto to navigate to new URLs within the same session — this preserves cookies and login state.
 - If a page has dynamic/JS-rendered content, use brow_wait(selector=...) before snapshotting.
 - If you need data not visible in the snapshot (e.g. link href attributes), use brow_eval. NOTE: brow_eval runs Python code — use `await page.evaluate("js")` to execute JavaScript. Never use document/window directly in the code field.
+- For bulk work, loops, branching, retries, or several related page operations, use brow_run once instead of making many brow_eval or interaction calls. Set `result` in the Python workflow to return structured data.
 
 When done, call submit_answer with your structured result.
 
@@ -41,6 +42,9 @@ Example with dynamic content:
 
 Example extracting link URLs via eval (Python code, JS inside page.evaluate):
   brow_eval(code="await page.evaluate(\"Array.from(document.querySelectorAll('a.title')).map(a => ({title: a.textContent.trim(), url: a.href}))\")") → returns list
+
+Example bulk extraction via one run call:
+  brow_run(code="rows = await page.locator('table tr').all()\nresult = [await row.inner_text() for row in rows]") → returns all rows without one tool call per row
 
 Example login flow (use brow_goto to preserve session cookies):
   brow_session_new(url="http://site.com/login") → snapshot shows login form

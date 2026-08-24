@@ -9,10 +9,10 @@ from benchmarks.harness.metrics import RunResult
 def test_full_pipeline_mocked():
     tasks_dir = Path(__file__).parent.parent / "tasks"
     tasks = load_all_tasks(tasks_dir)
-    assert len(tasks) == 16
+    assert len(tasks) == 19
 
     plan = build_run_plan(tasks, ["brow", "mcp-playwright"], runs=1)
-    assert len(plan) == 32
+    assert len(plan) == 38
 
     results = []
     for item in plan:

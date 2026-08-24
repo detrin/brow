@@ -554,10 +554,9 @@ async def test_replay_unknown_action_reports_an_error(client, session_id):
     await client.post(f"/browser/{session_id}/navigate", json={"url": html})
     playbook = {"steps": [{"action": "clik", "selector": "#x"}]}
     r = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
-    assert r.status_code == 200, r.text
-    entry = r.json()["results"][0]
-    assert entry["ok"] is False
-    assert "clik" in entry.get("error", "")
+    assert r.status_code == 422, r.text
+    assert "steps[0].action" in r.json()["detail"]
+    assert "clik" in r.json()["detail"]
 
 
 @pytest.mark.asyncio
@@ -608,3 +607,157 @@ async def test_replay_top_level_auth_none_is_inherited_by_steps(client, session_
     assert r.status_code == 200, r.text
     assert used_no_cookies_client["called"] is True
     assert r.json()["results"][0]["ok"] is True
+
+
+@pytest.mark.asyncio
+async def test_password_value_is_omitted_from_fill_snapshot(client, session_id):
+    await client.post(
+        f"/browser/{session_id}/navigate",
+        json={"url": "data:text/html,<label>Password<input id=p type=password></label>"},
+    )
+
+    response = await client.post(
+        f"/browser/{session_id}/fill",
+        json={"selector": "#p", "value": "audit-only-secret"},
+    )
+
+    assert response.status_code == 200
+    assert "audit-only-secret" not in response.json()["snapshot"]
+
+
+@pytest.mark.asyncio
+async def test_fill_action_log_never_retains_the_value(client, session_id):
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<input id=note>"})
+    await client.post(
+        f"/browser/{session_id}/fill",
+        json={"selector": "#note", "value": "private form contents"},
+    )
+
+    actions = (await client.get(f"/browser/{session_id}/actions", params={"as_json": True})).json()["actions"]
+
+    assert actions[-1] == {"seq": 2, "action": "fill", "selector": "#note"}
+
+
+@pytest.mark.asyncio
+async def test_replay_fill_action_log_never_retains_the_value(client, session_id):
+    await client.post(f"/browser/{session_id}/navigate", json={"url": "data:text/html,<input id=token>"})
+    playbook = {"steps": [{"action": "fill", "selector": "#token", "value": "token-from-playbook"}]}
+
+    response = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+    actions = (await client.get(f"/browser/{session_id}/actions", params={"as_json": True})).json()["actions"]
+
+    assert response.status_code == 200
+    assert actions[-1] == {"seq": 2, "action": "fill", "selector": "#token"}
+
+
+@pytest.mark.asyncio
+async def test_replay_rejects_unknown_playbook_fields_before_execution(client, session_id):
+    response = await client.post(
+        f"/browser/{session_id}/replay",
+        json={"playbook": {"stepz": [], "steps": []}},
+    )
+
+    assert response.status_code == 422
+    assert "stepz" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_replay_rejects_missing_required_step_fields(client, session_id):
+    response = await client.post(
+        f"/browser/{session_id}/replay",
+        json={"playbook": {"steps": [{"action": "fill", "selector": "#field"}]}},
+    )
+
+    assert response.status_code == 422
+    assert "steps[0].value" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_replay_rejects_unknown_step_fields(client, session_id):
+    response = await client.post(
+        f"/browser/{session_id}/replay",
+        json={"playbook": {"steps": [{"action": "click", "selector": "#save", "selctor": "#typo"}]}},
+    )
+
+    assert response.status_code == 422
+    assert "steps[0].selctor" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_replay_rejects_malformed_nested_steps(client, session_id):
+    response = await client.post(
+        f"/browser/{session_id}/replay",
+        json={"playbook": {"steps": [{"action": "for_each", "var": "item", "items": [], "steps": "not-a-list"}]}},
+    )
+
+    assert response.status_code == 422
+    assert "steps[0].steps" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_replay_reports_undefined_for_each_item_source(client, session_id):
+    playbook = {
+        "steps": [
+            {
+                "action": "for_each",
+                "var": "item",
+                "items": "missing_items",
+                "steps": [{"action": "key", "key": "Enter"}],
+            }
+        ]
+    }
+
+    response = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+
+    assert response.status_code == 200
+    assert response.json()["results"] == [
+        {
+            "action": "for_each",
+            "ok": False,
+            "error": "for_each items variable 'missing_items' is not defined",
+        }
+    ]
+
+
+@pytest.mark.asyncio
+async def test_replay_reports_non_list_for_each_items(client, session_id):
+    playbook = {
+        "vars": {"items": {"id": 1}},
+        "steps": [
+            {
+                "action": "for_each",
+                "var": "item",
+                "items": "items",
+                "steps": [{"action": "key", "key": "Enter"}],
+            }
+        ],
+    }
+
+    response = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+
+    assert response.status_code == 200
+    assert response.json()["results"] == [
+        {
+            "action": "for_each",
+            "ok": False,
+            "error": "for_each items must resolve to a list, got dict",
+        }
+    ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "playbook,error_path",
+    [
+        ({"auth": ["none"], "steps": []}, "auth"),
+        ({"steps": [{"action": "wait", "selector": "#ready", "state": ["visible"]}]}, "steps[0].state"),
+        ({"steps": [{"action": "fetch", "url": "/api", "auth": ["none"]}]}, "steps[0].auth"),
+        ({"steps": [{"action": "fetch", "url": "/api", "expect_status": [200, "201"]}]}, "expect_status"),
+        ({"steps": [{"action": "wait", "selector": "#ready", "ms": 10}]}, "steps[0]"),
+    ],
+)
+async def test_replay_rejects_invalid_field_shapes(client, session_id, playbook, error_path):
+    response = await client.post(f"/browser/{session_id}/replay", json={"playbook": playbook})
+
+    assert response.status_code == 422
+    assert error_path in response.json()["detail"]

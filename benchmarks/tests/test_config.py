@@ -3,7 +3,7 @@ from benchmarks.harness.config import BenchmarkConfig
 
 def test_default_config():
     cfg = BenchmarkConfig()
-    assert cfg.model == "claude-sonnet-4-20250514"
+    assert cfg.model == "us.anthropic.claude-sonnet-4-20250514-v1:0"
     assert cfg.runs == 3
     assert cfg.warmup == 1
     assert cfg.backends == ["brow", "mcp-playwright"]

@@ -12,6 +12,8 @@ import time
 from importlib.metadata import PackageNotFoundError, version
 from typing import Optional
 
+from packaging.version import InvalidVersion, Version
+
 from brow.config import UPDATE_CHECK_FILE, ensure_dirs
 
 PACKAGE_NAME = "brow-cli"
@@ -28,12 +30,11 @@ def _current_version() -> Optional[str]:
         return None
 
 
-def _parse_version(v: str) -> tuple:
-    parts = []
-    for p in v.split("."):
-        digits = "".join(c for c in p if c.isdigit())
-        parts.append(int(digits) if digits else 0)
-    return tuple(parts)
+def _parse_version(v: str) -> Optional[Version]:
+    try:
+        return Version(v)
+    except InvalidVersion:
+        return None
 
 
 def _fetch_latest_version() -> Optional[str]:
@@ -89,6 +90,8 @@ def check_for_update(env=None) -> Optional[str]:
     if not latest:
         return None
 
-    if _parse_version(latest) > _parse_version(current):
+    latest_version = _parse_version(latest)
+    current_version = _parse_version(current)
+    if latest_version is not None and current_version is not None and latest_version > current_version:
         return f"brow {latest} is available (you have {current}). Update with: pip install --upgrade brow-cli"
     return None

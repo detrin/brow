@@ -93,7 +93,10 @@ def test_corrupt_cache_file_does_not_crash(monkeypatch):
         ("1.2.0", "1.2.0", False),
         ("1.2.0", "1.3.0", False),
         ("1.10.0", "1.9.0", True),
-        ("1.2.0", "1.2.0.dev1", False),
+        ("1.2.0", "1.2.0.dev1", True),
+        ("1.3.0", "1.3.0rc1", True),
+        ("1.3.0rc2", "1.3.0rc1", True),
+        ("not-a-version", "1.2.0", False),
     ],
 )
 def test_version_comparison(monkeypatch, latest, current, expect_notice):

@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
 from typer.testing import CliRunner
 
 from brow.cli import app
@@ -8,11 +9,34 @@ from brow.client import BrowAPIError
 runner = CliRunner()
 
 
+@pytest.fixture(autouse=True)
+def inert_client(monkeypatch):
+    client = MagicMock()
+    monkeypatch.setattr("brow.cli._client", lambda: client)
+    return client
+
+
 def test_daemon_status():
     with patch("brow.cli.daemon_running", return_value=True), patch("brow.cli.run_async") as mock_run:
         mock_run.return_value = {"status": "running", "sessions": 0}
         result = runner.invoke(app, ["daemon", "status"])
         assert result.exit_code == 0
+
+
+def test_daemon_start_wait_checks_requested_port():
+    with (
+        patch("brow.cli.daemon_running", return_value=False),
+        patch("brow.cli.subprocess.Popen"),
+        patch("brow.cli.time.sleep"),
+        patch("brow.cli.set_daemon_port") as persist_port,
+        patch("brow.cli._daemon_healthy", side_effect=[False, True]) as healthy,
+    ):
+        result = runner.invoke(app, ["daemon", "start", "--port", "20990", "--wait"])
+
+    assert result.exit_code == 0, result.output
+    persist_port.assert_called_once_with(20990)
+    assert all(call.args == (20990,) for call in healthy.call_args_list)
+    assert "20990" in result.output
 
 
 def test_ensure_daemon_surfaces_an_available_update():

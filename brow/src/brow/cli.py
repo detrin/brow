@@ -7,7 +7,7 @@ from typing import Optional
 import typer
 
 from brow.client import BrowAPIError, BrowClient
-from brow.config import DAEMON_HOST, DAEMON_PORT
+from brow.config import DAEMON_HOST, DAEMON_PORT, get_daemon_port, set_daemon_port
 from brow.daemon import daemon_running, stop_daemon
 from brow.update_check import check_for_update
 
@@ -39,11 +39,12 @@ def _client():
     return BrowClient()
 
 
-def _daemon_healthy():
+def _daemon_healthy(port=None):
     import httpx
 
+    port = get_daemon_port() if port is None else port
     try:
-        r = httpx.get(f"http://{DAEMON_HOST}:{DAEMON_PORT}/status", timeout=1.0)
+        r = httpx.get(f"http://{DAEMON_HOST}:{port}/status", timeout=1.0)
         return r.status_code == 200
     except Exception:
         return False
@@ -113,6 +114,7 @@ def daemon_start(
     if daemon_running():
         typer.echo("Daemon already running")
         return
+    set_daemon_port(port)
     subprocess.Popen(
         [sys.executable, "-m", "brow.daemon", "--port", str(port)],
         stdout=subprocess.DEVNULL,
@@ -122,7 +124,7 @@ def daemon_start(
     if wait:
         for _ in range(50):
             time.sleep(0.3)
-            if _daemon_healthy():
+            if _daemon_healthy(port):
                 typer.echo(f"Daemon ready on {DAEMON_HOST}:{port}")
                 return
         typer.echo("Daemon failed to start", err=True)

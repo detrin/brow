@@ -1,6 +1,8 @@
-import subprocess
-import json
+import asyncio
+import os
+import tempfile
 import uuid
+from pathlib import Path
 
 BROW_TOOLS = [
     {
@@ -117,6 +119,33 @@ BROW_TOOLS = [
             "required": ["session", "code"],
         },
     },
+    {
+        "name": "brow_run",
+        "description": (
+            "Run a reusable Python workflow as one call against the live authenticated session. "
+            "Use for bulk work, loops, branching, retries, or several related Playwright operations instead of many tool calls. "
+            "Available variables: page, context, browser, state, pages, and args. Set result to return structured output."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "session": {"type": "string"},
+                "code": {"type": "string", "description": "Python workflow code using async Playwright APIs."},
+                "args": {
+                    "type": "object",
+                    "description": "Optional string arguments exposed to the workflow as args.",
+                    "additionalProperties": {"type": "string"},
+                },
+                "timeout": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 300000,
+                    "description": "Maximum workflow time in milliseconds.",
+                },
+            },
+            "required": ["session", "code"],
+        },
+    },
 ]
 
 
@@ -151,6 +180,11 @@ def _build_brow_cmd(name, params):
         "brow_wait": lambda p: ["brow", "wait", "-s", p["session"], "--selector", p["selector"]]
             + (["--timeout", str(p["timeout"])] if p.get("timeout") else []),
         "brow_eval": lambda p: ["brow", "eval", "-s", p["session"], p["code"]],
+        "brow_run": lambda p: (
+            ["brow", "run", "-s", p["session"], p["_script_path"]]
+            + [item for key, value in p.get("args", {}).items() for item in ("--arg", f"{key}={value}")]
+            + ["--timeout", str(p.get("timeout", 300000))]
+        ),
     }
     builder = cmd_map.get(name)
     if not builder:
@@ -159,17 +193,28 @@ def _build_brow_cmd(name, params):
 
 
 async def execute_brow_tool(name, params):
-    import asyncio
-    cmd = _build_brow_cmd(name, params)
-    if cmd is None:
-        return {"error": f"Unknown tool: {name}"}
+    script_path = None
+    proc = None
     try:
+        command_params = params
+        if name == "brow_run":
+            fd, raw_path = tempfile.mkstemp(prefix="brow-benchmark-", suffix=".py")
+            script_path = Path(raw_path)
+            os.fchmod(fd, 0o600)
+            with os.fdopen(fd, "w") as script:
+                script.write(params["code"])
+            command_params = {**params, "_script_path": str(script_path)}
+
+        cmd = _build_brow_cmd(name, command_params)
+        if cmd is None:
+            return {"error": f"Unknown tool: {name}"}
         proc = await asyncio.create_subprocess_exec(
             *cmd,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
-        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=60)
+        timeout_seconds = max(60, params.get("timeout", 30000) / 1000 + 5)
+        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout_seconds)
         if proc.returncode != 0:
             return {"error": stderr.decode().strip() or f"Exit code {proc.returncode}"}
         output = stdout.decode().strip()
@@ -178,7 +223,12 @@ async def execute_brow_tool(name, params):
             return {"output": lines[0].strip(), "snapshot": lines[1].strip()}
         return {"output": output}
     except asyncio.TimeoutError:
-        proc.kill()
-        return {"error": "Command timed out after 60s"}
+        if proc is not None:
+            proc.kill()
+            await proc.wait()
+        return {"error": f"Command timed out after {timeout_seconds:g}s"}
     except Exception as e:
         return {"error": str(e)}
+    finally:
+        if script_path is not None:
+            script_path.unlink(missing_ok=True)

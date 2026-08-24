@@ -18,5 +18,6 @@ def tmp_brow_home(tmp_path, monkeypatch):
     cfg.SCREENSHOTS_DIR = cfg.BROW_HOME / "screenshots"
     cfg.PID_FILE = cfg.BROW_HOME / "daemon.pid"
     cfg.LOG_FILE = cfg.BROW_HOME / "daemon.log"
+    cfg.PORT_FILE = cfg.BROW_HOME / "daemon.port"
     cfg.DAEMON_URL = f"http://{cfg.DAEMON_HOST}:{cfg.DAEMON_PORT}"
     cfg.ensure_dirs()

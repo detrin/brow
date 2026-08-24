@@ -7,6 +7,8 @@ def test_build_system_prompt_brow():
     assert "browser automation agent" in prompt.lower()
     assert "brow" in prompt.lower()
     assert "coffee shops" in prompt
+    assert "brow_run" in prompt
+    assert "bulk" in prompt.lower()
 
 def test_build_system_prompt_mcp():
     prompt = build_system_prompt("mcp-playwright", "Fill the form")
