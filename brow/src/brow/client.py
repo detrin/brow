@@ -1,11 +1,11 @@
+from functools import partialmethod
+
 import httpx
 
 from brow.config import get_daemon_url
 
 
 class BrowAPIError(Exception):
-    """Raised when the brow daemon returns an error response."""
-
     def __init__(self, status_code: int, detail: str):
         self.status_code = status_code
         self.detail = detail
@@ -13,7 +13,6 @@ class BrowAPIError(Exception):
 
 
 def _raise_api_error(r: httpx.Response):
-    """Extract detail from JSON error response and raise BrowAPIError."""
     try:
         body = r.json()
         if isinstance(body, dict):
@@ -32,23 +31,15 @@ class BrowClient:
             timeout=60.0,
         )
 
-    async def get(self, path, **kwargs):
-        r = await self._client.get(path, **kwargs)
+    async def request(self, method, path, **kwargs):
+        r = await self._client.request(method, path, **kwargs)
         if r.is_error:
             _raise_api_error(r)
         return r.json()
 
-    async def post(self, path, **kwargs):
-        r = await self._client.post(path, **kwargs)
-        if r.is_error:
-            _raise_api_error(r)
-        return r.json()
-
-    async def delete(self, path, **kwargs):
-        r = await self._client.delete(path, **kwargs)
-        if r.is_error:
-            _raise_api_error(r)
-        return r.json()
+    get = partialmethod(request, "GET")
+    post = partialmethod(request, "POST")
+    delete = partialmethod(request, "DELETE")
 
     async def close(self):
         await self._client.aclose()
