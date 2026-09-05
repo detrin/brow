@@ -29,7 +29,7 @@ brow wait -s <id> <selector>
 brow wait -s <id> --load
 
 # Observe
-brow snapshot -s <id> [--search <regex>]     # accessibility tree — prefer over screenshot
+brow snapshot -s <id> [--search <regex>] [--limit N] [--locator <sel>]   # prefer over screenshot
 brow screenshot -s <id> [--full]
 brow html -s <id>
 brow url -s <id>
@@ -127,6 +127,18 @@ brow session delete 1
 - A `[brow] brow X.Y.Z is available ...` line on stderr is an informational
   update notice, not an error — safe to ignore. Disable with `BROW_NO_UPDATE_CHECK=1`.
 - Prefer `snapshot` over `screenshot` — faster, token-efficient, AI-readable
+- A snapshot can be truncated. When it is, it says so on stderr:
+  `⚠ truncated: 361 of 4,529 nodes (main complete — omitted nodes are page chrome)`.
+  Read the parenthetical before trusting an absence: `main complete` means what
+  was dropped is chrome, while `also truncated` or `no content landmark found`
+  means the answer may be missing. Don't reach for `html` — narrow the walk:
+- `snapshot --locator "<css>"` walks only that subtree, which is the cheapest way
+  to get a big listing or table in full. A locator matching nothing is an error,
+  not a silent full-page snapshot
+- `snapshot --search "<regex>"` searches the *whole* page, including nodes the
+  default walk omits and table rows past the row cap. It prints only matching
+  lines (10 by default; raise with `--limit`) and reports on stderr when it
+  withheld matches
 - `network --clear` before navigation to isolate requests for a specific page
 - `fetch` uses the browser's real cookies — use it to call authenticated APIs
 - `eval` returns both `print()` output and `result` — read it, don't just use it for side effects

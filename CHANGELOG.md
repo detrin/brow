@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- **Snapshots dropped every element containing an inline `<svg>` icon.** `className` on an SVG element is an `SVGAnimatedString`, so the walker's `.split(' ')` on it threw; the exception escaped into a parent `catch` that silently skipped the whole subtree. Icon links, icon buttons and star counts vanished with no error reported anywhere — on `github.com/trending` that was every repository row. Most modern UIs put an icon inside their actionable elements, so this affected a large fraction of real pages
+- Snapshots now walk the page's content before its chrome, so a heavy header no longer consumes the whole node budget before the walk reaches `main`. Content gets the full budget and spends it first; chrome gets the remainder (with a floor, so the page's controls never disappear). Output order and format are unchanged — the content subtree is spliced back in at its document position
+- A container with more than 20 children is capped at a share of the budget (`... N more items omitted (container cap)`), so one huge dropdown can't monopolise the walk. Inside the content root only menu-like containers are capped, so a long listing of real rows keeps its budget
+- Truncation is now reported instead of silent: `snapshot` and the post-action snapshots from `navigate`/`click`/`fill`/`key`/`select` print `⚠ truncated: N of M nodes (...)` to **stderr**, so piped trees stay clean. The parenthetical distinguishes "you have the content, minus some chrome" from "you may be missing the answer". Subtrees dropped by an internal walker error are counted and reported the same way
+- `snapshot --locator <sel>` now actually scopes the walk. It was accepted and then ignored, silently returning the whole page; a locator matching nothing is now a 400 rather than a full-page snapshot that looks like a successful one
+- `snapshot --search <regex>` now searches the *untruncated* page: search mode walks with a raised budget, no per-node text clipping and no container caps, so it can find content the default walk omits — including the 400th item of a dropdown. It also reports how many matches it withheld, and the new `--limit` (default 10, unchanged behaviour) raises the cap. Previously it filtered already-truncated text and capped silently at 10
+- Snapshot refs are numbered in reading order, so `[N]` counts up as you read down the tree. The old walker numbered post-order, which put a `<select>`'s ref *after* its `<option>`s
+
+### Changed
+- The benchmark numbers in `README.md` were measured with the old walker and are no longer comparable; re-running the benchmark is separate work
+
 ## [1.3.0] - 2026-08-15
 
 ### Added

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Deep Chrome — Orders</title></head>
+<body>
+<!--
+  Chrome is deep rather than wide: nested wrappers, a 120-item nav and a 60-item
+  sidebar, all before <main>, each item with a distinct class so consecutive-sibling
+  collapse never fires. A document-order walk reports no order rows at all.
+-->
+<div class="app">
+ <div class="app-shell">
+  <div class="app-shell-inner">
+   <header>
+    <div class="header-row">
+     <div class="header-col">
+      <a href="/" aria-label="Home">Acme</a>
+     </div>
+     <div class="header-col">
+      <nav aria-label="Primary">
+       <ul>
+        <li class="nav-item-1"><a href="/section/1">Section 1</a></li>
+        <li class="nav-item-2"><a href="/section/2">Section 2</a></li>
+        <li class="nav-item-3"><a href="/section/3">Section 3</a></li>
+        <li class="nav-item-4"><a href="/section/4">Section 4</a></li>
+        <li class="nav-item-5"><a href="/section/5">Section 5</a></li>
+        <li class="nav-item-6"><a href="/section/6">Section 6</a></li>
+        <li class="nav-item-7"><a href="/section/7">Section 7</a></li>
+        <li class="nav-item-8"><a href="/section/8">Section 8</a></li>
+        <li class="nav-item-9"><a href="/section/9">Section 9</a></li>
+        <li class="nav-item-10"><a href="/section/10">Section 10</a></li>
+        <li class="nav-item-11"><a href="/section/11">Section 11</a></li>
+        <li class="nav-item-12"><a href="/section/12">Section 12</a></li>
+        <li class="nav-item-13"><a href="/section/13">Section 13</a></li>
+        <li class="nav-item-14"><a href="/section/14">Section 14</a></li>
+        <li class="nav-item-15"><a href="/section/15">Section 15</a></li>
+        <li class="nav-item-16"><a href="/section/16">Section 16</a></li>
+        <li class="nav-item-17"><a href="/section/17">Section 17</a></li>
+        <li class="nav-item-18"><a href="/section/18">Section 18</a></li>
+        <li class="nav-item-19"><a href="/section/19">Section 19</a></li>
+        <li class="nav-item-20"><a href="/section/20">Section 20</a></li>
+        <li class="nav-item-21"><a href="/section/21">Section 21</a></li>
+        <li class="nav-item-22"><a href="/section/22">Section 22</a></li>
+        <li class="nav-item-23"><a href="/section/23">Section 23</a></li>
+        <li class="nav-item-24"><a href="/section/24">Section 24</a></li>
+        <li class="nav-item-25"><a href="/section/25">Section 25</a></li>
+        <li class="nav-item-26"><a href="/section/26">Section 26</a></li>
+        <li class="nav-item-27"><a href="/section/27">Section 27</a></li>
+        <li class="nav-item-28"><a href="/section/28">Section 28</a></li>
+        <li class="nav-item-29"><a href="/section/29">Section 29</a></li>
+        <li class="nav-item-30"><a href="/section/30">Section 30</a></li>
+        <li class="nav-item-31"><a href="/section/31">Section 31</a></li>
+        <li class="nav-item-32"><a href="/section/32">Section 32</a></li>
+        <li class="nav-item-33"><a href="/section/33">Section 33</a></li>
+        <li class="nav-item-34"><a href="/section/34">Section 34</a></li>
+        <li class="nav-item-35"><a href="/section/35">Section 35</a></li>
+        <li class="nav-item-36"><a href="/section/36">Section 36</a></li>
+        <li class="nav-item-37"><a href="/section/37">Section 37</a></li>
+        <li class="nav-item-38"><a href="/section/38">Section 38</a></li>
+        <li class="nav-item-39"><a href="/section/39">Section 39</a></li>
+        <li class="nav-item-40"><a href="/section/40">Section 40</a></li>
+        <li class="nav-item-41"><a href="/section/41">Section 41</a></li>
+        <li class="nav-item-42"><a href="/section/42">Section 42</a></li>
+        <li class="nav-item-43"><a href="/section/43">Section 43</a></li>
+        <li class="nav-item-44"><a href="/section/44">Section 44</a></li>
+        <li class="nav-item-45"><a href="/section/45">Section 45</a></li>
+        <li class="nav-item-46"><a href="/section/46">Section 46</a></li>
+        <li class="nav-item-47"><a href="/section/47">Section 47</a></li>
+        <li class="nav-item-48"><a href="/section/48">Section 48</a></li>
+        <li class="nav-item-49"><a href="/section/49">Section 49</a></li>
+        <li class="nav-item-50"><a href="/section/50">Section 50</a></li>
+        <li class="nav-item-51"><a href="/section/51">Section 51</a></li>
+        <li class="nav-item-52"><a href="/section/52">Section 52</a></li>
+        <li class="nav-item-53"><a href="/section/53">Section 53</a></li>
+        <li class="nav-item-54"><a href="/section/54">Section 54</a></li>
+        <li class="nav-item-55"><a href="/section/55">Section 55</a></li>
+        <li class="nav-item-56"><a href="/section/56">Section 56</a></li>
+        <li class="nav-item-57"><a href="/section/57">Section 57</a></li>
+        <li class="nav-item-58"><a href="/section/58">Section 58</a></li>
+        <li class="nav-item-59"><a href="/section/59">Section 59</a></li>
+        <li class="nav-item-60"><a href="/section/60">Section 60</a></li>
+        <li class="nav-item-61"><a href="/section/61">Section 61</a></li>
+        <li class="nav-item-62"><a href="/section/62">Section 62</a></li>
+        <li class="nav-item-63"><a href="/section/63">Section 63</a></li>
+        <li class="nav-item-64"><a href="/section/64">Section 64</a></li>
+        <li class="nav-item-65"><a href="/section/65">Section 65</a></li>
+        <li class="nav-item-66"><a href="/section/66">Section 66</a></li>
+        <li class="nav-item-67"><a href="/section/67">Section 67</a></li>
+        <li class="nav-item-68"><a href="/section/68">Section 68</a></li>
+        <li class="nav-item-69"><a href="/section/69">Section 69</a></li>
+        <li class="nav-item-70"><a href="/section/70">Section 70</a></li>
+        <li class="nav-item-71"><a href="/section/71">Section 71</a></li>
+        <li class="nav-item-72"><a href="/section/72">Section 72</a></li>
+        <li class="nav-item-73"><a href="/section/73">Section 73</a></li>
+        <li class="nav-item-74"><a href="/section/74">Section 74</a></li>
+        <li class="nav-item-75"><a href="/section/75">Section 75</a></li>
+        <li class="nav-item-76"><a href="/section/76">Section 76</a></li>
+        <li class="nav-item-77"><a href="/section/77">Section 77</a></li>
+        <li class="nav-item-78"><a href="/section/78">Section 78</a></li>
+        <li class="nav-item-79"><a href="/section/79">Section 79</a></li>
+        <li class="nav-item-80"><a href="/section/80">Section 80</a></li>
+        <li class="nav-item-81"><a href="/section/81">Section 81</a></li>
+        <li class="nav-item-82"><a href="/section/82">Section 82</a></li>
+        <li class="nav-item-83"><a href="/section/83">Section 83</a></li>
+        <li class="nav-item-84"><a href="/section/84">Section 84</a></li>
+        <li class="nav-item-85"><a href="/section/85">Section 85</a></li>
+        <li class="nav-item-86"><a href="/section/86">Section 86</a></li>
+        <li class="nav-item-87"><a href="/section/87">Section 87</a></li>
+        <li class="nav-item-88"><a href="/section/88">Section 88</a></li>
+        <li class="nav-item-89"><a href="/section/89">Section 89</a></li>
+        <li class="nav-item-90"><a href="/section/90">Section 90</a></li>
+        <li class="nav-item-91"><a href="/section/91">Section 91</a></li>
+        <li class="nav-item-92"><a href="/section/92">Section 92</a></li>
+        <li class="nav-item-93"><a href="/section/93">Section 93</a></li>
+        <li class="nav-item-94"><a href="/section/94">Section 94</a></li>
+        <li class="nav-item-95"><a href="/section/95">Section 95</a></li>
+        <li class="nav-item-96"><a href="/section/96">Section 96</a></li>
+        <li class="nav-item-97"><a href="/section/97">Section 97</a></li>
+        <li class="nav-item-98"><a href="/section/98">Section 98</a></li>
+        <li class="nav-item-99"><a href="/section/99">Section 99</a></li>
+        <li class="nav-item-100"><a href="/section/100">Section 100</a></li>
+        <li class="nav-item-101"><a href="/section/101">Section 101</a></li>
+        <li class="nav-item-102"><a href="/section/102">Section 102</a></li>
+        <li class="nav-item-103"><a href="/section/103">Section 103</a></li>
+        <li class="nav-item-104"><a href="/section/104">Section 104</a></li>
+        <li class="nav-item-105"><a href="/section/105">Section 105</a></li>
+        <li class="nav-item-106"><a href="/section/106">Section 106</a></li>
+        <li class="nav-item-107"><a href="/section/107">Section 107</a></li>
+        <li class="nav-item-108"><a href="/section/108">Section 108</a></li>
+        <li class="nav-item-109"><a href="/section/109">Section 109</a></li>
+        <li class="nav-item-110"><a href="/section/110">Section 110</a></li>
+        <li class="nav-item-111"><a href="/section/111">Section 111</a></li>
+        <li class="nav-item-112"><a href="/section/112">Section 112</a></li>
+        <li class="nav-item-113"><a href="/section/113">Section 113</a></li>
+        <li class="nav-item-114"><a href="/section/114">Section 114</a></li>
+        <li class="nav-item-115"><a href="/section/115">Section 115</a></li>
+        <li class="nav-item-116"><a href="/section/116">Section 116</a></li>
+        <li class="nav-item-117"><a href="/section/117">Section 117</a></li>
+        <li class="nav-item-118"><a href="/section/118">Section 118</a></li>
+        <li class="nav-item-119"><a href="/section/119">Section 119</a></li>
+        <li class="nav-item-120"><a href="/section/120">Section 120</a></li>
+       </ul>
+      </nav>
+     </div>
+    </div>
+   </header>
+   <div class="content-row">
+    <aside aria-label="Filters">
+     <ul>
+       <li class="tag-1"><a href="/tag/1">Tag 1</a></li>
+       <li class="tag-2"><a href="/tag/2">Tag 2</a></li>
+       <li class="tag-3"><a href="/tag/3">Tag 3</a></li>
+       <li class="tag-4"><a href="/tag/4">Tag 4</a></li>
+       <li class="tag-5"><a href="/tag/5">Tag 5</a></li>
+       <li class="tag-6"><a href="/tag/6">Tag 6</a></li>
+       <li class="tag-7"><a href="/tag/7">Tag 7</a></li>
+       <li class="tag-8"><a href="/tag/8">Tag 8</a></li>
+       <li class="tag-9"><a href="/tag/9">Tag 9</a></li>
+       <li class="tag-10"><a href="/tag/10">Tag 10</a></li>
+       <li class="tag-11"><a href="/tag/11">Tag 11</a></li>
+       <li class="tag-12"><a href="/tag/12">Tag 12</a></li>
+       <li class="tag-13"><a href="/tag/13">Tag 13</a></li>
+       <li class="tag-14"><a href="/tag/14">Tag 14</a></li>
+       <li class="tag-15"><a href="/tag/15">Tag 15</a></li>
+       <li class="tag-16"><a href="/tag/16">Tag 16</a></li>
+       <li class="tag-17"><a href="/tag/17">Tag 17</a></li>
+       <li class="tag-18"><a href="/tag/18">Tag 18</a></li>
+       <li class="tag-19"><a href="/tag/19">Tag 19</a></li>
+       <li class="tag-20"><a href="/tag/20">Tag 20</a></li>
+       <li class="tag-21"><a href="/tag/21">Tag 21</a></li>
+       <li class="tag-22"><a href="/tag/22">Tag 22</a></li>
+       <li class="tag-23"><a href="/tag/23">Tag 23</a></li>
+       <li class="tag-24"><a href="/tag/24">Tag 24</a></li>
+       <li class="tag-25"><a href="/tag/25">Tag 25</a></li>
+       <li class="tag-26"><a href="/tag/26">Tag 26</a></li>
+       <li class="tag-27"><a href="/tag/27">Tag 27</a></li>
+       <li class="tag-28"><a href="/tag/28">Tag 28</a></li>
+       <li class="tag-29"><a href="/tag/29">Tag 29</a></li>
+       <li class="tag-30"><a href="/tag/30">Tag 30</a></li>
+       <li class="tag-31"><a href="/tag/31">Tag 31</a></li>
+       <li class="tag-32"><a href="/tag/32">Tag 32</a></li>
+       <li class="tag-33"><a href="/tag/33">Tag 33</a></li>
+       <li class="tag-34"><a href="/tag/34">Tag 34</a></li>
+       <li class="tag-35"><a href="/tag/35">Tag 35</a></li>
+       <li class="tag-36"><a href="/tag/36">Tag 36</a></li>
+       <li class="tag-37"><a href="/tag/37">Tag 37</a></li>
+       <li class="tag-38"><a href="/tag/38">Tag 38</a></li>
+       <li class="tag-39"><a href="/tag/39">Tag 39</a></li>
+       <li class="tag-40"><a href="/tag/40">Tag 40</a></li>
+       <li class="tag-41"><a href="/tag/41">Tag 41</a></li>
+       <li class="tag-42"><a href="/tag/42">Tag 42</a></li>
+       <li class="tag-43"><a href="/tag/43">Tag 43</a></li>
+       <li class="tag-44"><a href="/tag/44">Tag 44</a></li>
+       <li class="tag-45"><a href="/tag/45">Tag 45</a></li>
+       <li class="tag-46"><a href="/tag/46">Tag 46</a></li>
+       <li class="tag-47"><a href="/tag/47">Tag 47</a></li>
+       <li class="tag-48"><a href="/tag/48">Tag 48</a></li>
+       <li class="tag-49"><a href="/tag/49">Tag 49</a></li>
+       <li class="tag-50"><a href="/tag/50">Tag 50</a></li>
+       <li class="tag-51"><a href="/tag/51">Tag 51</a></li>
+       <li class="tag-52"><a href="/tag/52">Tag 52</a></li>
+       <li class="tag-53"><a href="/tag/53">Tag 53</a></li>
+       <li class="tag-54"><a href="/tag/54">Tag 54</a></li>
+       <li class="tag-55"><a href="/tag/55">Tag 55</a></li>
+       <li class="tag-56"><a href="/tag/56">Tag 56</a></li>
+       <li class="tag-57"><a href="/tag/57">Tag 57</a></li>
+       <li class="tag-58"><a href="/tag/58">Tag 58</a></li>
+       <li class="tag-59"><a href="/tag/59">Tag 59</a></li>
+       <li class="tag-60"><a href="/tag/60">Tag 60</a></li>
+     </ul>
+    </aside>
+    <main>
+     <h1>Orders</h1>
+     <table>
+      <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Order 1</td><td>Customer 1</td><td>$37.00</td><td>shipped</td></tr>
+        <tr><td>Order 2</td><td>Customer 2</td><td>$74.00</td><td>shipped</td></tr>
+        <tr><td>Order 3</td><td>Customer 3</td><td>$111.00</td><td>shipped</td></tr>
+        <tr><td>Order 4</td><td>Customer 4</td><td>$148.00</td><td>shipped</td></tr>
+        <tr><td>Order 5</td><td>Customer 5</td><td>$185.00</td><td>shipped</td></tr>
+        <tr><td>Order 6</td><td>Customer 6</td><td>$222.00</td><td>shipped</td></tr>
+        <tr><td>Order 7</td><td>Customer 7</td><td>$259.00</td><td>shipped</td></tr>
+        <tr><td>Order 8</td><td>Customer 8</td><td>$296.00</td><td>shipped</td></tr>
+        <tr><td>Order 9</td><td>Customer 9</td><td>$333.00</td><td>shipped</td></tr>
+        <tr><td>Order 10</td><td>Customer 10</td><td>$370.00</td><td>shipped</td></tr>
+        <tr><td>Order 11</td><td>Customer 11</td><td>$407.00</td><td>shipped</td></tr>
+        <tr><td>Order 12</td><td>Customer 12</td><td>$444.00</td><td>shipped</td></tr>
+        <tr><td>Order 13</td><td>Customer 13</td><td>$481.00</td><td>shipped</td></tr>
+        <tr><td>Order 14</td><td>Customer 14</td><td>$518.00</td><td>shipped</td></tr>
+        <tr><td>Order 15</td><td>Customer 15</td><td>$555.00</td><td>shipped</td></tr>
+        <tr><td>Order 16</td><td>Customer 16</td><td>$592.00</td><td>shipped</td></tr>
+        <tr><td>Order 17</td><td>Customer 17</td><td>$629.00</td><td>shipped</td></tr>
+        <tr><td>Order 18</td><td>Customer 18</td><td>$666.00</td><td>shipped</td></tr>
+        <tr><td>Order 19</td><td>Customer 19</td><td>$703.00</td><td>shipped</td></tr>
+        <tr><td>Order 20</td><td>Customer 20</td><td>$740.00</td><td>shipped</td></tr>
+        <tr><td>Order 21</td><td>Customer 21</td><td>$777.00</td><td>shipped</td></tr>
+        <tr><td>Order 22</td><td>Customer 22</td><td>$814.00</td><td>shipped</td></tr>
+        <tr><td>Order 23</td><td>Customer 23</td><td>$851.00</td><td>shipped</td></tr>
+        <tr><td>Order 24</td><td>Customer 24</td><td>$888.00</td><td>shipped</td></tr>
+        <tr><td>Order 25</td><td>Customer 25</td><td>$925.00</td><td>shipped</td></tr>
+      </tbody>
+     </table>
+    </main>
+   </div>
+   <footer><a href="/terms">Terms</a><a href="/privacy">Privacy</a></footer>
+  </div>
+ </div>
+</div>
+</body>
+</html>
