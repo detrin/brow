@@ -1,11 +1,3 @@
-"""Best-effort "a newer brow-cli is available" notice.
-
-Never blocks a command for long and never raises: any network, filesystem,
-or parsing failure just means no notice this run. Cached so most
-invocations don't touch the network at all. Disable entirely with
-BROW_NO_UPDATE_CHECK=1.
-"""
-
 import json
 import os
 import time
@@ -64,7 +56,6 @@ def _write_cache(data: dict) -> None:
 
 
 def check_for_update(env=None) -> Optional[str]:
-    """Return a one-line update notice, or None if none is due."""
     env = env if env is not None else os.environ
     if env.get("BROW_NO_UPDATE_CHECK"):
         return None

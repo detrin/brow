@@ -31,10 +31,12 @@ def create_app():
     from brow.routes.eval import router as eval_router
     from brow.routes.pages import router as pages_router
     from brow.routes.profiles import router as profiles_router
+    from brow.routes.replay import router as replay_router
     from brow.routes.sessions import router as sessions_router
 
     app.include_router(sessions_router)
     app.include_router(browser_router)
+    app.include_router(replay_router)
     app.include_router(pages_router)
     app.include_router(profiles_router)
     app.include_router(eval_router)
