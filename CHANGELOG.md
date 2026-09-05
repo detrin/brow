@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - The benchmark numbers in `README.md` were measured with the old walker and are no longer comparable; re-running the benchmark is separate work
+- Internal restructuring, no behaviour change: `routes/browser.py` (1,465 lines, four jobs) is now routes only (380 lines). The snapshot JS moved to a real `brow/snapshot.js` file, snapshot formatting and helpers to `snapshot.py`, request models to `models.py`, the replay engine to `routes/replay.py`, and the repeated session/page lookup to FastAPI dependencies in `deps.py`. The replay step dispatcher replaced an if/elif chain with a handler table
+- Removed eight stale benchmark output directories (`results_v2`, `results_v3`, `results_v2_pwcli`, `results_optimized`, `results_{final,live}_{brow,mcp,pwcli}`), 1.2 MB of superseded run artifacts. `benchmarks/results/` — the one `README.md` cites — is kept
 
 ## [1.3.0] - 2026-08-15
 
