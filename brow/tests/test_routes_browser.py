@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -204,8 +206,11 @@ async def test_select_by_ref(client, session_id):
         "data:text/html,<body><select id='sel'><option value='a'>A</option><option value='b'>B</option></select></body>"
     )
     await client.post(f"/browser/{session_id}/navigate", json={"url": html})
-    await client.get(f"/browser/{session_id}/snapshot")
-    r = await client.post(f"/browser/{session_id}/select", json={"ref": 3, "value": "b"})
+    snap = await client.get(f"/browser/{session_id}/snapshot")
+    # Read the ref off the snapshot rather than hardcoding it: refs are numbered
+    # in reading order, so a hardcoded number silently retargets if the walk changes.
+    ref = int(re.search(r"\[(\d+)\] select", snap.json()["tree"]).group(1))
+    r = await client.post(f"/browser/{session_id}/select", json={"ref": ref, "value": "b"})
     assert r.status_code == 200
     assert r.json()["ok"] is True
 

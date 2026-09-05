@@ -39,6 +39,13 @@ def _client():
     return BrowClient()
 
 
+def _echo_snapshot_hint(result):
+    """Report what a snapshot left out — on stderr, so piped trees stay clean."""
+    hint = result.get("hint")
+    if hint:
+        typer.echo(hint, err=True)
+
+
 def _daemon_healthy(port=None):
     import httpx
 
@@ -166,6 +173,7 @@ def session_new(
     typer.echo(result["id"])
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
+    _echo_snapshot_hint(result)
 
 
 @session_app.command("list")
@@ -214,6 +222,7 @@ def navigate(
     typer.echo(f"{result['url']} [{result.get('status', '')}]")
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
+    _echo_snapshot_hint(result)
 
 
 @app.command("wait")
@@ -227,13 +236,14 @@ def wait_cmd(selector: Optional[str] = None, load: bool = False, s: Optional[str
 @app.command("snapshot")
 def snapshot_cmd(
     search: Optional[str] = None,
-    locator: Optional[str] = None,
+    locator: Optional[str] = typer.Option(None, "--locator", help="Snapshot only this element's subtree"),
     compact: bool = typer.Option(False, "--compact", help="Show only interactive elements"),
+    limit: int = typer.Option(10, "--limit", help="Max lines to keep when --search is used"),
     s: Optional[str] = session_opt,
 ):
     ensure_daemon()
     c = _client()
-    params = {}
+    params = {"limit": limit}
     if search:
         params["search"] = search
     if locator:
@@ -242,6 +252,7 @@ def snapshot_cmd(
         params["compact"] = "true"
     result = run_async(c.get(f"/browser/{s}/snapshot", params=params))
     typer.echo(result["tree"])
+    _echo_snapshot_hint(result)
 
 
 @app.command("screenshot")
@@ -449,6 +460,7 @@ def click_cmd(
     result = run_async(c.post(f"/browser/{s}/click", json=payload))
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
+    _echo_snapshot_hint(result)
 
 
 @app.command("click-until")
@@ -512,6 +524,7 @@ def fill_cmd(
     result = run_async(c.post(f"/browser/{s}/fill", json=payload))
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
+    _echo_snapshot_hint(result)
 
 
 @app.command("select")
@@ -541,6 +554,7 @@ def select_cmd(
     result = run_async(c.post(f"/browser/{s}/select", json=payload))
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
+    _echo_snapshot_hint(result)
 
 
 @app.command("type")

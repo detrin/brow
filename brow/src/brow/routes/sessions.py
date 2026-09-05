@@ -47,7 +47,7 @@ async def create(req: Request, body: CreateSession):
     if body.url:
         page = session.page
         if page:
-            from brow.routes.browser import _take_snapshot
+            from brow.routes.browser import _take_snapshot, _with_snapshot
 
             try:
                 r = await page.goto(body.url, timeout=30000)
@@ -58,10 +58,9 @@ async def create(req: Request, body: CreateSession):
                 resp["url"] = body.url
                 resp["status"] = None
                 resp["error"] = f"Navigation failed: {e}"
-            formatted, truncated, node_count = await _take_snapshot(page)
+            formatted, meta = await _take_snapshot(page)
             resp["snapshot"] = formatted
-            if truncated:
-                resp["truncated"] = True
+            _with_snapshot(resp, meta)
 
     return resp
 

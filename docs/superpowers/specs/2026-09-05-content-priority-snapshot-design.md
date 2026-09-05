@@ -1,7 +1,7 @@
 # Content-priority snapshots
 
 **Date:** 2026-09-05
-**Status:** approved
+**Status:** implemented (see "Implementation notes" for where the code differs)
 
 ## Problem
 
@@ -162,3 +162,88 @@ match-count reporting.
 - Re-running the benchmark. The numbers in `README.md` were measured with the
   old walker and become non-comparable once this lands; the changelog says so
   and the re-run is separate work.
+
+## Implementation notes
+
+Status: implemented on `feat/content-priority-snapshot`. Where the code departs
+from the design above, this section is authoritative.
+
+### Deviations from the design
+
+- **`sig()` was not loosened.** The design proposed `tag + firstClass + role`
+  with the collapse threshold raised to 5. Dropped: structurally varied listing
+  cards (the scraping case brow is strongest at) would collapse into
+  `... N similar items omitted`. `varied-cards.html` plus
+  `test_varied_cards_are_never_collapsed` guard the current signature instead.
+  `sig()` was fixed for a different reason — see the SVG crash below.
+- **The content pass gets the whole budget, not 70%.** A 70% ceiling makes
+  content *worse* off than the old single pass on any page whose content comes
+  early — a long article, for instance. Content is walked first and may spend all
+  of `NODE_LIMIT`; chrome gets the remainder, with a floor of `CHROME_FLOOR = 60`
+  so the page's controls never disappear entirely.
+- **The container quota triggers at 20 children, not 8**, and exempts each pass's
+  root and the content root's ancestors. Capping a container that *contains* the
+  content root cuts the walk off before it can splice the content in.
+- **Search mode is exempt from container quotas entirely.** A quota saves tokens
+  by not emitting lines, and in search mode only *matching* lines are emitted —
+  so it saved nothing and cost matches: `--search Zig` found nothing while
+  `--search Abkhazian` (an early item of the same dropdown) worked, which reads
+  exactly like the item not existing.
+- **Inside the content root only menu-like containers are capped**, and to a flat
+  `MENU_QUOTA = 12` rather than a share of the budget: `github.com/trending` keeps
+  three dropdowns in `<main>`, and at 20% each they spend 60% of the content
+  budget on things that are not content. A long listing of real rows keeps its
+  full budget.
+
+### Bugs found by validating against live pages
+
+The fixture suite passed while three of these were still live. Each was found by
+diffing old and new snapshots on real URLs, and each now has a fixture.
+
+1. **`sig()` crashed on every inline `<svg>`** (`icon-links.html`). `className`
+   on an SVG element is an `SVGAnimatedString`, so `.split(' ')` throws. `sig()`
+   is called outside the child loop's `try`, so the throw escaped `buildTree` and
+   was swallowed by the *parent's* `catch` — silently deleting every
+   icon-bearing link, button and star count. **This, not the node budget, is why
+   GitHub trending showed zero repository rows.** The `catch` now counts what it
+   drops and the hint reports it, so a swallowed crash can never be invisible
+   again.
+2. **The content subtree could be built and then thrown away**
+   (`huge-header.html`). `buildTree` checked `out()` *before* the splice check,
+   so when pass 2 exhausted its budget on chrome before reaching the content root
+   in document order, the whole subtree pass 1 had paid for was discarded. The
+   splice is now checked first, and the walk may always descend along the path to
+   the content root.
+3. **The interactive-dense heuristic stripped the content's prose**
+   (`prose-article.html`). On a link-dense article "non-interactive" *is* the
+   prose; the heuristic is now disabled inside the content pass.
+4. **`scoreBlock` counted whitespace as prose** (`menu-in-main.html`). Raw
+   `textContent` includes the newlines and indentation between elements, so a
+   deeply-nested 842-item dropdown scored 21,886 — more than a real article — and
+   escaped both the content-root penalty and the menu cap. Text is now measured
+   with whitespace collapsed.
+
+### Additional changes
+
+- **Refs are renumbered in reading order.** Two passes assign refs out of
+  document order, which would have the caller clicking `[1]` near the bottom of
+  the page. The assembled tree is renumbered and the `data-brow-ref` attributes
+  rewritten to match. Refs on subtrees that were built but dropped no longer
+  leave a stale attribute behind. Note this also fixes a pre-existing quirk: the
+  old walker numbered post-order, so a `<select>` came *after* its `<option>`s.
+- **The `N of M nodes` denominator counts text nodes**, which the budget spends
+  too. It could previously report more nodes kept than the page contained.
+
+### Result on the page that motivated the change
+
+`github.com/trending/python?since=daily`, default `snapshot`:
+
+| | before | after |
+|---|---|---|
+| bytes | 18,126 | 14,383 |
+| `stars today` rows | **0** | 9 |
+
+`--search "stars today"` went from 0 matches to all 14. A Wikipedia article kept
+its prose (7 mentions of the topic, up from 0 mid-implementation and comparable
+to the 9 the old walker got from a chrome-first walk). Hacker News is unchanged
+byte-for-byte. The correctness win costs fewer tokens, not more.

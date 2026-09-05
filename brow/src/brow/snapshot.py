@@ -73,7 +73,16 @@ def format_tree(tree, indent=0):
     return "\n".join(lines)
 
 
-def filter_lines(text, pattern, limit=10):
+def match_lines(text, pattern, limit=10):
+    """Filter lines by regex, returning the kept text and the total match count.
+
+    The count is what makes a capped filter honest: without it, "3 matches" and
+    "3 of 900 matches" look identical to the caller.
+    """
     regex = re.compile(pattern)
     matches = [line for line in text.split("\n") if regex.search(line)]
-    return "\n".join(matches[:limit])
+    return "\n".join(matches[:limit]), len(matches)
+
+
+def filter_lines(text, pattern, limit=10):
+    return match_lines(text, pattern, limit)[0]

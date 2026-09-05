@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Nav Heavy — Trending Repositories</title></head>
+<body>
+<!--
+  The github.com/trending shape: a very large interactive widget sits before the
+  content in document order, and its items vary in structure so consecutive-sibling
+  collapse does not fire. A document-order walk with a node budget spends the whole
+  budget in the dropdown and never reaches <main>.
+-->
+<header>
+  <nav aria-label="Global">
+    <a href="/">Home</a>
+    <a href="/explore">Explore</a>
+    <a href="/pricing">Pricing</a>
+    <details>
+      <summary>Spoken language</summary>
+      <div role="menu" aria-label="Spoken language">
+        <a role="menuitemradio" href="?lang=0">Abkhazian</a>
+        <a role="menuitemradio" href="?lang=1">Afar<span class="native">afar</span></a>
+        <a role="menuitemradio" href="?lang=2">Afrikaans</a>
+        <a role="menuitemradio" href="?lang=3">Akan<span class="native">akan</span></a>
+        <a role="menuitemradio" href="?lang=4">Albanian</a>
+        <a role="menuitemradio" href="?lang=5">Amharic<span class="native">amharic</span></a>
+        <a role="menuitemradio" href="?lang=6">Arabic</a>
+        <a role="menuitemradio" href="?lang=7">Aragonese<span class="native">aragonese</span></a>
+        <a role="menuitemradio" href="?lang=8">Armenian</a>
+        <a role="menuitemradio" href="?lang=9">Assamese<span class="native">assamese</span></a>
+        <a role="menuitemradio" href="?lang=10">Avaric</a>
+        <a role="menuitemradio" href="?lang=11">Avestan<span class="native">avestan</span></a>
+        <a role="menuitemradio" href="?lang=12">Aymara</a>
+        <a role="menuitemradio" href="?lang=13">Azerbaijani<span class="native">azerbaijani</span></a>
+        <a role="menuitemradio" href="?lang=14">Bambara</a>
+        <a role="menuitemradio" href="?lang=15">Bashkir<span class="native">bashkir</span></a>
+        <a role="menuitemradio" href="?lang=16">Basque</a>
+        <a role="menuitemradio" href="?lang=17">Belarusian<span class="native">belarusian</span></a>
+        <a role="menuitemradio" href="?lang=18">Bengali</a>
+        <a role="menuitemradio" href="?lang=19">Bihari<span class="native">bihari</span></a>
+        <a role="menuitemradio" href="?lang=20">Bislama</a>
+        <a role="menuitemradio" href="?lang=21">Bosnian<span class="native">bosnian</span></a>
+        <a role="menuitemradio" href="?lang=22">Breton</a>
+        <a role="menuitemradio" href="?lang=23">Bulgarian<span class="native">bulgarian</span></a>
+        <a role="menuitemradio" href="?lang=24">Burmese</a>
+        <a role="menuitemradio" href="?lang=25">Catalan<span class="native">catalan</span></a>
+        <a role="menuitemradio" href="?lang=26">Chamorro</a>
+        <a role="menuitemradio" href="?lang=27">Chechen<span class="native">chechen</span></a>
+        <a role="menuitemradio" href="?lang=28">Chichewa</a>
+        <a role="menuitemradio" href="?lang=29">Chinese<span class="native">chinese</span></a>
+        <a role="menuitemradio" href="?lang=30">Chuvash</a>
+        <a role="menuitemradio" href="?lang=31">Cornish<span class="native">cornish</span></a>
+        <a role="menuitemradio" href="?lang=32">Corsican</a>
+        <a role="menuitemradio" href="?lang=33">Cree<span class="native">cree</span></a>
+        <a role="menuitemradio" href="?lang=34">Croatian</a>
+        <a role="menuitemradio" href="?lang=35">Czech<span class="native">czech</span></a>
+        <a role="menuitemradio" href="?lang=36">Danish</a>
+        <a role="menuitemradio" href="?lang=37">Divehi<span class="native">divehi</span></a>
+        <a role="menuitemradio" href="?lang=38">Dutch</a>
+        <a role="menuitemradio" href="?lang=39">Dzongkha<span class="native">dzongkha</span></a>
+        <a role="menuitemradio" href="?lang=40">Esperanto</a>
+        <a role="menuitemradio" href="?lang=41">Estonian<span class="native">estonian</span></a>
+        <a role="menuitemradio" href="?lang=42">Ewe</a>
+        <a role="menuitemradio" href="?lang=43">Faroese<span class="native">faroese</span></a>
+        <a role="menuitemradio" href="?lang=44">Fijian</a>
+        <a role="menuitemradio" href="?lang=45">Finnish<span class="native">finnish</span></a>
+        <a role="menuitemradio" href="?lang=46">French</a>
+        <a role="menuitemradio" href="?lang=47">Fulah<span class="native">fulah</span></a>
+        <a role="menuitemradio" href="?lang=48">Galician</a>
+        <a role="menuitemradio" href="?lang=49">Georgian<span class="native">georgian</span></a>
+        <a role="menuitemradio" href="?lang=50">German</a>
+        <a role="menuitemradio" href="?lang=51">Greek<span class="native">greek</span></a>
+        <a role="menuitemradio" href="?lang=52">Guarani</a>
+        <a role="menuitemradio" href="?lang=53">Gujarati<span class="native">gujarati</span></a>
+        <a role="menuitemradio" href="?lang=54">Haitian</a>
+        <a role="menuitemradio" href="?lang=55">Hausa<span class="native">hausa</span></a>
+        <a role="menuitemradio" href="?lang=56">Hebrew</a>
+        <a role="menuitemradio" href="?lang=57">Herero<span class="native">herero</span></a>
+        <a role="menuitemradio" href="?lang=58">Hindi</a>
+        <a role="menuitemradio" href="?lang=59">Hungarian<span class="native">hungarian</span></a>
+        <a role="menuitemradio" href="?lang=60">Interlingua</a>
+        <a role="menuitemradio" href="?lang=61">Indonesian<span class="native">indonesian</span></a>
+        <a role="menuitemradio" href="?lang=62">Interlingue</a>
+        <a role="menuitemradio" href="?lang=63">Irish<span class="native">irish</span></a>
+        <a role="menuitemradio" href="?lang=64">Igbo</a>
+        <a role="menuitemradio" href="?lang=65">Inupiaq<span class="native">inupiaq</span></a>
+        <a role="menuitemradio" href="?lang=66">Ido</a>
+        <a role="menuitemradio" href="?lang=67">Icelandic<span class="native">icelandic</span></a>
+        <a role="menuitemradio" href="?lang=68">Italian</a>
+        <a role="menuitemradio" href="?lang=69">Inuktitut<span class="native">inuktitut</span></a>
+        <a role="menuitemradio" href="?lang=70">Japanese</a>
+        <a role="menuitemradio" href="?lang=71">Javanese<span class="native">javanese</span></a>
+        <a role="menuitemradio" href="?lang=72">Kalaallisut</a>
+        <a role="menuitemradio" href="?lang=73">Kannada<span class="native">kannada</span></a>
+        <a role="menuitemradio" href="?lang=74">Kanuri</a>
+        <a role="menuitemradio" href="?lang=75">Kashmiri<span class="native">kashmiri</span></a>
+        <a role="menuitemradio" href="?lang=76">Kazakh</a>
+        <a role="menuitemradio" href="?lang=77">Khmer<span class="native">khmer</span></a>
+        <a role="menuitemradio" href="?lang=78">Kikuyu</a>
+        <a role="menuitemradio" href="?lang=79">Kinyarwanda<span class="native">kinyarwanda</span></a>
+        <a role="menuitemradio" href="?lang=80">Kirghiz</a>
+        <a role="menuitemradio" href="?lang=81">Komi<span class="native">komi</span></a>
+        <a role="menuitemradio" href="?lang=82">Kongo</a>
+        <a role="menuitemradio" href="?lang=83">Korean<span class="native">korean</span></a>
+        <a role="menuitemradio" href="?lang=84">Kurdish</a>
+        <a role="menuitemradio" href="?lang=85">Kuanyama<span class="native">kuanyama</span></a>
+        <a role="menuitemradio" href="?lang=86">Latin</a>
+        <a role="menuitemradio" href="?lang=87">Luxembourgish<span class="native">luxembourgish</span></a>
+        <a role="menuitemradio" href="?lang=88">Ganda</a>
+        <a role="menuitemradio" href="?lang=89">Limburgish<span class="native">limburgish</span></a>
+        <a role="menuitemradio" href="?lang=90">Lingala</a>
+        <a role="menuitemradio" href="?lang=91">Lao<span class="native">lao</span></a>
+        <a role="menuitemradio" href="?lang=92">Lithuanian</a>
+        <a role="menuitemradio" href="?lang=93">Luba-Katanga<span class="native">luba-katanga</span></a>
+        <a role="menuitemradio" href="?lang=94">Latvian</a>
+        <a role="menuitemradio" href="?lang=95">Manx<span class="native">manx</span></a>
+        <a role="menuitemradio" href="?lang=96">Macedonian</a>
+        <a role="menuitemradio" href="?lang=97">Malagasy<span class="native">malagasy</span></a>
+        <a role="menuitemradio" href="?lang=98">Malay</a>
+        <a role="menuitemradio" href="?lang=99">Malayalam<span class="native">malayalam</span></a>
+        <a role="menuitemradio" href="?lang=100">Maltese</a>
+        <a role="menuitemradio" href="?lang=101">Maori<span class="native">maori</span></a>
+        <a role="menuitemradio" href="?lang=102">Marathi</a>
+        <a role="menuitemradio" href="?lang=103">Marshallese<span class="native">marshallese</span></a>
+        <a role="menuitemradio" href="?lang=104">Mongolian</a>
+        <a role="menuitemradio" href="?lang=105">Nauru<span class="native">nauru</span></a>
+        <a role="menuitemradio" href="?lang=106">Navajo</a>
+        <a role="menuitemradio" href="?lang=107">Nepali<span class="native">nepali</span></a>
+        <a role="menuitemradio" href="?lang=108">Ndonga</a>
+        <a role="menuitemradio" href="?lang=109">Norwegian<span class="native">norwegian</span></a>
+        <a role="menuitemradio" href="?lang=110">Occitan</a>
+        <a role="menuitemradio" href="?lang=111">Ojibwe<span class="native">ojibwe</span></a>
+        <a role="menuitemradio" href="?lang=112">Oromo</a>
+        <a role="menuitemradio" href="?lang=113">Oriya<span class="native">oriya</span></a>
+        <a role="menuitemradio" href="?lang=114">Ossetian</a>
+        <a role="menuitemradio" href="?lang=115">Punjabi<span class="native">punjabi</span></a>
+        <a role="menuitemradio" href="?lang=116">Pali</a>
+        <a role="menuitemradio" href="?lang=117">Persian<span class="native">persian</span></a>
+        <a role="menuitemradio" href="?lang=118">Polish</a>
+        <a role="menuitemradio" href="?lang=119">Pashto<span class="native">pashto</span></a>
+        <a role="menuitemradio" href="?lang=120">Portuguese</a>
+        <a role="menuitemradio" href="?lang=121">Quechua<span class="native">quechua</span></a>
+        <a role="menuitemradio" href="?lang=122">Romansh</a>
+        <a role="menuitemradio" href="?lang=123">Rundi<span class="native">rundi</span></a>
+        <a role="menuitemradio" href="?lang=124">Romanian</a>
+        <a role="menuitemradio" href="?lang=125">Russian<span class="native">russian</span></a>
+        <a role="menuitemradio" href="?lang=126">Sanskrit</a>
+        <a role="menuitemradio" href="?lang=127">Sardinian<span class="native">sardinian</span></a>
+        <a role="menuitemradio" href="?lang=128">Sindhi</a>
+        <a role="menuitemradio" href="?lang=129">Samoan<span class="native">samoan</span></a>
+        <a role="menuitemradio" href="?lang=130">Sango</a>
+        <a role="menuitemradio" href="?lang=131">Serbian<span class="native">serbian</span></a>
+        <a role="menuitemradio" href="?lang=132">Gaelic</a>
+        <a role="menuitemradio" href="?lang=133">Shona<span class="native">shona</span></a>
+        <a role="menuitemradio" href="?lang=134">Sinhala</a>
+        <a role="menuitemradio" href="?lang=135">Slovak<span class="native">slovak</span></a>
+        <a role="menuitemradio" href="?lang=136">Slovenian</a>
+        <a role="menuitemradio" href="?lang=137">Somali<span class="native">somali</span></a>
+        <a role="menuitemradio" href="?lang=138">Spanish</a>
+        <a role="menuitemradio" href="?lang=139">Sundanese<span class="native">sundanese</span></a>
+        <a role="menuitemradio" href="?lang=140">Swahili</a>
+        <a role="menuitemradio" href="?lang=141">Swati<span class="native">swati</span></a>
+        <a role="menuitemradio" href="?lang=142">Swedish</a>
+        <a role="menuitemradio" href="?lang=143">Tamil<span class="native">tamil</span></a>
+        <a role="menuitemradio" href="?lang=144">Telugu</a>
+        <a role="menuitemradio" href="?lang=145">Tajik<span class="native">tajik</span></a>
+        <a role="menuitemradio" href="?lang=146">Thai</a>
+        <a role="menuitemradio" href="?lang=147">Tigrinya<span class="native">tigrinya</span></a>
+        <a role="menuitemradio" href="?lang=148">Tibetan</a>
+        <a role="menuitemradio" href="?lang=149">Turkmen<span class="native">turkmen</span></a>
+        <a role="menuitemradio" href="?lang=150">Tagalog</a>
+        <a role="menuitemradio" href="?lang=151">Tswana<span class="native">tswana</span></a>
+        <a role="menuitemradio" href="?lang=152">Tonga</a>
+        <a role="menuitemradio" href="?lang=153">Turkish<span class="native">turkish</span></a>
+        <a role="menuitemradio" href="?lang=154">Tsonga</a>
+        <a role="menuitemradio" href="?lang=155">Tatar<span class="native">tatar</span></a>
+        <a role="menuitemradio" href="?lang=156">Twi</a>
+        <a role="menuitemradio" href="?lang=157">Tahitian<span class="native">tahitian</span></a>
+        <a role="menuitemradio" href="?lang=158">Uighur</a>
+        <a role="menuitemradio" href="?lang=159">Ukrainian<span class="native">ukrainian</span></a>
+        <a role="menuitemradio" href="?lang=160">Urdu</a>
+        <a role="menuitemradio" href="?lang=161">Uzbek<span class="native">uzbek</span></a>
+        <a role="menuitemradio" href="?lang=162">Venda</a>
+        <a role="menuitemradio" href="?lang=163">Vietnamese<span class="native">vietnamese</span></a>
+        <a role="menuitemradio" href="?lang=164">Volapuk</a>
+        <a role="menuitemradio" href="?lang=165">Walloon<span class="native">walloon</span></a>
+        <a role="menuitemradio" href="?lang=166">Welsh</a>
+        <a role="menuitemradio" href="?lang=167">Wolof<span class="native">wolof</span></a>
+        <a role="menuitemradio" href="?lang=168">Frisian</a>
+        <a role="menuitemradio" href="?lang=169">Xhosa<span class="native">xhosa</span></a>
+        <a role="menuitemradio" href="?lang=170">Yiddish</a>
+        <a role="menuitemradio" href="?lang=171">Yoruba<span class="native">yoruba</span></a>
+        <a role="menuitemradio" href="?lang=172">Zhuang</a>
+        <a role="menuitemradio" href="?lang=173">Zulu<span class="native">zulu</span></a>
+      </div>
+    </details>
+    <details>
+      <summary>Date range</summary>
+      <div role="menu" aria-label="Date range">
+        <a role="menuitemradio" href="?since=daily">Today</a>
+        <a role="menuitemradio" href="?since=weekly">This week</a>
+        <a role="menuitemradio" href="?since=monthly">This month</a>
+      </div>
+    </details>
+  </nav>
+</header>
+
+<main>
+  <h1>Trending repositories</h1>
+  <div class="repo-list">
+    <article class="repo"><h2><a href="/acme/alpha">acme / alpha</a></h2><p>Fast alpha toolkit</p><span class="stars">1,204 stars today</span></article>
+    <article class="repo"><h2><a href="/acme/bravo">acme / bravo</a></h2><p>Bravo runtime</p><span class="stars">982 stars today</span></article>
+    <article class="repo"><h2><a href="/acme/charlie">acme / charlie</a></h2><p>Charlie parser</p><span class="stars">877 stars today</span></article>
+    <article class="repo"><h2><a href="/acme/delta">acme / delta</a></h2><p>Delta scheduler</p><span class="stars">744 stars today</span></article>
+    <article class="repo"><h2><a href="/acme/echo">acme / echo</a></h2><p>Echo tracer</p><span class="stars">690 stars today</span></article>
+    <article class="repo"><h2><a href="/acme/foxtrot">acme / foxtrot</a></h2><p>Foxtrot indexer</p><span class="stars">651 stars today</span></article>
+    <article class="repo"><h2><a href="/acme/golf">acme / golf</a></h2><p>Golf compiler</p><span class="stars">602 stars today</span></article>
+    <article class="repo"><h2><a href="/acme/hotel">acme / hotel</a></h2><p>Hotel gateway</p><span class="stars">588 stars today</span></article>
+    <article class="repo"><h2><a href="/acme/india">acme / india</a></h2><p>India dataset loader</p><span class="stars">540 stars today</span></article>
+    <article class="repo"><h2><a href="/acme/juliett">acme / juliett</a></h2><p>Juliett queue</p><span class="stars">511 stars today</span></article>
+  </div>
+</main>
+
+<footer>
+  <a href="/terms">Terms</a>
+  <a href="/privacy">Privacy</a>
+  <a href="/security">Security</a>
+</footer>
+</body>
+</html>
