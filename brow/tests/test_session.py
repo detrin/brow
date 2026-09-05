@@ -1,11 +1,77 @@
 import pytest
 
-from brow.session import SessionManager, is_browser_missing_error
+from brow.session import Session, SessionManager, is_browser_missing_error
 
 
 @pytest.fixture
 def manager():
     return SessionManager()
+
+
+class FakeChromium:
+    executable_path = "/chrome"
+
+    def __init__(self, fail_channel=False):
+        self.fail_channel = fail_channel
+        self.calls = []
+
+    async def launch_persistent_context(self, **kwargs):
+        self.calls.append(kwargs)
+        if self.fail_channel and "channel" in kwargs:
+            raise RuntimeError("Chromium distribution 'chromium' is not found")
+        return FakeContext()
+
+
+class FakeContext:
+    pages = []
+
+    def on(self, *a):
+        pass
+
+
+class FakePlaywright:
+    def __init__(self, chromium):
+        self.chromium = chromium
+
+
+@pytest.fixture
+def version(monkeypatch):
+    from brow import stealth
+
+    monkeypatch.setattr(stealth, "_major_version", lambda exe: "151")
+
+
+async def test_headless_launch_asks_for_the_full_chromium_build(version):
+    chromium = FakeChromium()
+    await Session(id="1", profile="p", headless=True).launch(FakePlaywright(chromium), "/tmp/p")
+    assert chromium.calls[0]["channel"] == "chromium"
+    assert "Headless" not in chromium.calls[0]["user_agent"]
+
+
+async def test_launch_falls_back_when_the_full_build_is_missing(version):
+    chromium = FakeChromium(fail_channel=True)
+    await Session(id="1", profile="p", headless=True).launch(FakePlaywright(chromium), "/tmp/p")
+    assert len(chromium.calls) == 2
+    assert "channel" not in chromium.calls[1]
+    assert "user_agent" not in chromium.calls[1]
+
+
+async def test_a_failure_unrelated_to_the_channel_is_not_swallowed(version):
+    class AlwaysFails(FakeChromium):
+        async def launch_persistent_context(self, **kwargs):
+            self.calls.append(kwargs)
+            raise RuntimeError("disk full")
+
+    chromium = AlwaysFails()
+    with pytest.raises(RuntimeError, match="disk full"):
+        await Session(id="1", profile="p", headless=True).launch(FakePlaywright(chromium), "/tmp/p")
+    assert len(chromium.calls) == 2
+
+
+async def test_headed_launch_leaves_the_user_agent_alone(version):
+    chromium = FakeChromium()
+    await Session(id="1", profile="p", headless=False).launch(FakePlaywright(chromium), "/tmp/p")
+    assert "user_agent" not in chromium.calls[0]
 
 
 def test_create_session(manager):

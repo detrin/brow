@@ -292,32 +292,21 @@ def test_replay_exits_zero_when_all_steps_succeed(tmp_path):
 def test_run_sends_file_contents_as_eval_code(tmp_path):
     script = tmp_path / "workflow.py"
     script.write_text("result = {'processed': 1}\n")
-    posted = {}
-    with (
-        patch("brow.cli.ensure_daemon"),
-        patch("brow.cli._client") as mock_client,
-        patch("brow.cli.run_async") as mock_run,
-    ):
-        mock_client.return_value.post = lambda path, json=None: posted.update(json or {}) or json
-        mock_run.return_value = {"stdout": "", "result": {"processed": 1}}
+    with patch("brow.cli.call") as mock_call:
+        mock_call.return_value = {"stdout": "", "result": {"processed": 1}}
         result = runner.invoke(app, ["run", str(script), "-s", "1"])
         assert result.exit_code == 0
         assert "processed" in result.stdout
-        assert "result = {'processed': 1}" in posted["code"]
+        assert "result = {'processed': 1}" in mock_call.call_args.kwargs["json"]["code"]
 
 
 def test_run_passes_args_into_the_script_namespace(tmp_path):
     script = tmp_path / "workflow.py"
     script.write_text("print(args['query'])\n")
-    posted = {}
-    with (
-        patch("brow.cli.ensure_daemon"),
-        patch("brow.cli._client") as mock_client,
-        patch("brow.cli.run_async") as mock_run,
-    ):
-        mock_client.return_value.post = lambda path, json=None: posted.update(json or {}) or json
-        mock_run.side_effect = lambda x: {"stdout": "", "result": None}
+    with patch("brow.cli.call") as mock_call:
+        mock_call.return_value = {"stdout": "", "result": None}
         result = runner.invoke(app, ["run", str(script), "-s", "1", "--arg", "query=widgets"])
         assert result.exit_code == 0
-        assert 'args = {"query": "widgets"}' in posted["code"]
-        assert "print(args['query'])" in posted["code"]
+        code = mock_call.call_args.kwargs["json"]["code"]
+        assert 'args = {"query": "widgets"}' in code
+        assert "print(args['query'])" in code
