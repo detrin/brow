@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **`-s` is now optional.** With no `-s`, a command resolves *your* session — the one holding your default profile — and starts it if it isn't running. `brow navigate <url>` followed by `brow snapshot` and `brow click "[3]"` now works with no session bookkeeping at all. An explicit `-s` still wins, and an explicit id that doesn't exist still fails loudly rather than silently falling back to yours
+- `brow login [url]` — opens your profile in a visible window so you can sign in by hand, then leaves it running for later commands to reuse
+- `brow profile prune [--days N] [--yes]` — deletes stale profile directories, reporting only unless `--yes` is passed. Never touches your default profile, the legacy `default` profile, or any profile a live session holds
+
 ### Fixed
+- **`brow navigate <url>` with no `-s` printed `Error (404): Session None not found`** — a leaked Python `None`, because the unset session id was interpolated straight into the request path. That code path no longer exists
 - **Snapshots dropped every element containing an inline `<svg>` icon.** `className` on an SVG element is an `SVGAnimatedString`, so the walker's `.split(' ')` on it threw; the exception escaped into a parent `catch` that silently skipped the whole subtree. Icon links, icon buttons and star counts vanished with no error reported anywhere — on `github.com/trending` that was every repository row. Most modern UIs put an icon inside their actionable elements, so this affected a large fraction of real pages
 - Snapshots now walk the page's content before its chrome, so a heavy header no longer consumes the whole node budget before the walk reaches `main`. Content gets the full budget and spends it first; chrome gets the remainder (with a floor, so the page's controls never disappear). Output order and format are unchanged — the content subtree is spliced back in at its document position
 - A container with more than 20 children is capped at a share of the budget (`... N more items omitted (container cap)`), so one huge dropdown can't monopolise the walk. Inside the content root only menu-like containers are capped, so a long listing of real rows keeps its budget
@@ -17,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Snapshot refs are numbered in reading order, so `[N]` counts up as you read down the tree. The old walker numbered post-order, which put a `<select>`'s ref *after* its `<option>`s
 
 ### Changed
+- **Breaking: the default profile is now `personal`, not `default`.** A command with no `--profile` uses the browser you are already signed into — that is the point of the change, and it means a bare command carries your real cookies. Set `BROW_PROFILE` to pick a different default, or pass `--profile` per command. Scripts that relied on the bare default being anonymous must now say `--profile default` explicitly
 - The benchmark numbers in `README.md` were measured with the old walker and are no longer comparable; re-running the benchmark is separate work
 - Internal restructuring, no behaviour change: `routes/browser.py` (1,465 lines, four jobs) is now routes only (380 lines). The snapshot JS moved to a real `brow/snapshot.js` file, snapshot formatting and helpers to `snapshot.py`, request models to `models.py`, the replay engine to `routes/replay.py`, and the repeated session/page lookup to FastAPI dependencies in `deps.py`. The replay step dispatcher replaced an if/elif chain with a handler table
 - Removed eight stale benchmark output directories (`results_v2`, `results_v3`, `results_v2_pwcli`, `results_optimized`, `results_{final,live}_{brow,mcp,pwcli}`), 1.2 MB of superseded run artifacts. `benchmarks/results/` — the one `README.md` cites — is kept
