@@ -147,18 +147,73 @@ someone else's WAF tuning is noise. Scheduled and informational instead.
 The point is not the marketing table. It is that a `patchright` bump becomes
 verifiable instead of an act of faith.
 
+### As built: deviations
+
+**We own the probe; we do not scrape third-party detectors.** The design said
+"scrape verdict cells into per-signal pass/fail" from bot.sannysoft, CreepJS and
+browserleaks. Rejected during implementation: scraping someone else's DOM fails
+*silently*. They restyle, the scrape returns nothing, and every runner looks
+perfect. `benchmarks/stealth/probe.js` is one JS function we control, scored
+against 17 signals in `signals.py`, each with a recorded reason. sannysoft stays,
+demoted to the real-sites list where it belongs.
+
+That decision immediately paid for itself, and proved the danger was real rather
+than theoretical. The first run reported `agent-browser` at **0/15** — every
+check failing, including host-independent ones. It was not stealth data: its
+`--json eval` needs the probe function *invoked*, not passed, so it returned
+nothing and every check "failed" on `None`. A transport bug read exactly like a
+perfect detection result. `signals.unusable()` now refuses to score a probe that
+didn't come back with real values — such a runner is reported under **Errors** —
+and `Runner.fn_forms` retries the invoked form. agent-browser's real score is
+13/17. The same bug was silently erroring its live-site column too.
+
+**Correction to the premise this project started from.** The claim was that brow
+"measurably wins" on stealth. Measured, brow started at **7/17** and
+agent-browser at 13/17: on fingerprint signals brow was *losing*, and the real
+Alza result was carried by `navigator.webdriver` alone. The premise was right
+about the outcome and wrong about the margin.
+
 ## 3. Deepen stealth
 
 Nothing ships here without the harness showing it moved a number.
 
-- **Fingerprint coherence with the real host** — UA, platform, locale, timezone,
-  screen. Mismatch is a stronger tell than `navigator.webdriver` and is cheap to
-  fix.
-- **Human-like input** — dwell and micro-movement on click, variable delay in
-  `type`. Both code paths are ours.
-- **Launch-args audit** — the current list (`--disable-blink-features=
-  AutomationControlled`, dropping `--enable-automation`) has not been revisited
-  since it was written.
+### As built
+
+**The lever was one line.** `headless=True` alone runs `chrome-headless-shell`:
+no GPU, no plugins, no PDF viewer, no `window.chrome` — six failing signals from
+one cause. `channel="chromium"` runs the full build in Chrome's new headless mode
+instead. Measured on plain patchright: **7/15 → 13/15**.
+
+**Then the UA.** New headless still self-identifies as `HeadlessChrome/151` in
+the UA string, while its client-hint brands say plain `Chromium` — so sanitising
+the string *removes* a contradiction rather than creating one. `brow/stealth.py`
+derives the major version from the browser binary and builds Chrome's frozen
+reduced-UA string for the host OS, applied only when headless. Combined: brow
+**16/17**, ahead of patchright-newheadless (15) and agent-browser (13).
+
+This is what moved the real-site column, not just the table: plain patchright and
+patchright-newheadless are both `BLOCKED` on Alza and Google search; brow is
+`through` on all four sites. It reproduces, from a clean harness, the manual
+observation this project started from.
+
+Launch failures fall back to a channel-less launch — a machine without the full
+build should get a noisier browser, not no browser.
+
+**Launch-args audit: done, and the answer is they buy nothing.**
+`patchright-bare` (no `--disable-blink-features=AutomationControlled`, no
+`ignore_default_args`) scores identically to `patchright`. Kept because they cost
+nothing, not because they earn anything. That column exists to keep the finding
+honest rather than to flatter the config.
+
+**Human-like input: deliberately not shipped.** Dwell, micro-movement and
+variable `type` delay are unmeasurable by this harness — it probes fingerprint
+surface, not behaviour. Shipping them would violate this section's own gate, so
+the gate wins. Recorded as a known gap in `benchmarks/stealth/README.md`.
+
+**`chrome.runtime` is unresolved.** brow fails it; so does every runner measured,
+agent-browser included. Getting it means injecting JS — which is precisely what
+patchright declines to do, and a patched built-in is a louder signal than the one
+it hides — or shipping a real extension. Left failing, and documented.
 
 ## 4. Reposition the docs
 
@@ -170,7 +225,19 @@ commands.
 lands. That it does is the clearest evidence workstream 1 was the right first
 move.
 
-## Risks
+### As built
+
+The session preamble did collapse, as predicted: three of its five rules
+(`--reclaim` always, the profile-collision dance, never invent an id) stop
+applying to the default path, replaced by "leave `-s` out". What replaced them is
+guidance the old docs lacked — when to *not* use the default profile, and how to
+hand a login to the user via `brow login` instead of typing their credentials.
+
+Two fixes outside the stated scope, both in files being rewritten anyway: the
+README's command reference documented the pre-1.0 `brow -s <id> navigate <url>`
+argument order, which has been wrong since the CLI became subcommand-first; and
+it still told users to sign in via `session new --headed` + `navigate` + `session
+delete`, which `brow login` replaces in one line.
 
 **Acting as you by default.** A bare command uses your real logins. Intended,
 but it means any unattended agent run touches your cookies unless it passes
@@ -183,3 +250,15 @@ carry your identity. Called out in `CHANGELOG.md` as breaking.
 **Auto-create hides state.** A typo'd URL silently launches a browser. Mitigated
 by keeping auto-start headless and cheap, and by `session list` remaining the
 source of truth.
+
+**`channel="chromium"` assumes the full build is installed.** `brow setup`
+installs it, but a machine with only `chrome-headless-shell` would fail to launch.
+Mitigated by falling back to a channel-less launch, covered by
+`test_launch_falls_back_when_the_full_build_is_missing`. A failure unrelated to
+the channel is re-raised rather than swallowed.
+
+**The UA override is constructed, not observed.** `UA_PLATFORM` hard-codes
+Chrome's reduced-UA platform tokens for Darwin/Windows/Linux. They are frozen by
+the UA-reduction spec, but an unknown `platform.system()` or an unparseable
+`--version` skips the override rather than guessing — one failing check beats an
+incoherent fingerprint.

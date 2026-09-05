@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+from brow import stealth
 from brow.config import MAX_SESSIONS
 
 _MISSING_BROWSER_HINTS = ("Executable doesn't exist", "playwright install", "patchright install", "BrowserType.launch")
@@ -39,14 +40,16 @@ class Session:
 
     async def launch(self, playwright, user_data_dir):
         self.browser = None
-        self.context = await playwright.chromium.launch_persistent_context(
-            user_data_dir=str(user_data_dir),
-            headless=self.headless,
-            args=[
-                "--disable-blink-features=AutomationControlled",
-            ],
-            ignore_default_args=["--enable-automation"],
-        )
+        kwargs = stealth.launch_kwargs(user_data_dir, self.headless, playwright.chromium.executable_path)
+        try:
+            self.context = await playwright.chromium.launch_persistent_context(**kwargs)
+        except Exception:
+            # A machine without the full Chromium build should degrade to a noisier browser, not no browser.
+            if "channel" not in kwargs:
+                raise
+            kwargs.pop("channel")
+            kwargs.pop("user_agent", None)
+            self.context = await playwright.chromium.launch_persistent_context(**kwargs)
         self.state["console_logs"] = []
         self.state["network_requests"] = []
         self.state["websocket_messages"] = []
