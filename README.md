@@ -5,9 +5,18 @@
 [![Python](https://img.shields.io/pypi/pyversions/brow-cli)](https://pypi.org/project/brow-cli/)
 [![License: ELv2](https://img.shields.io/badge/license-Elastic%202.0-blue.svg)](LICENSE)
 
-**The browser tool agents win with: 82% task success at ~$0.22/task — beating browser-use, playwright-mcp, and agent-browser on [22 benchmark tasks](#benchmarks).**
+**Your browser, your logins, your machine.** brow gives an agent a real Chromium that stays signed
+into your accounts and doesn't look automated — so it can do errands on the sites you actually use,
+not just the ones that allow bots.
 
-A standalone Playwright CLI that gives your agent a real Chromium instance with an agent-friendly API — structured commands for common actions, plus an `eval` escape hatch for full power.
+Two numbers behind that: brow scores **16/17** on [detectable automation
+signals](#does-it-look-automated) against agent-browser's 13 and plain patchright's 8, and it is the
+only runner tested that gets through both Alza and Google search. It also leads on task success:
+**82% at ~$0.22/task**, ahead of browser-use, playwright-mcp and agent-browser across
+[22 benchmark tasks](#benchmarks).
+
+Nothing runs in a datacentre. There is no cloud browser to send your session cookies to, which is
+the part competitors built on remote CDP cannot copy.
 
 ![brow demo](https://github.com/user-attachments/assets/27c6114c-451b-4e64-b66d-2268248be79b)
 
@@ -44,19 +53,41 @@ git clone https://github.com/detrin/brow.git
 ln -s "$(pwd)/brow/skills/brow" ~/.opencode/skills/brow   # OpenCode
 ```
 
+## Quick start
+
+Sign in once, by hand, in a window you can see:
+
+```bash
+brow login https://accounts.google.com
+# ... sign in in the window that opens, then leave it or close it
+```
+
+After that, drop the ceremony. Commands with no `-s` use your `personal` profile, reusing the open
+session or starting one:
+
+```bash
+brow navigate "https://www.google.com/maps/search/bars+near+Times+Square"
+brow snapshot
+brow click "text=Directions"
+brow url
+```
+
+That's the everyday shape: no session ids, no `session new --reclaim`, no cleanup. Pass `-s <id>`
+only when you deliberately want a second, separate browser. Set `BROW_PROFILE=work` to keep a
+different identity side by side.
+
+Profiles accumulate; `brow profile prune` reports what's stale and deletes it with `--yes`
+(never your default profile, never one with a live session).
+
 ## Example: Find Bars Near Times Square with Google Maps
 
 A real use case: use your Google account to search Maps in a city you've never visited, and extract structured results.
 
 ### Step 1: Log into Google (once)
 
-Open a headed browser with a persistent profile and sign in manually:
-
 ```bash
-brow session new --profile personal --headed
-brow navigate -s 1 "https://accounts.google.com"
+brow login https://accounts.google.com
 # Sign in manually in the browser window...
-brow session delete 1
 ```
 
 Your login is saved in `~/.brow/profiles/personal/` -you won't need to sign in again.
@@ -72,10 +103,9 @@ Paste this into Claude Code:
 Claude Code runs:
 
 ```bash
-brow session new --profile personal --headed    # → 1 (already logged in)
-brow navigate -s 1 "https://www.google.com/maps/search/bars+near+Times+Square+New+York"
-brow screenshot -s 1
-brow eval -s 1 "
+brow navigate "https://www.google.com/maps/search/bars+near+Times+Square+New+York"
+brow screenshot
+brow eval "
 results = await page.evaluate('''() => {
     const items = document.querySelectorAll('div.Nv2PK');
     return Array.from(items).slice(0, 8).map(el => {
@@ -94,7 +124,6 @@ results = await page.evaluate('''() => {
 import json
 result = json.dumps(results, indent=2)
 "
-brow session delete 1
 ```
 
 ### Result
@@ -110,7 +139,31 @@ brow session delete 1
 | The Dickens | 4.8 | 2,128 | [Maps](https://www.google.com/maps/place/The+Dickens/) |
 | The Woo Woo | 4.8 | 1,871 | [Maps](https://www.google.com/maps/place/The+Woo+Woo/) |
 
-Because the `google` profile persists your login, you get personalized results -no cookie banners, no sign-in walls, just data.
+Because the profile persists your login, you get personalized results -no cookie banners, no sign-in walls, just data.
+
+## Does it look automated?
+
+Measured, not asserted. `python -m benchmarks.stealth --sites` runs one JS probe against 17 signals
+a detector can read for free, then visits four live sites:
+
+| | **brow** | agent-browser | patchright (default) |
+|---|---|---|---|
+| Fingerprint signals passed | **16/17** | 13/17 | 8/17 |
+| `navigator.webdriver` hidden | **yes** | no | yes |
+| Real GPU, plugins, PDF viewer | **yes** | yes | no |
+| `Headless` absent from UA + client hints | **yes** | no | no |
+| Through Alza (Cloudflare) | **yes** | no | no |
+| Through Google search | **yes** | no | no |
+
+The gap over plain patchright is mostly one thing: `headless=True` alone runs
+`chrome-headless-shell`, which has no GPU, no plugins, no PDF viewer and no `window.chrome` — six
+signals from one cause. brow uses Chrome's new headless mode instead and sanitises the UA string to
+match its own client hints. That took plain patchright from 8/17 to 16/17 and turned Alza and Google
+from `BLOCKED` into `through`.
+
+brow still fails one check (`chrome.runtime`) — so does every runner measured. Gaps are listed
+rather than hidden in [benchmarks/stealth/README.md](benchmarks/stealth/README.md), along with the
+raw probe output. Re-run it after every `patchright` bump; that's what it's for.
 
 ## Benchmarks
 
@@ -140,70 +193,77 @@ brow daemon stop
 brow daemon status
 ```
 
+Every command below takes an optional `-s <id>`. Leave it out and brow uses your default profile,
+reusing the open session or starting one. Pass it only for a second, separate browser.
+
 ### Sessions
 
 ```bash
-brow session new [--profile <name>] [--headed]
+brow login [url] [--profile <name>]   # visible window, sign in by hand
+brow session new [--profile <name>] [--headed] [--reclaim]
 brow session list
 brow session delete <id>
+brow session cleanup
 ```
 
 ### Navigation
 
 ```bash
-brow -s <id> navigate <url>
-brow -s <id> wait <selector>
-brow -s <id> wait --load
+brow navigate <url> [--wait load|domcontentloaded|networkidle]
+brow wait <selector>
+brow wait --load
 ```
 
 ### Observation
 
 ```bash
-brow -s <id> snapshot [--search <regex>] [--locator <selector>]
-brow -s <id> screenshot [--full] [--path <file>]
-brow -s <id> html [--locator <selector>] [--search <regex>]
-brow -s <id> logs [--search <regex>] [--count <n>]
-brow -s <id> url
+brow snapshot [--search <regex>] [--locator <selector>]
+brow screenshot [--full] [--path <file>]
+brow html [--locator <selector>] [--search <regex>]
+brow logs [--search <regex>] [--count <n>]
+brow url
 ```
 
 ### Interaction
 
 ```bash
-brow -s <id> click <selector>
-brow -s <id> fill <selector> <value>
-brow -s <id> type <text>
-brow -s <id> key <key>            # Enter, Tab, Meta+a
-brow -s <id> hover <selector>
-brow -s <id> scroll <pixels>
-brow -s <id> scroll-to <selector>
-brow -s <id> drag <from> <to>
-brow -s <id> upload <selector> <filepath>
+brow click <selector>
+brow fill <selector> <value>
+brow type <text>
+brow key <key>                    # Enter, Tab, Meta+a
+brow hover <selector>
+brow scroll [--pixels <n>]
+brow scroll-to <selector>
+brow drag <from> <to>
+brow upload <selector> <filepath>
+brow click-until <selector> --until-gone <selector>
 ```
 
 ### Pages
 
 ```bash
-brow -s <id> page list
-brow -s <id> page new [url]
-brow -s <id> page close [index]
-brow -s <id> page switch <index>
+brow page list
+brow page new [url]
+brow page close [index]
+brow page switch <index>
 ```
 
 ### Profiles & State
 
 ```bash
 brow profile list
+brow profile prune [--days <n>] [--yes]   # reclaim disk from one-shot profiles
 brow profile delete <name>
-brow state save <name> -s <id>
-brow state restore <name> -s <id>
+brow state save <name>
+brow state restore <name>
 brow state list
 ```
 
 ### Eval & Run
 
 ```bash
-brow eval -s <id> <code>              # inline, one-off
-brow run -s <id> workflow.py --arg k=v  # reusable, from a file
+brow eval <code>                  # inline, one-off
+brow run workflow.py --arg k=v    # reusable, from a file
 ```
 
 Variables available: `page`, `context`, `browser`, `state`, `pages`, plus `args` (from `--arg`) for `run`.
@@ -222,14 +282,13 @@ Playwright selector syntax:
   ┌─────────────────────────────────────────────────────────────────┐
   │  Agent (Claude Code, script, etc.)                              │
   │                                                                 │
-  │  brow session new --headed          ← start browser             │
-  │  brow navigate -s 1 "https://..."   ← go to page               │
-  │  brow snapshot -s 1                 ← read page (a11y tree)     │
-  │  brow click -s 1 "text=Login"       ← interact                  │
-  │  brow fill -s 1 "#email" "me@..."   ← fill form                 │
-  │  brow screenshot -s 1               ← capture screen            │
-  │  brow eval -s 1 "await page..."     ← escape hatch              │
-  │  brow session delete 1              ← cleanup                   │
+  │  brow login                         ← sign in by hand, once     │
+  │  brow navigate "https://..."        ← go to page                │
+  │  brow snapshot                      ← read page (a11y tree)     │
+  │  brow click "text=Login"            ← interact                  │
+  │  brow fill "#email" "me@..."        ← fill form                 │
+  │  brow screenshot                    ← capture screen            │
+  │  brow eval "await page..."          ← escape hatch              │
   └──────────────┬──────────────────────────────────────────────────┘
                  │ HTTP (localhost:19987)
                  ▼
@@ -260,7 +319,9 @@ Playwright selector syntax:
 - Daemon auto-starts on first `brow` command
 - Persistent Chromium profiles for login session survival
 - One browser per session, full isolation
-- Headless by default, `--headed` to watch
+- Headless by default, `--headed` to watch — headless runs Chrome's new headless mode, not
+  `chrome-headless-shell`, so it keeps a real GPU and fingerprint
+- Commands with no `-s` resolve to your default profile via `~/.brow/current.json`
 
 ## Configuration
 
@@ -269,6 +330,7 @@ Playwright selector syntax:
 | `BROW_HOME` | `~/.brow` | Data directory |
 | `BROW_PORT` | `19987` | Daemon port |
 | `BROW_MAX_SESSIONS` | `10` | Max concurrent sessions |
+| `BROW_PROFILE` | `personal` | Profile used by commands without `-s` |
 
 ## Resource Usage
 

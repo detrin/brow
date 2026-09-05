@@ -7,6 +7,11 @@ description: Browser automation CLI for agents — control Chromium with simple 
 
 Control a real Chromium browser from Claude Code. Navigate pages, click buttons, fill forms, take screenshots, and read page content — all through simple CLI commands.
 
+The browser runs on this machine and keeps the user's logins in a persistent profile, so it can
+work on sites that require an account and sites that reject bots. It is deliberately hard to
+fingerprint (16/17 on `benchmarks/stealth`), which is why it gets through Cloudflare-fronted sites
+and Google search where CDP-based tools are blocked.
+
 ## Setup
 
 ```bash
@@ -33,25 +38,52 @@ is informational only, not an error; ignore it or run `pip install
 
 ## Usage
 
-Syntax is **subcommand-first**, with `-s <id>` on the subcommand:
+Syntax is **subcommand-first**. `-s <id>` is optional — leave it out and the command uses the
+user's default profile (`personal`, or `$BROW_PROFILE`), reusing the session already open on that
+profile or starting one:
 
 ```bash
-brow session new --headed          # → 1
-brow navigate -s 1 "https://example.com"
-brow snapshot -s 1                 # accessibility tree
-brow click -s 1 "text=Login"
-brow fill -s 1 "#email" "user@example.com"
-brow fill -s 1 "#password" "secret"
-brow key -s 1 Enter
-brow screenshot -s 1               # saves to ~/.brow/screenshots/
-brow session delete 1
+brow navigate "https://example.com"
+brow snapshot                      # accessibility tree
+brow click "text=Login"
+brow fill "#email" "user@example.com"
+brow key Enter
+brow screenshot                    # saves to ~/.brow/screenshots/
 ```
+
+This is the default shape to reach for. Don't create a session, don't pass `-s`, and don't clean up
+— the session persists so the user's logins survive between your commands.
+
+Pass `-s <id>` only when you deliberately need a **second, concurrent** browser, which means
+creating it explicitly:
+
+```bash
+brow session new --profile scratch --reclaim   # → 2
+brow navigate -s 2 "https://example.com"
+brow session delete 2
+```
+
+An `-s <id>` that doesn't exist is an error, never a silent fallback. Session ids are integers from
+`session new` or `session list` — never invent one.
+
+**When a site needs a login you don't have:** don't try to type the user's credentials. Open a
+visible window and hand it over:
+
+```bash
+brow login https://accounts.google.com
+```
+
+Then tell the user to sign in in that window, and continue with bare commands once they confirm.
+The login persists in the profile, so this is a one-time cost per site.
 
 ## Key Commands
 
+`-s <id>` is shown below for clarity but is optional on every command that takes it.
+
 | Command | Description |
 |---------|-------------|
-| `session new [--headed] [--profile <name>]` | Start browser session |
+| `login [url] [--profile <name>]` | Open a visible window on the profile so the user can sign in by hand |
+| `session new [--headed] [--profile <name>] [--reclaim]` | Start an explicit extra session; prints the id |
 | `session list` / `session delete <id>` / `session cleanup` | List sessions / close one / close all |
 | `navigate -s <id> <url> [--wait load\|domcontentloaded\|networkidle]` | Go to URL |
 | `wait -s <id> <selector> [--load] [--timeout ms]` | Wait for a selector or the load event — use instead of guessing with `sleep` |
@@ -76,6 +108,7 @@ brow session delete 1
 | `websocket -s <id> [--count N] [--search <str>] [--clear]` | Get WebSocket messages |
 | `page list\|new\|switch\|close -s <id>` | Manage tabs — see "Working with Multiple Tabs" below |
 | `profile list` / `profile delete <name>` | List/delete saved persistent-profile directories |
+| `profile prune [--days N] [--yes]` | Report stale profiles and their disk use; `--yes` deletes them. Never touches the default profile or one with a live session |
 | `state save\|restore <name> -s <id>` / `state list` | Save/restore cookies + localStorage independent of a profile — see below |
 | `actions -s <id> [--json] [--clear]` | View recorded action log for current session |
 | `replay -s <id> <playbook.yaml> [--var k=v]` | Replay a playbook YAML (with optional var overrides) |
@@ -200,18 +233,24 @@ brow upload -s 1 "[3]" data.csv                   # fails with 500
 
 ## Profiles
 
-Persistent Chromium profiles survive across sessions. Log in once, reuse forever:
+A profile is a persistent Chromium user-data directory that survives across sessions, so a login
+done once keeps working. Bare commands use the default profile (`personal`, or `$BROW_PROFILE`) —
+that's the user's real browser identity, with their real logins.
 
 ```bash
-brow session new --profile gmail --headed
-brow navigate -s 1 "https://gmail.com"
-brow session delete 1
-
-# Next time — already logged in:
-brow session new --profile gmail
+brow login https://gmail.com     # sign in by hand, once
+brow navigate "https://gmail.com"   # any time later — already logged in
 ```
 
-**Profile conflict:** `session new` fails if the profile is already in use: `Profile 'default' already in use by session N`. Fix: use a unique `--profile <name>` per concurrent session, or pass `--reclaim` to close the stale session and take over the profile.
+Two things follow from bare commands acting as the user:
+
+- **Prefer a throwaway profile for anything you wouldn't want attributed to them** — posting,
+  purchasing, or anything that writes to an account. `brow session new --profile scratch --reclaim`
+  gives you a clean identity with its own id.
+- **Don't create a profile per task.** They cost 150-300MB each. `brow profile prune` reports what's
+  stale; suggest it to the user rather than running `--yes` unprompted.
+
+**Profile conflict:** `session new` fails if the profile is already in use: `Profile 'personal' already in use by session N`. Fix: use a unique `--profile <name>` per concurrent session, or pass `--reclaim` to close the stale session and take over the profile. Bare commands never hit this — they reuse the existing session instead.
 
 ## Saving & Restoring Login State
 
@@ -286,6 +325,12 @@ brow page list -s 1
 - `eval` returns `result` and stdout. `page` is async — `await` everything, or use the `text(sel)` / `texts(sel)` helpers for quick extraction
 - `navigate --wait networkidle` for JS-heavy pages instead of guessing with `sleep`
 - Session IDs are simple integers: 1, 2, 3...
+- Headless is the default and is not the fingerprint liability it is in other tools — it runs
+  Chrome's new headless mode with a real GPU. Use `--headed` because a human needs to see or act,
+  not to avoid detection
+- Blocked anyway? Check the page text before retrying. A block page returns HTTP 200, so `navigate`
+  succeeding tells you nothing — `brow snapshot` or `brow html --search` shows whether you got a
+  challenge instead of the content
 
 ## API Scouting
 

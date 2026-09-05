@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+from brow import stealth
 from brow.config import MAX_SESSIONS
 
 _MISSING_BROWSER_HINTS = ("Executable doesn't exist", "playwright install", "patchright install", "BrowserType.launch")
@@ -18,9 +19,7 @@ class Session:
     browser: object = None
     context: object = None
     state: dict = field(default_factory=dict)
-    # Explicitly-chosen target page. None means "no choice made, use the newest
-    # tab". Tracked as an object rather than an index so it stays correct when
-    # other tabs open or close and shift the indices around.
+    # Tracked as an object, not an index: indices shift when other tabs open or close.
     _active: object = None
 
     @property
@@ -29,13 +28,7 @@ class Session:
 
     @property
     def page(self):
-        """The page commands act on.
-
-        Falls back to the newest tab when nothing was explicitly selected, or
-        when the selected page has since been closed. Without the explicit
-        `_active`, `page switch` was a no-op: every command targeted the
-        last-opened tab, so a background popup would silently steal the target.
-        """
+        # Without _active, page switch was a no-op: a background popup silently stole the target.
         pages = self.pages
         if self._active is not None and self._active in pages:
             return self._active
@@ -47,14 +40,16 @@ class Session:
 
     async def launch(self, playwright, user_data_dir):
         self.browser = None
-        self.context = await playwright.chromium.launch_persistent_context(
-            user_data_dir=str(user_data_dir),
-            headless=self.headless,
-            args=[
-                "--disable-blink-features=AutomationControlled",
-            ],
-            ignore_default_args=["--enable-automation"],
-        )
+        kwargs = stealth.launch_kwargs(user_data_dir, self.headless, playwright.chromium.executable_path)
+        try:
+            self.context = await playwright.chromium.launch_persistent_context(**kwargs)
+        except Exception:
+            # A machine without the full Chromium build should degrade to a noisier browser, not no browser.
+            if "channel" not in kwargs:
+                raise
+            kwargs.pop("channel")
+            kwargs.pop("user_agent", None)
+            self.context = await playwright.chromium.launch_persistent_context(**kwargs)
         self.state["console_logs"] = []
         self.state["network_requests"] = []
         self.state["websocket_messages"] = []

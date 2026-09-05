@@ -1,0 +1,629 @@
+{
+  "host": {
+    "platform": "MacIntel",
+    "timezone": "CEST",
+    "system": "Darwin"
+  },
+  "sites_included": true,
+  "results": [
+    {
+      "runner": "brow",
+      "available": true,
+      "probe": {
+        "webdriver": false,
+        "automationKeys": [],
+        "documentAutomationKeys": [],
+        "hasChromeObject": true,
+        "hasChromeRuntime": false,
+        "plugins": 5,
+        "mimeTypes": 2,
+        "pdfViewerEnabled": true,
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "headlessInUserAgent": false,
+        "vendor": "Google Inc.",
+        "platform": "MacIntel",
+        "languages": [
+          "en-US",
+          "en"
+        ],
+        "language": "en-US",
+        "hardwareConcurrency": 14,
+        "deviceMemory": 32,
+        "maxTouchPoints": 0,
+        "userAgentData": {
+          "brands": [
+            "Chromium",
+            "Not=A?Brand"
+          ],
+          "mobile": false,
+          "platform": "macOS"
+        },
+        "webgl": {
+          "vendor": "Google Inc. (Apple)",
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+        },
+        "timezone": "Europe/Prague",
+        "locale": "en-US",
+        "screen": {
+          "width": 1280,
+          "height": 720,
+          "availWidth": 1280,
+          "availHeight": 720,
+          "colorDepth": 24
+        },
+        "window": {
+          "outerWidth": 1280,
+          "outerHeight": 720,
+          "devicePixelRatio": 1
+        },
+        "notificationPermission": "default",
+        "permissionQueryState": "prompt",
+        "nativeToString": true,
+        "stackMentionsDriver": false,
+        "webRtcLocalIps": [
+          "e:3262782757"
+        ]
+      },
+      "fingerprint": {
+        "passed": 16,
+        "total": 17,
+        "checks": {
+          "navigator.webdriver absent": {
+            "pass": true,
+            "why": "The single most-checked flag. True means every detector sees a bot on the first line of script it runs."
+          },
+          "no automation globals": {
+            "pass": true,
+            "why": "cdc_/__playwright globals on window or document are a direct fingerprint of the driver."
+          },
+          "window.chrome present": {
+            "pass": true,
+            "why": "Real Chrome always has it; its absence in a Chrome user-agent is a contradiction."
+          },
+          "chrome.runtime present": {
+            "pass": false,
+            "why": "Missing runtime with window.chrome present is the classic patched-but-incomplete signature."
+          },
+          "plugins non-empty": {
+            "pass": true,
+            "why": "Zero plugins is a headless default and a very cheap check for a detector."
+          },
+          "PDF viewer enabled": {
+            "pass": true,
+            "why": "Headless Chrome ships without it; desktop Chrome always has it."
+          },
+          "no 'Headless' in UA": {
+            "pass": true,
+            "why": "Self-identifying. Nothing else matters if this is true."
+          },
+          "client hints free of 'Headless'": {
+            "pass": true,
+            "why": "navigator.userAgentData is a separate surface from the UA string; sanitising one and not the other is worse than neither."
+          },
+          "window not larger than screen": {
+            "pass": true,
+            "why": "A window bigger than the display it is on is physically impossible and costs a detector one comparison."
+          },
+          "hardware-accelerated WebGL": {
+            "pass": true,
+            "why": "SwiftShader/llvmpipe means no GPU, which on consumer hardware means a datacentre or a headless run."
+          },
+          "notification permission not denied": {
+            "pass": true,
+            "why": "'denied' without the user ever being asked is a headless default."
+          },
+          "permissions API self-consistent": {
+            "pass": true,
+            "why": "Notification.permission and permissions.query() disagreeing is the classic headless contradiction."
+          },
+          "native function toString": {
+            "pass": true,
+            "why": "A patched built-in that no longer reports [native code] is worse than the flag it was hiding."
+          },
+          "stack traces clean": {
+            "pass": true,
+            "why": "Driver names leaking into Error().stack identify the tool exactly."
+          },
+          "plausible core count": {
+            "pass": true,
+            "why": "A 1-core machine browsing the web in 2026 is a container."
+          },
+          "timezone matches host": {
+            "pass": true,
+            "why": "A UTC browser on a non-UTC machine is a mismatch detectors correlate against IP geolocation."
+          },
+          "platform matches host OS": {
+            "pass": true,
+            "why": "navigator.platform disagreeing with the real OS is an incoherent fingerprint."
+          }
+        }
+      },
+      "sites": {
+        "example": {
+          "verdict": "through",
+          "why": "HTTP 200",
+          "seconds": 0.0
+        },
+        "alza": {
+          "verdict": "through",
+          "why": "HTTP 200",
+          "seconds": 2.1
+        },
+        "google-search": {
+          "verdict": "through",
+          "why": "HTTP 200",
+          "seconds": 0.7
+        },
+        "sannysoft": {
+          "verdict": "through",
+          "why": "HTTP 200",
+          "seconds": 1.8
+        }
+      }
+    },
+    {
+      "runner": "patchright",
+      "available": true,
+      "probe": {
+        "webdriver": false,
+        "automationKeys": [],
+        "documentAutomationKeys": [],
+        "hasChromeObject": false,
+        "hasChromeRuntime": false,
+        "plugins": 0,
+        "mimeTypes": 0,
+        "pdfViewerEnabled": false,
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+        "headlessInUserAgent": true,
+        "vendor": "Google Inc.",
+        "platform": "MacIntel",
+        "languages": [
+          "en-US"
+        ],
+        "language": "en-US",
+        "hardwareConcurrency": 14,
+        "deviceMemory": 32,
+        "maxTouchPoints": 0,
+        "userAgentData": {
+          "brands": [
+            "Not=A?Brand",
+            "HeadlessChrome",
+            "Chromium"
+          ],
+          "mobile": false,
+          "platform": "macOS"
+        },
+        "webgl": {
+          "vendor": "Google Inc. (Google)",
+          "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+        },
+        "timezone": "Europe/Prague",
+        "locale": "en-US",
+        "screen": {
+          "width": 1280,
+          "height": 720,
+          "availWidth": 1280,
+          "availHeight": 720,
+          "colorDepth": 24
+        },
+        "window": {
+          "outerWidth": 1280,
+          "outerHeight": 720,
+          "devicePixelRatio": 1
+        },
+        "notificationPermission": "denied",
+        "permissionQueryState": "prompt",
+        "nativeToString": true,
+        "stackMentionsDriver": false,
+        "webRtcLocalIps": [
+          "e:961932515"
+        ]
+      },
+      "fingerprint": {
+        "passed": 8,
+        "total": 17,
+        "checks": {
+          "navigator.webdriver absent": {
+            "pass": true,
+            "why": "The single most-checked flag. True means every detector sees a bot on the first line of script it runs."
+          },
+          "no automation globals": {
+            "pass": true,
+            "why": "cdc_/__playwright globals on window or document are a direct fingerprint of the driver."
+          },
+          "window.chrome present": {
+            "pass": false,
+            "why": "Real Chrome always has it; its absence in a Chrome user-agent is a contradiction."
+          },
+          "chrome.runtime present": {
+            "pass": false,
+            "why": "Missing runtime with window.chrome present is the classic patched-but-incomplete signature."
+          },
+          "plugins non-empty": {
+            "pass": false,
+            "why": "Zero plugins is a headless default and a very cheap check for a detector."
+          },
+          "PDF viewer enabled": {
+            "pass": false,
+            "why": "Headless Chrome ships without it; desktop Chrome always has it."
+          },
+          "no 'Headless' in UA": {
+            "pass": false,
+            "why": "Self-identifying. Nothing else matters if this is true."
+          },
+          "client hints free of 'Headless'": {
+            "pass": false,
+            "why": "navigator.userAgentData is a separate surface from the UA string; sanitising one and not the other is worse than neither."
+          },
+          "window not larger than screen": {
+            "pass": true,
+            "why": "A window bigger than the display it is on is physically impossible and costs a detector one comparison."
+          },
+          "hardware-accelerated WebGL": {
+            "pass": false,
+            "why": "SwiftShader/llvmpipe means no GPU, which on consumer hardware means a datacentre or a headless run."
+          },
+          "notification permission not denied": {
+            "pass": false,
+            "why": "'denied' without the user ever being asked is a headless default."
+          },
+          "permissions API self-consistent": {
+            "pass": false,
+            "why": "Notification.permission and permissions.query() disagreeing is the classic headless contradiction."
+          },
+          "native function toString": {
+            "pass": true,
+            "why": "A patched built-in that no longer reports [native code] is worse than the flag it was hiding."
+          },
+          "stack traces clean": {
+            "pass": true,
+            "why": "Driver names leaking into Error().stack identify the tool exactly."
+          },
+          "plausible core count": {
+            "pass": true,
+            "why": "A 1-core machine browsing the web in 2026 is a container."
+          },
+          "timezone matches host": {
+            "pass": true,
+            "why": "A UTC browser on a non-UTC machine is a mismatch detectors correlate against IP geolocation."
+          },
+          "platform matches host OS": {
+            "pass": true,
+            "why": "navigator.platform disagreeing with the real OS is an incoherent fingerprint."
+          }
+        }
+      },
+      "sites": {
+        "example": {
+          "verdict": "through",
+          "why": "HTTP 200",
+          "seconds": 0.0
+        },
+        "alza": {
+          "verdict": "blocked",
+          "why": "HTTP 403",
+          "seconds": 0.3
+        },
+        "google-search": {
+          "verdict": "blocked",
+          "why": "page says 'unusual traffic'",
+          "seconds": 0.8
+        },
+        "sannysoft": {
+          "verdict": "through",
+          "why": "HTTP 200",
+          "seconds": 0.6
+        }
+      }
+    },
+    {
+      "runner": "patchright-newheadless",
+      "available": true,
+      "probe": {
+        "webdriver": false,
+        "automationKeys": [],
+        "documentAutomationKeys": [],
+        "hasChromeObject": true,
+        "hasChromeRuntime": false,
+        "plugins": 5,
+        "mimeTypes": 2,
+        "pdfViewerEnabled": true,
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+        "headlessInUserAgent": true,
+        "vendor": "Google Inc.",
+        "platform": "MacIntel",
+        "languages": [
+          "en-US",
+          "en"
+        ],
+        "language": "en-US",
+        "hardwareConcurrency": 14,
+        "deviceMemory": 32,
+        "maxTouchPoints": 0,
+        "userAgentData": {
+          "brands": [
+            "Chromium",
+            "Not=A?Brand"
+          ],
+          "mobile": false,
+          "platform": "macOS"
+        },
+        "webgl": {
+          "vendor": "Google Inc. (Apple)",
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+        },
+        "timezone": "Europe/Prague",
+        "locale": "en-US",
+        "screen": {
+          "width": 1280,
+          "height": 720,
+          "availWidth": 1280,
+          "availHeight": 720,
+          "colorDepth": 24
+        },
+        "window": {
+          "outerWidth": 1280,
+          "outerHeight": 720,
+          "devicePixelRatio": 1
+        },
+        "notificationPermission": "default",
+        "permissionQueryState": "prompt",
+        "nativeToString": true,
+        "stackMentionsDriver": false,
+        "webRtcLocalIps": [
+          "e:765504390"
+        ]
+      },
+      "fingerprint": {
+        "passed": 15,
+        "total": 17,
+        "checks": {
+          "navigator.webdriver absent": {
+            "pass": true,
+            "why": "The single most-checked flag. True means every detector sees a bot on the first line of script it runs."
+          },
+          "no automation globals": {
+            "pass": true,
+            "why": "cdc_/__playwright globals on window or document are a direct fingerprint of the driver."
+          },
+          "window.chrome present": {
+            "pass": true,
+            "why": "Real Chrome always has it; its absence in a Chrome user-agent is a contradiction."
+          },
+          "chrome.runtime present": {
+            "pass": false,
+            "why": "Missing runtime with window.chrome present is the classic patched-but-incomplete signature."
+          },
+          "plugins non-empty": {
+            "pass": true,
+            "why": "Zero plugins is a headless default and a very cheap check for a detector."
+          },
+          "PDF viewer enabled": {
+            "pass": true,
+            "why": "Headless Chrome ships without it; desktop Chrome always has it."
+          },
+          "no 'Headless' in UA": {
+            "pass": false,
+            "why": "Self-identifying. Nothing else matters if this is true."
+          },
+          "client hints free of 'Headless'": {
+            "pass": true,
+            "why": "navigator.userAgentData is a separate surface from the UA string; sanitising one and not the other is worse than neither."
+          },
+          "window not larger than screen": {
+            "pass": true,
+            "why": "A window bigger than the display it is on is physically impossible and costs a detector one comparison."
+          },
+          "hardware-accelerated WebGL": {
+            "pass": true,
+            "why": "SwiftShader/llvmpipe means no GPU, which on consumer hardware means a datacentre or a headless run."
+          },
+          "notification permission not denied": {
+            "pass": true,
+            "why": "'denied' without the user ever being asked is a headless default."
+          },
+          "permissions API self-consistent": {
+            "pass": true,
+            "why": "Notification.permission and permissions.query() disagreeing is the classic headless contradiction."
+          },
+          "native function toString": {
+            "pass": true,
+            "why": "A patched built-in that no longer reports [native code] is worse than the flag it was hiding."
+          },
+          "stack traces clean": {
+            "pass": true,
+            "why": "Driver names leaking into Error().stack identify the tool exactly."
+          },
+          "plausible core count": {
+            "pass": true,
+            "why": "A 1-core machine browsing the web in 2026 is a container."
+          },
+          "timezone matches host": {
+            "pass": true,
+            "why": "A UTC browser on a non-UTC machine is a mismatch detectors correlate against IP geolocation."
+          },
+          "platform matches host OS": {
+            "pass": true,
+            "why": "navigator.platform disagreeing with the real OS is an incoherent fingerprint."
+          }
+        }
+      },
+      "sites": {
+        "example": {
+          "verdict": "through",
+          "why": "HTTP 200",
+          "seconds": 0.0
+        },
+        "alza": {
+          "verdict": "blocked",
+          "why": "HTTP 403",
+          "seconds": 0.6
+        },
+        "google-search": {
+          "verdict": "blocked",
+          "why": "page says 'unusual traffic'",
+          "seconds": 0.7
+        },
+        "sannysoft": {
+          "verdict": "through",
+          "why": "HTTP 200",
+          "seconds": 0.8
+        }
+      }
+    },
+    {
+      "runner": "agent-browser",
+      "available": true,
+      "probe": {
+        "automationKeys": [],
+        "deviceMemory": 32,
+        "documentAutomationKeys": [],
+        "hardwareConcurrency": 14,
+        "hasChromeObject": true,
+        "hasChromeRuntime": false,
+        "headlessInUserAgent": true,
+        "language": "en-US",
+        "languages": [
+          "en-US"
+        ],
+        "locale": "en-US",
+        "maxTouchPoints": 0,
+        "mimeTypes": 2,
+        "nativeToString": true,
+        "notificationPermission": "default",
+        "pdfViewerEnabled": true,
+        "permissionQueryState": "prompt",
+        "platform": "MacIntel",
+        "plugins": 5,
+        "screen": {
+          "availHeight": 600,
+          "availWidth": 800,
+          "colorDepth": 24,
+          "height": 600,
+          "width": 800
+        },
+        "stackMentionsDriver": false,
+        "timezone": "Europe/Prague",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+        "userAgentData": {
+          "brands": [
+            "Not?A_Brand",
+            "Chromium"
+          ],
+          "mobile": false,
+          "platform": "macOS"
+        },
+        "vendor": "Google Inc.",
+        "webRtcLocalIps": [
+          "e:1810259772"
+        ],
+        "webdriver": true,
+        "webgl": {
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+          "vendor": "Google Inc. (Apple)"
+        },
+        "window": {
+          "devicePixelRatio": 1,
+          "outerHeight": 720,
+          "outerWidth": 1280
+        }
+      },
+      "fingerprint": {
+        "passed": 13,
+        "total": 17,
+        "checks": {
+          "navigator.webdriver absent": {
+            "pass": false,
+            "why": "The single most-checked flag. True means every detector sees a bot on the first line of script it runs."
+          },
+          "no automation globals": {
+            "pass": true,
+            "why": "cdc_/__playwright globals on window or document are a direct fingerprint of the driver."
+          },
+          "window.chrome present": {
+            "pass": true,
+            "why": "Real Chrome always has it; its absence in a Chrome user-agent is a contradiction."
+          },
+          "chrome.runtime present": {
+            "pass": false,
+            "why": "Missing runtime with window.chrome present is the classic patched-but-incomplete signature."
+          },
+          "plugins non-empty": {
+            "pass": true,
+            "why": "Zero plugins is a headless default and a very cheap check for a detector."
+          },
+          "PDF viewer enabled": {
+            "pass": true,
+            "why": "Headless Chrome ships without it; desktop Chrome always has it."
+          },
+          "no 'Headless' in UA": {
+            "pass": false,
+            "why": "Self-identifying. Nothing else matters if this is true."
+          },
+          "client hints free of 'Headless'": {
+            "pass": true,
+            "why": "navigator.userAgentData is a separate surface from the UA string; sanitising one and not the other is worse than neither."
+          },
+          "window not larger than screen": {
+            "pass": false,
+            "why": "A window bigger than the display it is on is physically impossible and costs a detector one comparison."
+          },
+          "hardware-accelerated WebGL": {
+            "pass": true,
+            "why": "SwiftShader/llvmpipe means no GPU, which on consumer hardware means a datacentre or a headless run."
+          },
+          "notification permission not denied": {
+            "pass": true,
+            "why": "'denied' without the user ever being asked is a headless default."
+          },
+          "permissions API self-consistent": {
+            "pass": true,
+            "why": "Notification.permission and permissions.query() disagreeing is the classic headless contradiction."
+          },
+          "native function toString": {
+            "pass": true,
+            "why": "A patched built-in that no longer reports [native code] is worse than the flag it was hiding."
+          },
+          "stack traces clean": {
+            "pass": true,
+            "why": "Driver names leaking into Error().stack identify the tool exactly."
+          },
+          "plausible core count": {
+            "pass": true,
+            "why": "A 1-core machine browsing the web in 2026 is a container."
+          },
+          "timezone matches host": {
+            "pass": true,
+            "why": "A UTC browser on a non-UTC machine is a mismatch detectors correlate against IP geolocation."
+          },
+          "platform matches host OS": {
+            "pass": true,
+            "why": "navigator.platform disagreeing with the real OS is an incoherent fingerprint."
+          }
+        }
+      },
+      "sites": {
+        "example": {
+          "verdict": "through",
+          "why": "ok",
+          "seconds": 0.1
+        },
+        "alza": {
+          "verdict": "blocked",
+          "why": "page says 'just a moment'",
+          "seconds": 0.7
+        },
+        "google-search": {
+          "verdict": "blocked",
+          "why": "page says 'unusual traffic'",
+          "seconds": 1.6
+        },
+        "sannysoft": {
+          "verdict": "through",
+          "why": "ok",
+          "seconds": 1.9
+        }
+      }
+    }
+  ]
+}

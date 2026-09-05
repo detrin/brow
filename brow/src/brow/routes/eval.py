@@ -2,10 +2,11 @@ import asyncio
 import io
 import sys
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from brow.config import DEFAULT_TIMEOUT
+from brow.deps import get_session
 
 router = APIRouter(prefix="/eval/{sid}", tags=["eval"])
 
@@ -16,12 +17,7 @@ class EvalReq(BaseModel):
 
 
 @router.post("")
-async def eval_code(req: Request, sid: str, body: EvalReq):
-    try:
-        session = req.app.state.manager.get(sid)
-    except KeyError:
-        raise HTTPException(404, f"Session {sid} not found")
-
+async def eval_code(body: EvalReq, session=Depends(get_session)):
     page = session.page
     context = session.context
 
@@ -58,11 +54,7 @@ async def eval_code(req: Request, sid: str, body: EvalReq):
         finally:
             sys.stdout = old_stdout
     except asyncio.TimeoutError:
-        # Name the knob and hand back whatever the job already printed. A bare
-        # "Eval timed out" reads as a hard ceiling, which pushes callers into
-        # writing their own batching/staging machinery for jobs that would fit
-        # fine with a larger timeout; and dropping the partial stdout means a run
-        # that completed most of its work reports nothing to resume from.
+        # Name the knob and return partial stdout: a bare timeout reads as a hard ceiling and hides progress.
         partial = stdout_capture.getvalue()
         msg = (
             f"Eval timed out after {body.timeout}ms. "

@@ -1,4 +1,5 @@
 import asyncio
+import shutil
 import subprocess
 import sys
 import time
@@ -6,8 +7,9 @@ from typing import Optional
 
 import typer
 
+from brow import current
 from brow.client import BrowAPIError, BrowClient
-from brow.config import DAEMON_HOST, DAEMON_PORT, get_daemon_port, set_daemon_port
+from brow.config import DAEMON_HOST, DAEMON_PORT, PROFILES_DIR, get_daemon_port, set_daemon_port
 from brow.daemon import daemon_running, stop_daemon
 from brow.update_check import check_for_update
 
@@ -27,9 +29,9 @@ app.add_typer(page_app, name="page")
 session_opt = typer.Option(None, "-s", "--session")
 
 
-def run_async(coro):
+def run_async(fn, *args, **kwargs):
     try:
-        return asyncio.run(coro)
+        return asyncio.run(fn(*args, **kwargs))
     except BrowAPIError as e:
         typer.echo(f"Error ({e.status_code}): {e.detail}", err=True)
         raise typer.Exit(2)
@@ -39,8 +41,44 @@ def _client():
     return BrowClient()
 
 
+async def _explicit(method, path, **kwargs):
+    return await getattr(_client(), method)(path, **kwargs)
+
+
+async def _implicit(method, path, **kwargs):
+    client = _client()
+    for retry in (False, True):
+        sid = await current.resolve(client, refresh=retry)
+        try:
+            return await getattr(client, method)(path.format(sid=sid), **kwargs)
+        except BrowAPIError as e:
+            # A cached id outliving its session is normal; re-resolve once instead of failing the command.
+            if retry or e.status_code != 404 or "not found" not in (e.detail or ""):
+                raise
+            current.clear()
+
+
+async def _resolve(headed):
+    return await current.resolve(_client(), headed=headed)
+
+
+def call(method, path, s=None, **kwargs):
+    ensure_daemon()
+    if "{sid}" not in path:
+        return run_async(_explicit, method, path, **kwargs)
+    if s is not None:
+        return run_async(_explicit, method, path.format(sid=s), **kwargs)
+    return run_async(_implicit, method, path, **kwargs)
+
+
+def resolved_sid(s, headed=False):
+    if s is not None:
+        return s
+    ensure_daemon()
+    return run_async(_resolve, headed)
+
+
 def _echo_snapshot_hint(result):
-    """Report what a snapshot left out — on stderr, so piped trees stay clean."""
     hint = result.get("hint")
     if hint:
         typer.echo(hint, err=True)
@@ -105,9 +143,7 @@ def setup_cmd(
         raise typer.Exit(1)
 
     if upgrade and daemon_running():
-        # The daemon already imported the old patchright in memory and is
-        # driving Chromium via the old binary path — an upgrade on disk does
-        # nothing for it until it's restarted.
+        # A running daemon holds the old patchright in memory; an on-disk upgrade does nothing until it restarts.
         stop_daemon()
         typer.echo("Stopped the running daemon so it restarts fresh on your next command.")
 
@@ -152,24 +188,24 @@ def daemon_status():
     if not daemon_running():
         typer.echo("Daemon not running")
         return
-    c = _client()
-    result = run_async(c.get("/status"))
+    result = call("get", "/status")
     typer.echo(f"Running — {result['sessions']} active sessions")
 
 
 @session_app.command("new")
 def session_new(
-    profile: str = "default",
+    profile: Optional[str] = None,
     headed: bool = False,
     url: Optional[str] = None,
     reclaim: bool = typer.Option(False, "--reclaim", help="Close any existing session holding this profile"),
 ):
-    ensure_daemon()
-    c = _client()
+    profile = profile or current.default_profile()
     payload = {"profile": profile, "headless": not headed, "reclaim": reclaim}
     if url:
         payload["url"] = url
-    result = run_async(c.post("/sessions", json=payload))
+    result = call("post", "/sessions", json=payload)
+    if profile == current.default_profile():
+        current.write(result["id"])
     typer.echo(result["id"])
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
@@ -178,9 +214,7 @@ def session_new(
 
 @session_app.command("list")
 def session_list():
-    ensure_daemon()
-    c = _client()
-    sessions = run_async(c.get("/sessions"))
+    sessions = call("get", "/sessions")
     if not sessions:
         typer.echo("No active sessions")
         return
@@ -190,23 +224,35 @@ def session_list():
 
 @session_app.command("delete")
 def session_delete(sid: str):
-    ensure_daemon()
-    c = _client()
-    run_async(c.delete(f"/sessions/{sid}"))
+    call("delete", f"/sessions/{sid}")
     typer.echo(f"Deleted session {sid}")
 
 
 @session_app.command("cleanup")
 def session_cleanup():
-    ensure_daemon()
-    c = _client()
-    sessions = run_async(c.get("/sessions"))
+    sessions = call("get", "/sessions")
     if not sessions:
         typer.echo("No sessions to clean up")
         return
     for s in sessions:
-        run_async(c.delete(f"/sessions/{s['id']}"))
+        call("delete", f"/sessions/{s['id']}")
     typer.echo(f"Cleaned up {len(sessions)} session(s)")
+
+
+@app.command("login")
+def login(url: Optional[str] = typer.Argument(None), profile: Optional[str] = None):
+    """Open your profile in a visible window so you can sign in by hand."""
+    profile = profile or current.default_profile()
+    payload = {"profile": profile, "headless": False, "reclaim": True}
+    if url:
+        payload["url"] = url
+    result = call("post", "/sessions", json=payload)
+    sid = result["id"]
+    if profile == current.default_profile():
+        current.write(sid)
+    typer.echo(f"Session {sid} open in a visible window on profile '{profile}'.")
+    typer.echo("Sign in, then leave it running — later commands reuse it. Close with:", err=True)
+    typer.echo(f"  brow session delete {sid}", err=True)
 
 
 @app.command("navigate")
@@ -216,9 +262,7 @@ def navigate(
     timeout: int = 30000,
     wait: str = typer.Option("load", "--wait", help="Settle strategy: domcontentloaded | load | networkidle"),
 ):
-    ensure_daemon()
-    c = _client()
-    result = run_async(c.post(f"/browser/{s}/navigate", json={"url": url, "timeout": timeout, "wait": wait}))
+    result = call("post", "/browser/{sid}/navigate", s, json={"url": url, "timeout": timeout, "wait": wait})
     typer.echo(f"{result['url']} [{result.get('status', '')}]")
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
@@ -227,9 +271,7 @@ def navigate(
 
 @app.command("wait")
 def wait_cmd(selector: Optional[str] = None, load: bool = False, s: Optional[str] = session_opt, timeout: int = 30000):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post(f"/browser/{s}/wait", json={"selector": selector, "load": load, "timeout": timeout}))
+    call("post", "/browser/{sid}/wait", s, json={"selector": selector, "load": load, "timeout": timeout})
     typer.echo("Done")
 
 
@@ -241,8 +283,6 @@ def snapshot_cmd(
     limit: int = typer.Option(10, "--limit", help="Max lines to keep when --search is used"),
     s: Optional[str] = session_opt,
 ):
-    ensure_daemon()
-    c = _client()
     params = {"limit": limit}
     if search:
         params["search"] = search
@@ -250,7 +290,7 @@ def snapshot_cmd(
         params["locator"] = locator
     if compact:
         params["compact"] = "true"
-    result = run_async(c.get(f"/browser/{s}/snapshot", params=params))
+    result = call("get", "/browser/{sid}/snapshot", s, params=params)
     typer.echo(result["tree"])
     _echo_snapshot_hint(result)
 
@@ -264,42 +304,34 @@ def screenshot_cmd(
     quality: Optional[str] = typer.Option(None, help="low (400px), medium (800px), high (1200px)"),
     s: Optional[str] = session_opt,
 ):
-    ensure_daemon()
-    c = _client()
     payload = {"full": full, "path": path, "width": width, "scale": scale, "quality": quality}
-    result = run_async(c.post(f"/browser/{s}/screenshot", json=payload))
+    result = call("post", "/browser/{sid}/screenshot", s, json=payload)
     typer.echo(result["path"])
 
 
 @app.command("html")
 def html_cmd(locator: Optional[str] = None, search: Optional[str] = None, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
     params = {}
     if locator:
         params["locator"] = locator
     if search:
         params["search"] = search
-    result = run_async(c.get(f"/browser/{s}/html", params=params))
+    result = call("get", "/browser/{sid}/html", s, params=params)
     typer.echo(result["html"])
 
 
 @app.command("url")
 def url_cmd(s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    result = run_async(c.get(f"/browser/{s}/url"))
+    result = call("get", "/browser/{sid}/url", s)
     typer.echo(result["url"])
 
 
 @app.command("logs")
 def logs_cmd(search: Optional[str] = None, count: int = 50, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
     params = {"count": count}
     if search:
         params["search"] = search
-    result = run_async(c.get(f"/browser/{s}/logs", params=params))
+    result = call("get", "/browser/{sid}/logs", s, params=params)
     typer.echo(result["logs"])
 
 
@@ -312,16 +344,14 @@ def network_cmd(
     clear: bool = typer.Option(False, "--clear", help="Clear the network log"),
     s: Optional[str] = session_opt,
 ):
-    ensure_daemon()
-    c = _client()
     if clear:
-        run_async(c.delete(f"/browser/{s}/network"))
+        call("delete", "/browser/{sid}/network", s)
         typer.echo("Network log cleared")
         return
     params = {"count": count, "include_static": include_static, "include_response": include_response}
     if search:
         params["search"] = search
-    result = run_async(c.get(f"/browser/{s}/network", params=params))
+    result = call("get", "/browser/{sid}/network", s, params=params)
     typer.echo(result["network"])
 
 
@@ -334,20 +364,15 @@ def fetch_cmd(
     no_cookies: bool = typer.Option(False, "--no-cookies", help="Plain HTTP request without browser session cookies"),
     s: Optional[str] = session_opt,
 ):
-    ensure_daemon()
-    c = _client()
     headers = {}
     for h in header or []:
         k, _, v = h.partition(":")
         headers[k.strip()] = v.strip()
     payload = {"url": url, "method": method, "headers": headers, "body": data, "no_cookies": no_cookies}
-    result = run_async(c.post(f"/browser/{s}/fetch", json=payload))
+    result = call("post", "/browser/{sid}/fetch", s, json=payload)
     body = result.get("body", "")
     typer.echo(body)
-    # Non-2xx has to be visible. Printing only the body meant an empty-bodied 401
-    # printed nothing, which looks exactly like a successful empty response and
-    # hides the one fact that explains the failure. Goes to stderr so it never
-    # pollutes piped output.
+    # An empty-bodied 401 printed nothing, which reads as a successful empty response. stderr keeps pipes clean.
     status = result.get("status")
     if status is not None and not (200 <= int(status) < 300):
         hint = ""
@@ -365,13 +390,11 @@ def actions_cmd(
     as_json: bool = typer.Option(False, "--json", help="Output as JSON"),
     s: Optional[str] = session_opt,
 ):
-    ensure_daemon()
-    c = _client()
     if clear:
-        run_async(c.delete(f"/browser/{s}/actions"))
+        call("delete", "/browser/{sid}/actions", s)
         typer.echo("Action log cleared")
         return
-    result = run_async(c.get(f"/browser/{s}/actions", params={"as_json": as_json}))
+    result = call("get", "/browser/{sid}/actions", s, params={"as_json": as_json})
     if as_json:
         import json
 
@@ -398,13 +421,11 @@ def replay_cmd(
 
         with open(playbook) as f:
             pb = _json.load(f)
-    ensure_daemon()
-    c = _client()
     vars_override = {}
     for v in var or []:
         k, _, val = v.partition("=")
         vars_override[k.strip()] = val.strip()
-    result = run_async(c.post(f"/browser/{s}/replay", json={"playbook": pb, "vars": vars_override}))
+    result = call("post", "/browser/{sid}/replay", s, json={"playbook": pb, "vars": vars_override})
     for r in result["results"]:
         ok = "✓" if r["ok"] else "✗"
         act = r["action"]
@@ -425,16 +446,14 @@ def websocket_cmd(
     clear: bool = typer.Option(False, "--clear", help="Clear the websocket log"),
     s: Optional[str] = session_opt,
 ):
-    ensure_daemon()
-    c = _client()
     if clear:
-        run_async(c.delete(f"/browser/{s}/websocket"))
+        call("delete", "/browser/{sid}/websocket", s)
         typer.echo("WebSocket log cleared")
         return
     params = {"count": count}
     if search:
         params["search"] = search
-    result = run_async(c.get(f"/browser/{s}/websocket", params=params))
+    result = call("get", "/browser/{sid}/websocket", s, params=params)
     typer.echo(result["websocket"])
 
 
@@ -447,8 +466,6 @@ def click_cmd(
     retry: int = 0,
     no_wait: bool = typer.Option(False, help="Skip waiting for selector to be visible"),
 ):
-    ensure_daemon()
-    c = _client()
     payload = {"timeout": timeout, "retry": retry, "wait_for_selector": not no_wait}
     if ref is not None:
         payload["ref"] = ref
@@ -457,7 +474,7 @@ def click_cmd(
     else:
         typer.echo("Either selector or --ref required", err=True)
         raise typer.Exit(1)
-    result = run_async(c.post(f"/browser/{s}/click", json=payload))
+    result = call("post", "/browser/{sid}/click", s, json=payload)
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
     _echo_snapshot_hint(result)
@@ -473,25 +490,21 @@ def click_until_cmd(
     timeout: int = typer.Option(30000, "--timeout", help="Per-click timeout in ms"),
 ):
     """Click a selector repeatedly until the work runs out (paginated/batched UI)."""
-    ensure_daemon()
-    c = _client()
-    result = run_async(
-        c.post(
-            f"/browser/{s}/click-until",
-            json={
-                "selector": selector,
-                "until_gone": until_gone,
-                "max_iterations": max_iterations,
-                "settle_ms": settle_ms,
-                "timeout": timeout,
-            },
-        )
+    result = call(
+        "post",
+        f"/browser/{s}/click-until",
+        json={
+            "selector": selector,
+            "until_gone": until_gone,
+            "max_iterations": max_iterations,
+            "settle_ms": settle_ms,
+            "timeout": timeout,
+        },
     )
     iterations = result.get("iterations", 0)
     typer.echo(f"Clicked {iterations} time(s)")
     if not result.get("done"):
-        # A capped or failed sweep looks identical to a finished one unless the
-        # reason is surfaced, and reading it as finished leaves work undone.
+        # A capped sweep looks identical to a finished one unless the reason is surfaced.
         typer.echo(f"[brow] not done: {result.get('reason')}", err=True)
 
 
@@ -511,8 +524,6 @@ def fill_cmd(
         selector, value = None, args[0]
     else:
         selector, value = args[-2], args[-1]
-    ensure_daemon()
-    c = _client()
     payload = {"value": value, "timeout": timeout, "retry": retry, "wait_for_selector": not no_wait}
     if ref is not None:
         payload["ref"] = ref
@@ -521,7 +532,7 @@ def fill_cmd(
     else:
         typer.echo("Either selector or --ref required", err=True)
         raise typer.Exit(1)
-    result = run_async(c.post(f"/browser/{s}/fill", json=payload))
+    result = call("post", "/browser/{sid}/fill", s, json=payload)
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
     _echo_snapshot_hint(result)
@@ -541,8 +552,6 @@ def select_cmd(
         selector, value = None, args[0]
     else:
         selector, value = args[-2], args[-1]
-    ensure_daemon()
-    c = _client()
     payload = {"value": value, "timeout": timeout}
     if ref is not None:
         payload["ref"] = ref
@@ -551,7 +560,7 @@ def select_cmd(
     else:
         typer.echo("Either selector or --ref required", err=True)
         raise typer.Exit(1)
-    result = run_async(c.post(f"/browser/{s}/select", json=payload))
+    result = call("post", "/browser/{sid}/select", s, json=payload)
     if result.get("snapshot"):
         typer.echo(result["snapshot"])
     _echo_snapshot_hint(result)
@@ -559,23 +568,17 @@ def select_cmd(
 
 @app.command("type")
 def type_cmd(text: str, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post(f"/browser/{s}/type", json={"text": text}))
+    call("post", "/browser/{sid}/type", s, json={"text": text})
 
 
 @app.command("key")
 def key_cmd(key: str, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post(f"/browser/{s}/key", json={"key": key}))
+    call("post", "/browser/{sid}/key", s, json={"key": key})
 
 
 @app.command("hover")
 def hover_cmd(selector: str, s: Optional[str] = session_opt, timeout: int = 30000):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post(f"/browser/{s}/hover", json={"selector": selector, "timeout": timeout}))
+    call("post", "/browser/{sid}/hover", s, json={"selector": selector, "timeout": timeout})
 
 
 @app.command("scroll")
@@ -585,52 +588,39 @@ def scroll_cmd(
     max_attempts: int = typer.Option(10, "--max-attempts"),
     s: Optional[str] = session_opt,
 ):
-    ensure_daemon()
-    c = _client()
     if until:
-        result = run_async(
-            c.post(
-                f"/browser/{s}/scroll-until",
-                json={"until": until, "pixels": pixels or 800, "max_attempts": max_attempts},
-            )
+        result = call(
+            "post",
+            f"/browser/{s}/scroll-until",
+            json={"until": until, "pixels": pixels or 800, "max_attempts": max_attempts},
         )
         if result.get("found"):
             typer.echo(f"Found after {result['attempts']} scroll(s)")
         else:
             typer.echo(f"Not found after {result['attempts']} scroll(s)", err=True)
     else:
-        run_async(c.post(f"/browser/{s}/scroll", json={"pixels": pixels}))
+        call("post", "/browser/{sid}/scroll", s, json={"pixels": pixels})
 
 
 @app.command("scroll-to")
 def scroll_to_cmd(selector: str, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post(f"/browser/{s}/scroll", json={"selector": selector}))
+    call("post", "/browser/{sid}/scroll", s, json={"selector": selector})
 
 
 @app.command("drag")
 def drag_cmd(source: str, target: str, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post(f"/browser/{s}/drag", json={"source": source, "target": target}))
+    call("post", "/browser/{sid}/drag", s, json={"source": source, "target": target})
 
 
 @app.command("upload")
 def upload_cmd(selector: str, filepath: str, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post(f"/browser/{s}/upload", json={"selector": selector, "filepath": filepath}))
+    call("post", "/browser/{sid}/upload", s, json={"selector": selector, "filepath": filepath})
 
 
 @page_app.command("list")
 def page_list(s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    result = run_async(c.get(f"/pages/{s}"))
+    result = call("get", "/pages/{sid}", s)
     for p in result["pages"]:
-        # The marker answers "where will my next command land?", which is
-        # otherwise invisible.
         typer.echo(f"{p['index']}\t{'*' if p.get('active') else ' '}\t{p['url']}")
 
 
@@ -639,65 +629,99 @@ def page_new(
     url: Optional[str] = typer.Argument(None, help="URL to open in the new tab"),
     s: Optional[str] = session_opt,
 ):
-    ensure_daemon()
-    c = _client()
-    result = run_async(c.post(f"/pages/{s}/new", json={"url": url}))
+    result = call("post", "/pages/{sid}/new", s, json={"url": url})
     typer.echo(f"Page {result['index']}: {result['url']}")
 
 
 @page_app.command("close")
 def page_close(index: Optional[int] = None, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post(f"/pages/{s}/close", params={"index": index} if index is not None else {}))
+    call("post", "/pages/{sid}/close", s, params={"index": index} if index is not None else {})
 
 
 @page_app.command("switch")
 def page_switch(index: int, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    result = run_async(c.post(f"/pages/{s}/switch", json={"index": index}))
+    result = call("post", "/pages/{sid}/switch", s, json={"index": index})
     typer.echo(f"Switched to page {result['active']}: {result['url']}")
 
 
 @profile_app.command("list")
 def profile_list():
-    ensure_daemon()
-    c = _client()
-    result = run_async(c.get("/profiles"))
+    result = call("get", "/profiles")
     for p in result["profiles"]:
         typer.echo(p)
 
 
 @profile_app.command("delete")
 def profile_delete(name: str):
-    ensure_daemon()
-    c = _client()
-    run_async(c.delete(f"/profiles/{name}"))
+    call("delete", f"/profiles/{name}")
     typer.echo(f"Deleted profile {name}")
+
+
+def _dir_size(path):
+    return sum(f.stat().st_size for f in path.rglob("*") if f.is_file())
+
+
+def _fmt_size(n):
+    for unit in ("B", "K", "M", "G"):
+        if n < 1024 or unit == "G":
+            return f"{n:.0f}{unit}" if unit == "B" else f"{n:.1f}{unit}"
+        n /= 1024
+
+
+@profile_app.command("prune")
+def profile_prune(
+    days: int = typer.Option(30, "--days", help="Only consider profiles untouched for this many days"),
+    yes: bool = typer.Option(False, "--yes", help="Actually delete; without this it only reports"),
+):
+    """Delete stale profile directories. Reports only unless --yes is given."""
+    if not PROFILES_DIR.exists():
+        typer.echo("No profiles directory")
+        return
+
+    protected = {current.default_profile(), current.FALLBACK_PROFILE, "default"}
+    live = {s["profile"] for s in call("get", "/sessions")}
+    cutoff = time.time() - days * 86400
+
+    stale = sorted(
+        (p for p in PROFILES_DIR.iterdir() if p.is_dir() and p.name not in protected and p.name not in live),
+        key=lambda p: p.stat().st_mtime,
+    )
+    stale = [p for p in stale if p.stat().st_mtime < cutoff]
+    if not stale:
+        typer.echo(f"Nothing to prune (no profiles older than {days} days outside {sorted(protected)})")
+        return
+
+    total = 0
+    for p in stale:
+        size = _dir_size(p)
+        total += size
+        age = int((time.time() - p.stat().st_mtime) / 86400)
+        typer.echo(f"{_fmt_size(size):>8}  {age:>4}d  {p.name}")
+
+    if not yes:
+        typer.echo(f"\n{len(stale)} profile(s), {_fmt_size(total)} — re-run with --yes to delete", err=True)
+        return
+
+    for p in stale:
+        shutil.rmtree(p, ignore_errors=True)
+    typer.echo(f"\nDeleted {len(stale)} profile(s), freed {_fmt_size(total)}")
 
 
 @state_app.command("save")
 def state_save(name: str, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post("/states/save", json={"name": name, "session_id": s}))
+    call("post", "/states/save", json={"name": name, "session_id": resolved_sid(s)})
     typer.echo(f"State saved: {name}")
 
 
 @state_app.command("restore")
 def state_restore(name: str, s: Optional[str] = session_opt):
-    ensure_daemon()
-    c = _client()
-    run_async(c.post("/states/restore", json={"name": name, "session_id": s}))
+    call("post", "/states/restore", json={"name": name, "session_id": resolved_sid(s)})
     typer.echo(f"State restored: {name}")
 
 
 @state_app.command("list")
 def state_list():
-    ensure_daemon()
-    c = _client()
-    result = run_async(c.get("/states"))
+    result = call("get", "/states")
     for st in result["states"]:
         typer.echo(st)
 
@@ -712,9 +736,7 @@ def eval_cmd(
 ):
     import json
 
-    ensure_daemon()
-    c = _client()
-    result = run_async(c.post(f"/eval/{s}", json={"code": code, "timeout": timeout}))
+    result = call("post", "/eval/{sid}", s, json={"code": code, "timeout": timeout})
     if result.get("stdout"):
         typer.echo(result["stdout"], nl=False)
     if result.get("result") is not None:
@@ -746,9 +768,7 @@ def run_cmd(
         args[k.strip()] = v.strip()
     code = f"args = {json.dumps(args)}\n" + code
 
-    ensure_daemon()
-    c = _client()
-    result = run_async(c.post(f"/eval/{s}", json={"code": code, "timeout": timeout}))
+    result = call("post", "/eval/{sid}", s, json={"code": code, "timeout": timeout})
     if result.get("stdout"):
         typer.echo(result["stdout"], nl=False)
     if result.get("result") is not None:
