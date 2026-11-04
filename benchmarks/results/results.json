@@ -1,1848 +1,265 @@
 [
   {
-    "task_id": "rapid-multi-step",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "task_id": "github-trending-python",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
     "success": true,
-    "total_input_tokens": 123275,
-    "total_output_tokens": 1125,
-    "tool_calls": 12,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2255,
-        "output_tokens": 99,
-        "latency_ms": 557,
-        "response_bytes": 812,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 2667,
-        "output_tokens": 109,
-        "latency_ms": 315,
-        "response_bytes": 808,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 3417,
-        "output_tokens": 88,
-        "latency_ms": 305,
-        "response_bytes": 824,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 4757,
-        "output_tokens": 71,
-        "latency_ms": 307,
-        "response_bytes": 824,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 6706,
-        "output_tokens": 113,
-        "latency_ms": 288,
-        "response_bytes": 843,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 8708,
-        "output_tokens": 89,
-        "latency_ms": 286,
-        "response_bytes": 862,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 10706,
-        "output_tokens": 71,
-        "latency_ms": 293,
-        "response_bytes": 862,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_select",
-        "input_tokens": 12705,
-        "output_tokens": 114,
-        "latency_ms": 277,
-        "response_bytes": 863,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 14771,
-        "output_tokens": 71,
-        "latency_ms": 306,
-        "response_bytes": 862,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 16804,
-        "output_tokens": 71,
-        "latency_ms": 307,
-        "response_bytes": 889,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 18846,
-        "output_tokens": 107,
-        "latency_ms": 312,
-        "response_bytes": 889,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 20933,
-        "output_tokens": 122,
-        "latency_ms": 0,
-        "response_bytes": 94,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 39729,
-    "errors": [],
-    "error_recoveries": 0,
-    "final_output": {
-      "confirmation": "Thank you for registering!"
-    },
-    "run_id": "b0163795",
-    "timestamp": "2026-04-04T10:32:43.068077+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 12
-  },
-  {
-    "task_id": "form-fill",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": false,
-    "total_input_tokens": 30426,
-    "total_output_tokens": 641,
-    "tool_calls": 7,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2201,
-        "output_tokens": 88,
-        "latency_ms": 563,
-        "response_bytes": 527,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 2481,
-        "output_tokens": 86,
-        "latency_ms": 305,
-        "response_bytes": 527,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 2967,
-        "output_tokens": 92,
-        "latency_ms": 292,
-        "response_bytes": 554,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_select",
-        "input_tokens": 3832,
-        "output_tokens": 88,
-        "latency_ms": 285,
-        "response_bytes": 554,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 5083,
-        "output_tokens": 91,
-        "latency_ms": 289,
-        "response_bytes": 587,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 6360,
-        "output_tokens": 79,
-        "latency_ms": 380,
-        "response_bytes": 163,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 7502,
-        "output_tokens": 117,
-        "latency_ms": 0,
-        "response_bytes": 172,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 18379,
-    "errors": [],
-    "error_recoveries": 0,
-    "final_output": {
-      "result": "Thank you, John Doe! Your message about 'support' has been received.\nWe'll reply to john@example.com shortly."
-    },
-    "run_id": "af6c0ebd",
-    "timestamp": "2026-04-04T10:33:01.469553+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 7
-  },
-  {
-    "task_id": "spa-navigation",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 73837,
-    "total_output_tokens": 1162,
-    "tool_calls": 10,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2288,
-        "output_tokens": 104,
-        "latency_ms": 472,
-        "response_bytes": 558,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 2629,
-        "output_tokens": 121,
-        "latency_ms": 317,
-        "response_bytes": 714,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 3294,
-        "output_tokens": 81,
-        "latency_ms": 277,
-        "response_bytes": 714,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 4462,
-        "output_tokens": 130,
-        "latency_ms": 311,
-        "response_bytes": 579,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 6253,
-        "output_tokens": 99,
-        "latency_ms": 294,
-        "response_bytes": 579,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_wait",
-        "input_tokens": 8115,
-        "output_tokens": 117,
-        "latency_ms": 270,
-        "response_bytes": 18,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 9665,
-        "output_tokens": 54,
-        "latency_ms": 281,
-        "response_bytes": 776,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_select",
-        "input_tokens": 11102,
-        "output_tokens": 128,
-        "latency_ms": 282,
-        "response_bytes": 775,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 12393,
-        "output_tokens": 95,
-        "latency_ms": 278,
-        "response_bytes": 479,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 13636,
-        "output_tokens": 233,
-        "latency_ms": 0,
-        "response_bytes": 341,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 31206,
-    "errors": [],
-    "error_recoveries": 0,
-    "final_output": {
-      "home": {
-        "active_users": 1234,
-        "revenue": "$56,789"
-      },
-      "admin_count": 1,
-      "stats": [
-        {
-          "month": "Jan",
-          "visitors": "10,500",
-          "revenue": "$12,300"
-        },
-        {
-          "month": "Feb",
-          "visitors": "11,200",
-          "revenue": "$13,100"
-        },
-        {
-          "month": "Mar",
-          "visitors": "12,800",
-          "revenue": "$15,600"
-        }
-      ],
-      "settings_saved": true
-    },
-    "run_id": "3bc8a0a3",
-    "timestamp": "2026-04-04T10:33:32.693461+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 10
-  },
-  {
-    "task_id": "data-table-extract",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 61907,
-    "total_output_tokens": 2055,
-    "tool_calls": 8,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2228,
-        "output_tokens": 105,
-        "latency_ms": 549,
-        "response_bytes": 739,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 2732,
-        "output_tokens": 109,
-        "latency_ms": 306,
-        "response_bytes": 815,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 3650,
-        "output_tokens": 116,
-        "latency_ms": 279,
-        "response_bytes": 815,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_scroll",
-        "input_tokens": 5350,
-        "output_tokens": 109,
-        "latency_ms": 246,
-        "response_bytes": 1098,
-        "success": false,
-        "error": "Usage: brow scroll [OPTIONS]\nTry 'brow scroll --help' for help.\n\u256d\u2500 Error \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Got unexpected extra argument (300)                                          \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 8113,
-        "output_tokens": 421,
-        "latency_ms": 274,
-        "response_bytes": 210,
-        "success": false,
-        "error": "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 10859,
-        "output_tokens": 406,
-        "latency_ms": 269,
-        "response_bytes": 210,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 13506,
-        "output_tokens": 440,
-        "latency_ms": 276,
-        "response_bytes": 428,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 15469,
-        "output_tokens": 349,
-        "latency_ms": 0,
-        "response_bytes": 516,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 31734,
+    "total_input_tokens": 13780,
+    "total_output_tokens": 1039,
+    "tool_calls": 2,
+    "tool_call_log": [],
+    "wall_clock_ms": 34434,
     "errors": [
-      "Usage: brow scroll [OPTIONS]\nTry 'brow scroll --help' for help.\n\u256d\u2500 Error \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Got unexpected extra argument (300)                                          \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f",
-      "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+      "None",
+      "None"
     ],
-    "error_recoveries": 1,
+    "error_recoveries": 0,
     "final_output": {
-      "products": [
+      "repositories": [
         {
-          "id": 78,
-          "name": "Vintage Box 78",
-          "category": "Electronics",
-          "price": "$579.40",
-          "stock": 14,
-          "rating": 4.6
+          "name": "Blaizzy/mlx-vlm",
+          "description": "MLX-VLM is a package for inference and fine-tuning of Vision Language Models (VLMs) on your Mac using MLX.",
+          "stars_today": 499,
+          "total_stars": 3385
         },
         {
-          "id": 84,
-          "name": "Mini Kit 84",
-          "category": "Electronics",
-          "price": "$623.20",
-          "stock": 92,
-          "rating": 4.7
+          "name": "onyx-dot-app/onyx",
+          "description": "Open Source AI Platform - AI Chat with advanced features that works with every LLM",
+          "stars_today": 1212,
+          "total_stars": 23751
         },
         {
-          "id": 90,
-          "name": "Premium Widget 90",
-          "category": "Electronics",
-          "price": "$667.00",
-          "stock": 170,
-          "rating": 4.8
+          "name": "microsoft/agent-framework",
+          "description": "A framework for building, orchestrating and deploying AI agents and multi-agent workflows with support for Python and .NET.",
+          "stars_today": 66,
+          "total_stars": 8529
         },
         {
-          "id": 96,
-          "name": "Classic Set 96",
-          "category": "Electronics",
-          "price": "$710.80",
-          "stock": 248,
-          "rating": 4.9
+          "name": "sherlock-project/sherlock",
+          "description": "Hunt down social media accounts by username across social networks",
+          "stars_today": 993,
+          "total_stars": 78943
+        },
+        {
+          "name": "HKUDS/LightRAG",
+          "description": "[EMNLP2025] \"LightRAG: Simple and Fast Retrieval-Augmented Generation\"",
+          "stars_today": 272,
+          "total_stars": 32014
         }
       ]
     },
-    "run_id": "9e2d9add",
-    "timestamp": "2026-04-04T10:34:04.445509+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 8
+    "run_id": "b0f5db0f",
+    "timestamp": "2026-04-04T13:37:59.766593+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 2
   },
   {
-    "task_id": "multi-page-nav",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 10637,
-    "total_output_tokens": 503,
-    "tool_calls": 4,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2220,
-        "output_tokens": 100,
-        "latency_ms": 504,
-        "response_bytes": 422,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 2501,
-        "output_tokens": 107,
-        "latency_ms": 340,
-        "response_bytes": 445,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 2802,
-        "output_tokens": 121,
-        "latency_ms": 315,
-        "response_bytes": 433,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 3114,
-        "output_tokens": 175,
-        "latency_ms": 0,
-        "response_bytes": 111,
-        "success": true,
-        "error": null
-      }
+    "task_id": "hacker-news-ask",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
+    "success": false,
+    "total_input_tokens": 35103,
+    "total_output_tokens": 1741,
+    "tool_calls": 5,
+    "tool_call_log": [],
+    "wall_clock_ms": 86820,
+    "errors": [
+      "None",
+      "None",
+      "Too many tokens, please wait before trying again.",
+      "Too many tokens, please wait before trying again.",
+      "None"
     ],
-    "wall_clock_ms": 11141,
-    "errors": [],
     "error_recoveries": 0,
     "final_output": {
-      "founded": 2020,
-      "team_size": 3,
-      "email": "hello@example.com"
+      "result": "I have successfully scanned all 30 stories on the Hacker News front page. After examining each title carefully, I found no stories that start with \"Ask HN:\". There is one story that starts with \"Tell HN:\" (\"Tell HN: Anthropic no longer allowing Claude Code subscriptions to use OpenClaw\"), but this is different from \"Ask HN:\" posts.\n\nSince no Ask HN posts are currently on the front page, I'm returning an empty array as requested."
     },
-    "run_id": "adca39fc",
-    "timestamp": "2026-04-04T10:34:15.595428+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 4
+    "run_id": "77b8c3df",
+    "timestamp": "2026-04-04T13:39:26.599651+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 5
   },
   {
-    "task_id": "large-snapshot",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 78262,
-    "total_output_tokens": 2033,
-    "tool_calls": 7,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2200,
-        "output_tokens": 89,
-        "latency_ms": 416,
-        "response_bytes": 5535,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 4554,
-        "output_tokens": 141,
-        "latency_ms": 285,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 6975,
-        "output_tokens": 349,
-        "latency_ms": 347,
-        "response_bytes": 210,
-        "success": false,
-        "error": "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 11931,
-        "output_tokens": 428,
-        "latency_ms": 279,
-        "response_bytes": 108,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 16948,
-        "output_tokens": 432,
-        "latency_ms": 253,
-        "response_bytes": 364,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 17557,
-        "output_tokens": 415,
-        "latency_ms": 268,
-        "response_bytes": 222,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 18097,
-        "output_tokens": 179,
-        "latency_ms": 0,
-        "response_bytes": 94,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 32427,
+    "task_id": "npm-http-clients",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
+    "success": false,
+    "total_input_tokens": 189398,
+    "total_output_tokens": 9831,
+    "tool_calls": 16,
+    "tool_call_log": [],
+    "wall_clock_ms": 270100,
     "errors": [
-      "Error (400): Page.evaluate: SyntaxError: Illegal return statement\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+      "Too many tokens, please wait before trying again.",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
     ],
-    "error_recoveries": 1,
+    "error_recoveries": 0,
     "final_output": {
-      "item_100_value": "0",
-      "item_500_value": "0"
+      "result": "I was unable to complete the research task due to systematic blocking by security verification systems across all platforms.\n\n**Technical Blockers Encountered:**\n\n1. **npm.com pages**: All npm.com URLs (search page, homepage, individual package pages including axios) are protected by Cloudflare security verification that did not auto-resolve after 40+ seconds of waiting across multiple attempts.\n\n2. **Search engines**: All major search engines blocked access:\n   - DuckDuckGo: Required manual CAPTCHA (selecting duck images)\n   - Google: reCAPTCHA verification page that didn't auto-resolve\n   - Bing: Cloudflare security challenge\n\n3. **Direct package access**: Even direct navigation to known popular packages like axios (https://www.npmjs.com/package/axios) hit the same Cloudflare verification wall.\n\n**Attempted Approaches (16 steps total):**\n- Multiple npm search page attempts with extended waiting periods\n- Homepage navigation attempts\n- Search engine queries for popular JavaScript HTTP libraries\n- Direct navigation to known popular packages\n\n**Unable to Extract:**\n- Weekly download numbers from npm package pages\n- Latest version information\n- Package descriptions\n- Top 3 packages by npm popularity ranking\n\nThe task requires accessing npm.com pages to extract specific weekly download data, but this was systematically prevented by persistent security verification across all access methods. The browser rules indicate CAPTCHAs should be automatically solved, but this did not occur for any of the encountered verification systems."
     },
-    "run_id": "593f600c",
-    "timestamp": "2026-04-04T10:34:48.031575+00:00",
-    "brow_version": "4769292",
+    "run_id": "7582fff0",
+    "timestamp": "2026-04-04T13:43:56.711348+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 16
+  },
+  {
+    "task_id": "paginated-news",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
+    "success": true,
+    "total_input_tokens": 94246,
+    "total_output_tokens": 6341,
+    "tool_calls": 7,
+    "tool_call_log": [],
+    "wall_clock_ms": 109451,
+    "errors": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "error_recoveries": 0,
+    "final_output": {
+      "articles": [
+        {
+          "title": "AI Tools Reshape Developer Workflows",
+          "date": "2025-01-13",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Open Source AI Models: A Review",
+          "date": "2025-01-07",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "WebAssembly and Browser Performance",
+          "date": "2024-12-31",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        },
+        {
+          "title": "Cybersecurity Trends 2025",
+          "date": "2024-12-20",
+          "author": "Sarah Chen",
+          "category": "Technology"
+        }
+      ]
+    },
+    "run_id": "6e77a9a5",
+    "timestamp": "2026-04-04T13:45:46.174038+00:00",
+    "brow_version": "n/a",
     "conversation_turns": 7
   },
   {
-    "task_id": "multi-tab-workflow",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "task_id": "price-comparison",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
     "success": true,
-    "total_input_tokens": 42813,
-    "total_output_tokens": 1757,
-    "tool_calls": 10,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2258,
-        "output_tokens": 92,
-        "latency_ms": 538,
-        "response_bytes": 589,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 2615,
-        "output_tokens": 205,
-        "latency_ms": 970,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 3100,
-        "output_tokens": 183,
-        "latency_ms": 276,
-        "response_bytes": 109,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 3864,
-        "output_tokens": 76,
-        "latency_ms": 278,
-        "response_bytes": 211,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 4573,
-        "output_tokens": 228,
-        "latency_ms": 303,
-        "response_bytes": 88,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 4843,
-        "output_tokens": 73,
-        "latency_ms": 388,
-        "response_bytes": 211,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 5021,
-        "output_tokens": 212,
-        "latency_ms": 343,
-        "response_bytes": 87,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 5276,
-        "output_tokens": 112,
-        "latency_ms": 273,
-        "response_bytes": 101,
-        "success": false,
-        "error": "Error (400): cannot access local variable 'page' where it is not associated with a value"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 5425,
-        "output_tokens": 366,
-        "latency_ms": 285,
-        "response_bytes": 82,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 5838,
-        "output_tokens": 210,
-        "latency_ms": 0,
-        "response_bytes": 274,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 56421,
+    "total_input_tokens": 64635,
+    "total_output_tokens": 5249,
+    "tool_calls": 5,
+    "tool_call_log": [],
+    "wall_clock_ms": 79785,
     "errors": [
-      "Error (400): cannot access local variable 'page' where it is not associated with a value"
-    ],
-    "error_recoveries": 1,
-    "final_output": {
-      "headphones": {
-        "name": "Wireless Headphones",
-        "price": "$79.99",
-        "rating": "4.5/5 (234 reviews)",
-        "specs": "Bluetooth 5.0, 30hr battery, ANC",
-        "sku": "WH-001"
-      },
-      "usb_hub": {
-        "price": "$34.99",
-        "rating": "4.7/5 (456 reviews)"
-      }
-    },
-    "run_id": "e74685fa",
-    "timestamp": "2026-04-04T10:35:44.472047+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 10
-  },
-  {
-    "task_id": "ecommerce-search",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 44709,
-    "total_output_tokens": 1297,
-    "tool_calls": 7,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2194,
-        "output_tokens": 90,
-        "latency_ms": 552,
-        "response_bytes": 982,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_select",
-        "input_tokens": 2702,
-        "output_tokens": 103,
-        "latency_ms": 288,
-        "response_bytes": 967,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_select",
-        "input_tokens": 3652,
-        "output_tokens": 130,
-        "latency_ms": 282,
-        "response_bytes": 969,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 5440,
-        "output_tokens": 388,
-        "latency_ms": 270,
-        "response_bytes": 390,
-        "success": false,
-        "error": "Error (400): Page.evaluate: TypeError: Cannot read properties of null (reading 'textContent')\n    at eval (eval at evaluate (:290:30), <anonymous>:5:63)\n    at Array.map (<anonymous>)\n    at eval (eval at evaluate (:290:30), <anonymous>:1:51)\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 8033,
-        "output_tokens": 126,
-        "latency_ms": 262,
-        "response_bytes": 1588,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 10389,
-        "output_tokens": 326,
-        "latency_ms": 270,
-        "response_bytes": 390,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 12299,
-        "output_tokens": 134,
-        "latency_ms": 0,
-        "response_bytes": 108,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 27307,
-    "errors": [
-      "Error (400): Page.evaluate: TypeError: Cannot read properties of null (reading 'textContent')\n    at eval (eval at evaluate (:290:30), <anonymous>:5:63)\n    at Array.map (<anonymous>)\n    at eval (eval at evaluate (:290:30), <anonymous>:1:51)\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:290:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
-    ],
-    "error_recoveries": 1,
-    "final_output": {
-      "name": "GameStation Pro",
-      "price": "$1899",
-      "rating": 4.8
-    },
-    "run_id": "07238d37",
-    "timestamp": "2026-04-04T10:36:11.801420+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 7
-  },
-  {
-    "task_id": "deep-wizard",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": false,
-    "total_input_tokens": 291971,
-    "total_output_tokens": 1701,
-    "tool_calls": 17,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2339,
-        "output_tokens": 98,
-        "latency_ms": 527,
-        "response_bytes": 2179,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 3256,
-        "output_tokens": 105,
-        "latency_ms": 311,
-        "response_bytes": 2175,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 5014,
-        "output_tokens": 88,
-        "latency_ms": 288,
-        "response_bytes": 2191,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 8378,
-        "output_tokens": 100,
-        "latency_ms": 30296,
-        "response_bytes": 355,
-        "success": false,
-        "error": "Error (500): Failed to fill selector '[data-brow-ref=\"4\"]' after 1 attempts. Last error: Page.wait_for_selector: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-brow-ref=\\\"4\\\"]\") to be visible\n    64 \u00d7 locator resolved to hidden <input id=\"email\" type=\"email\" data-brow-ref=\"4\" placeholder=\"Email\"/>"
-      },
-      {
-        "name": "brow_scroll",
-        "input_tokens": 12704,
-        "output_tokens": 95,
-        "latency_ms": 30388,
-        "response_bytes": 47,
-        "success": false,
-        "error": "Error (500): Internal Server Error"
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 16099,
-        "output_tokens": 103,
-        "latency_ms": 30370,
-        "response_bytes": 321,
-        "success": false,
-        "error": "Error (500): Failed to fill selector '#email' after 1 attempts. Last error: Page.wait_for_selector: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#email\") to be visible\n    64 \u00d7 locator resolved to hidden <input id=\"email\" type=\"email\" data-brow-ref=\"4\" placeholder=\"Email\"/>"
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 17957,
-        "output_tokens": 100,
-        "latency_ms": 391,
-        "response_bytes": 2191,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 18878,
-        "output_tokens": 122,
-        "latency_ms": 248,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 19837,
-        "output_tokens": 100,
-        "latency_ms": 270,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 21595,
-        "output_tokens": 106,
-        "latency_ms": 271,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_select",
-        "input_tokens": 23359,
-        "output_tokens": 88,
-        "latency_ms": 30297,
-        "response_bytes": 47,
-        "success": false,
-        "error": "Error (500): Internal Server Error"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 23471,
-        "output_tokens": 96,
-        "latency_ms": 274,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 23583,
-        "output_tokens": 106,
-        "latency_ms": 271,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 23705,
-        "output_tokens": 96,
-        "latency_ms": 282,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 23817,
-        "output_tokens": 96,
-        "latency_ms": 281,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 23929,
-        "output_tokens": 105,
-        "latency_ms": 270,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 24050,
-        "output_tokens": 97,
-        "latency_ms": 265,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 181294,
-    "errors": [
-      "Error (500): Failed to fill selector '[data-brow-ref=\"4\"]' after 1 attempts. Last error: Page.wait_for_selector: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-brow-ref=\\\"4\\\"]\") to be visible\n    64 \u00d7 locator resolved to hidden <input id=\"email\" type=\"email\" data-brow-ref=\"4\" placeholder=\"Email\"/>",
-      "Error (500): Internal Server Error",
-      "Error (500): Failed to fill selector '#email' after 1 attempts. Last error: Page.wait_for_selector: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#email\") to be visible\n    64 \u00d7 locator resolved to hidden <input id=\"email\" type=\"email\" data-brow-ref=\"4\" placeholder=\"Email\"/>",
-      "Error (500): Internal Server Error"
-    ],
-    "error_recoveries": 0,
-    "final_output": {},
-    "run_id": "2cebbfeb",
-    "timestamp": "2026-04-04T10:39:13.114606+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 17
-  },
-  {
-    "task_id": "search-extract",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 8601,
-    "total_output_tokens": 578,
-    "tool_calls": 3,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2201,
-        "output_tokens": 97,
-        "latency_ms": 536,
-        "response_bytes": 1134,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 2769,
-        "output_tokens": 206,
-        "latency_ms": 276,
-        "response_bytes": 349,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 3631,
-        "output_tokens": 275,
-        "latency_ms": 0,
-        "response_bytes": 383,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 10014,
-    "errors": [],
-    "error_recoveries": 0,
-    "final_output": [
-      {
-        "title": "Blue Bottle Coffee",
-        "url": "http://127.0.0.1:63443/r/1"
-      },
-      {
-        "title": "Stumptown Coffee Roasters",
-        "url": "http://127.0.0.1:63443/r/2"
-      },
-      {
-        "title": "Joe Coffee Company",
-        "url": "http://127.0.0.1:63443/r/3"
-      },
-      {
-        "title": "Devocion",
-        "url": "http://127.0.0.1:63443/r/4"
-      },
-      {
-        "title": "Abraco",
-        "url": "http://127.0.0.1:63443/r/5"
-      }
-    ],
-    "run_id": "48d50349",
-    "timestamp": "2026-04-04T10:39:23.150633+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 3
-  },
-  {
-    "task_id": "login-auth",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 52711,
-    "total_output_tokens": 2208,
-    "tool_calls": 14,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2215,
-        "output_tokens": 90,
-        "latency_ms": 411,
-        "response_bytes": 77,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 2341,
-        "output_tokens": 66,
-        "latency_ms": 279,
-        "response_bytes": 58,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 2437,
-        "output_tokens": 113,
-        "latency_ms": 290,
-        "response_bytes": 94,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 2598,
-        "output_tokens": 117,
-        "latency_ms": 278,
-        "response_bytes": 80,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 2760,
-        "output_tokens": 103,
-        "latency_ms": 268,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2879,
-        "output_tokens": 88,
-        "latency_ms": 252,
-        "response_bytes": 51,
-        "success": false,
-        "error": "Error (400): Max sessions (10) reached"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 3011,
-        "output_tokens": 148,
-        "latency_ms": 277,
-        "response_bytes": 60,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 3196,
-        "output_tokens": 316,
-        "latency_ms": 305,
-        "response_bytes": 368,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 3637,
-        "output_tokens": 315,
-        "latency_ms": 286,
-        "response_bytes": 576,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 4195,
-        "output_tokens": 290,
-        "latency_ms": 276,
-        "response_bytes": 382,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 4886,
-        "output_tokens": 123,
-        "latency_ms": 287,
-        "response_bytes": 182,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 5575,
-        "output_tokens": 168,
-        "latency_ms": 270,
-        "response_bytes": 408,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 6378,
-        "output_tokens": 172,
-        "latency_ms": 271,
-        "response_bytes": 124,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 6603,
-        "output_tokens": 99,
-        "latency_ms": 0,
-        "response_bytes": 94,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 44163,
-    "errors": [
-      "Error (400): Max sessions (10) reached"
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
     ],
     "error_recoveries": 0,
     "final_output": {
-      "username": "admin",
-      "role": "Administrator"
+      "comparisons": [
+        {
+          "name": "USB-C Hub 7-in-1",
+          "price_techmart": "$29.99",
+          "price_digishop": "$24.99",
+          "cheaper_store": "DigiShop"
+        },
+        {
+          "name": "Keyboard Elite TKL",
+          "price_techmart": "$149.00",
+          "price_digishop": "$159.00",
+          "cheaper_store": "TechMart"
+        },
+        {
+          "name": "Monitor 27\" 4K",
+          "price_techmart": "$399.00",
+          "price_digishop": "$379.00",
+          "cheaper_store": "DigiShop"
+        }
+      ]
     },
-    "run_id": "dd4dc525",
-    "timestamp": "2026-04-04T10:40:07.322316+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 14
+    "run_id": "aeb20bb2",
+    "timestamp": "2026-04-04T13:47:05.971768+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 5
   },
   {
-    "task_id": "error-recovery",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "task_id": "tech-stack-graph",
+    "backend": "browser-use",
+    "model": "ChatAWSBedrock",
     "success": true,
-    "total_input_tokens": 58467,
-    "total_output_tokens": 2037,
-    "tool_calls": 17,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2205,
-        "output_tokens": 102,
-        "latency_ms": 553,
-        "response_bytes": 96,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 2353,
-        "output_tokens": 136,
-        "latency_ms": 289,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 2505,
-        "output_tokens": 116,
-        "latency_ms": 288,
-        "response_bytes": 114,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 2680,
-        "output_tokens": 98,
-        "latency_ms": 270,
-        "response_bytes": 114,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 2837,
-        "output_tokens": 94,
-        "latency_ms": 287,
-        "response_bytes": 114,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 2990,
-        "output_tokens": 92,
-        "latency_ms": 304,
-        "response_bytes": 114,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 3141,
-        "output_tokens": 85,
-        "latency_ms": 291,
-        "response_bytes": 113,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 3285,
-        "output_tokens": 118,
-        "latency_ms": 265,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 3419,
-        "output_tokens": 140,
-        "latency_ms": 278,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 3575,
-        "output_tokens": 149,
-        "latency_ms": 270,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 3740,
-        "output_tokens": 103,
-        "latency_ms": 283,
-        "response_bytes": 114,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 3902,
-        "output_tokens": 85,
-        "latency_ms": 270,
-        "response_bytes": 113,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 4046,
-        "output_tokens": 96,
-        "latency_ms": 287,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 4158,
-        "output_tokens": 178,
-        "latency_ms": 298,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_goto",
-        "input_tokens": 4350,
-        "output_tokens": 100,
-        "latency_ms": 296,
-        "response_bytes": 113,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 4509,
-        "output_tokens": 240,
-        "latency_ms": 280,
-        "response_bytes": 36,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 4772,
-        "output_tokens": 105,
-        "latency_ms": 0,
-        "response_bytes": 69,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 47697,
-    "errors": [],
-    "error_recoveries": 0,
-    "final_output": {
-      "text": "Found me!"
-    },
-    "run_id": "e8a64dfc",
-    "timestamp": "2026-04-04T10:40:55.038120+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 17
-  },
-  {
-    "task_id": "infinite-scroll",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": false,
-    "total_input_tokens": 118735,
-    "total_output_tokens": 1392,
-    "tool_calls": 15,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2236,
-        "output_tokens": 93,
-        "latency_ms": 523,
-        "response_bytes": 770,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 2584,
-        "output_tokens": 121,
-        "latency_ms": 277,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_scroll",
-        "input_tokens": 2975,
-        "output_tokens": 103,
-        "latency_ms": 271,
-        "response_bytes": 1098,
-        "success": false,
-        "error": "Usage: brow scroll [OPTIONS]\nTry 'brow scroll --help' for help.\n\u256d\u2500 Error \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Got unexpected extra argument (800)                                          \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 4263,
-        "output_tokens": 116,
-        "latency_ms": 283,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_wait",
-        "input_tokens": 5579,
-        "output_tokens": 105,
-        "latency_ms": 292,
-        "response_bytes": 18,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 7054,
-        "output_tokens": 54,
-        "latency_ms": 276,
-        "response_bytes": 752,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 8709,
-        "output_tokens": 117,
-        "latency_ms": 277,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 9090,
-        "output_tokens": 110,
-        "latency_ms": 278,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_wait",
-        "input_tokens": 9712,
-        "output_tokens": 90,
-        "latency_ms": 250,
-        "response_bytes": 18,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 10316,
-        "output_tokens": 73,
-        "latency_ms": 274,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 10405,
-        "output_tokens": 65,
-        "latency_ms": 274,
-        "response_bytes": 752,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 10719,
-        "output_tokens": 117,
-        "latency_ms": 281,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_wait",
-        "input_tokens": 11100,
-        "output_tokens": 90,
-        "latency_ms": 271,
-        "response_bytes": 18,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 11704,
-        "output_tokens": 73,
-        "latency_ms": 275,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 12289,
-        "output_tokens": 65,
-        "latency_ms": 281,
-        "response_bytes": 752,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 55465,
+    "total_input_tokens": 144185,
+    "total_output_tokens": 10024,
+    "tool_calls": 11,
+    "tool_call_log": [],
+    "wall_clock_ms": 146786,
     "errors": [
-      "Usage: brow scroll [OPTIONS]\nTry 'brow scroll --help' for help.\n\u256d\u2500 Error \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Got unexpected extra argument (800)                                          \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f"
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
     ],
-    "error_recoveries": 0,
-    "final_output": {},
-    "run_id": "3303b0e9",
-    "timestamp": "2026-04-04T10:41:50.523504+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 15
-  },
-  {
-    "task_id": "dynamic-content",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 33366,
-    "total_output_tokens": 1559,
-    "tool_calls": 10,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2208,
-        "output_tokens": 96,
-        "latency_ms": 415,
-        "response_bytes": 165,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_wait",
-        "input_tokens": 2378,
-        "output_tokens": 137,
-        "latency_ms": 279,
-        "response_bytes": 47,
-        "success": false,
-        "error": "Error (500): Internal Server Error"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 2539,
-        "output_tokens": 109,
-        "latency_ms": 3294,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_snapshot",
-        "input_tokens": 2661,
-        "output_tokens": 54,
-        "latency_ms": 305,
-        "response_bytes": 146,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 2783,
-        "output_tokens": 383,
-        "latency_ms": 294,
-        "response_bytes": 261,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 3259,
-        "output_tokens": 111,
-        "latency_ms": 277,
-        "response_bytes": 726,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 3588,
-        "output_tokens": 237,
-        "latency_ms": 285,
-        "response_bytes": 14,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 4059,
-        "output_tokens": 71,
-        "latency_ms": 274,
-        "response_bytes": 53,
-        "success": false,
-        "error": "Error (400): name 'items' is not defined"
-      },
-      {
-        "name": "brow_eval",
-        "input_tokens": 4595,
-        "output_tokens": 197,
-        "latency_ms": 255,
-        "response_bytes": 135,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 5296,
-        "output_tokens": 164,
-        "latency_ms": 0,
-        "response_bytes": 152,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 35438,
-    "errors": [
-      "Error (500): Internal Server Error",
-      "Error (400): name 'items' is not defined"
-    ],
-    "error_recoveries": 1,
-    "final_output": [
-      {
-        "name": "Alpha",
-        "value": "100"
-      },
-      {
-        "name": "Beta",
-        "value": "200"
-      },
-      {
-        "name": "Gamma",
-        "value": "300"
-      }
-    ],
-    "run_id": "48968ee4",
-    "timestamp": "2026-04-04T10:42:25.985833+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 10
-  },
-  {
-    "task_id": "info-lookup",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 7476,
-    "total_output_tokens": 340,
-    "tool_calls": 3,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2206,
-        "output_tokens": 99,
-        "latency_ms": 543,
-        "response_bytes": 479,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 2514,
-        "output_tokens": 107,
-        "latency_ms": 337,
-        "response_bytes": 343,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 2756,
-        "output_tokens": 134,
-        "latency_ms": 0,
-        "response_bytes": 106,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 7703,
-    "errors": [],
     "error_recoveries": 0,
     "final_output": {
-      "discovery_year": "1779",
-      "discoverer": "Jan Ingenhousz"
+      "dependencies": [
+        {
+          "name": "CoreLib",
+          "version": "2.1.0",
+          "description": "Foundational utilities for the Nexus ecosystem. Provides string manipulation helpers, date formatting, collection utilities (map, filter, group-by), and deep equality checks used throughout the framework."
+        },
+        {
+          "name": "AuthKit",
+          "version": "3.0.0",
+          "description": "Authentication and authorization toolkit for the Nexus ecosystem. Supports OAuth2 flows, JWT issuance and validation, session management with sliding expiry, and role-based access control (RBAC)."
+        },
+        {
+          "name": "Logger",
+          "version": "2.0.1",
+          "description": "Structured logging library with configurable log levels, pluggable formatters (JSON, pretty-print, logfmt), and transport plugins for stdout, files, and remote collectors (OpenTelemetry, Datadog)."
+        }
+      ]
     },
-    "run_id": "c6e71a16",
-    "timestamp": "2026-04-04T10:42:33.707406+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 3
-  },
-  {
-    "task_id": "form-validation-recovery",
-    "backend": "brow",
-    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "success": true,
-    "total_input_tokens": 33470,
-    "total_output_tokens": 1023,
-    "tool_calls": 10,
-    "tool_call_log": [
-      {
-        "name": "brow_session_new",
-        "input_tokens": 2260,
-        "output_tokens": 103,
-        "latency_ms": 416,
-        "response_bytes": 302,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 2481,
-        "output_tokens": 116,
-        "latency_ms": 310,
-        "response_bytes": 296,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 2713,
-        "output_tokens": 88,
-        "latency_ms": 316,
-        "response_bytes": 312,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 2921,
-        "output_tokens": 83,
-        "latency_ms": 304,
-        "response_bytes": 450,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 3164,
-        "output_tokens": 111,
-        "latency_ms": 287,
-        "response_bytes": 453,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 3435,
-        "output_tokens": 92,
-        "latency_ms": 288,
-        "response_bytes": 481,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 3695,
-        "output_tokens": 91,
-        "latency_ms": 282,
-        "response_bytes": 489,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_fill",
-        "input_tokens": 3957,
-        "output_tokens": 88,
-        "latency_ms": 294,
-        "response_bytes": 502,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "brow_click",
-        "input_tokens": 4220,
-        "output_tokens": 84,
-        "latency_ms": 298,
-        "response_bytes": 416,
-        "success": true,
-        "error": null
-      },
-      {
-        "name": "submit_answer",
-        "input_tokens": 4624,
-        "output_tokens": 167,
-        "latency_ms": 0,
-        "response_bytes": 235,
-        "success": true,
-        "error": null
-      }
-    ],
-    "wall_clock_ms": 30148,
-    "errors": [],
-    "error_recoveries": 0,
-    "final_output": {
-      "errors_seen": [
-        "Username must be at least 3 characters",
-        "Valid email is required",
-        "Password must be at least 8 characters"
-      ],
-      "confirmation": "Account created successfully for alice!"
-    },
-    "run_id": "b3353378",
-    "timestamp": "2026-04-04T10:43:03.866347+00:00",
-    "brow_version": "4769292",
-    "conversation_turns": 10
+    "run_id": "465b1d2e",
+    "timestamp": "2026-04-04T13:49:32.770112+00:00",
+    "brow_version": "n/a",
+    "conversation_turns": 11
   }
 ]

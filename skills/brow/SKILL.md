@@ -36,7 +36,7 @@ is informational only, not an error; ignore it or run `pip install
 Syntax is **subcommand-first**, with `-s <id>` on the subcommand:
 
 ```bash
-brow session new --headed          # → 1
+brow session new --reclaim --headed   # → 1
 brow navigate -s 1 "https://example.com"
 brow snapshot -s 1                 # accessibility tree
 brow click -s 1 "text=Login"
@@ -47,12 +47,41 @@ brow screenshot -s 1               # saves to ~/.brow/screenshots/
 brow session delete 1
 ```
 
+### Session rules (read before your first command)
+
+Getting a session is where most brow runs fail. Five rules cover all of it:
+
+1. **Always start with `brow session new --reclaim`.** With no `--profile`, every
+   session takes the profile named `default`, so a session left behind by an
+   earlier run makes a bare `session new` fail with
+   `Profile 'default' already in use by session N`. `--reclaim` closes that
+   holder and takes the profile over. Use it unless you deliberately need a
+   second concurrent browser, in which case give that one its own
+   `--profile <name>`.
+2. **`session new` takes no name.** Not positionally, not with `-s`.
+   `brow session new market_research` and `brow session new -s market_research`
+   are both usage errors. The only options are `--profile`, `--headed`,
+   `--url`, `--reclaim`. `-s <id>` addresses an *existing* session and belongs
+   on every other subcommand.
+3. **`session` has exactly four subcommands:** `new`, `list`, `delete`,
+   `cleanup`. There is no `start`, `close`, `stop` or `info`.
+4. **Ten concurrent sessions is the hard cap.** The eleventh fails with
+   `Max sessions (10) reached`. Run `brow session cleanup` to close all of
+   them, and delete sessions you finish with rather than leaking them.
+   When it had sessions to close, `cleanup` exits 1 with a
+   `RuntimeError: Event loop is closed` traceback even though it succeeded.
+   Confirm with `brow session list` instead of retrying on that error.
+5. **Never invent a session id.** Ids are integers assigned by `session new`,
+   which prints the one you got; `brow session list` is the only other source
+   of truth. Passing a name or a guessed number fails with
+   `Session <x> not found`.
+
 ## Key Commands
 
 | Command | Description |
 |---------|-------------|
-| `session new [--headed] [--profile <name>]` | Start browser session |
-| `session list` / `session delete <id>` / `session cleanup` | List sessions / close one / close all |
+| `session new [--reclaim] [--headed] [--profile <name>] [--url <url>]` | Start browser session; prints the id. Default `--profile` is `default`, so pass `--reclaim` |
+| `session list` / `session delete <id>` / `session cleanup` | List sessions / close one / close all (max 10 concurrent) |
 | `navigate -s <id> <url> [--wait load\|domcontentloaded\|networkidle]` | Go to URL |
 | `wait -s <id> <selector> [--load] [--timeout ms]` | Wait for a selector or the load event — use instead of guessing with `sleep` |
 | `url -s <id>` | Get the current page URL |
@@ -79,7 +108,7 @@ brow session delete 1
 | `state save\|restore <name> -s <id>` / `state list` | Save/restore cookies + localStorage independent of a profile — see below |
 | `actions -s <id> [--json] [--clear]` | View recorded action log for current session |
 | `replay -s <id> <playbook.yaml> [--var k=v]` | Replay a playbook YAML (with optional var overrides) |
-| `eval -s <id> <code>` | Run Python inline; returns `result` + stdout. Helpers: `text(sel)`, `texts(sel)` |
+| `eval -s <id> <code> [--timeout <ms>]` | Run Python inline; returns `result` + stdout. Helpers: `text(sel)`, `texts(sel)`. Default timeout 30000; raise it for long jobs instead of batching, and note there is no `-t` short form |
 | `run -s <id> <file.py> [--arg k=v]` | Run a reusable Python file in the session; same vars as `eval`, plus `args` |
 
 ## Scrolling
@@ -122,6 +151,21 @@ Make requests with the browser's session cookies — essential for reverse-engin
 brow fetch -s 1 "/rest/offer/v2/competitions/136806/matches" | jq
 brow fetch -s 1 "https://example.com/api/data" -X POST -d '{"key":"val"}' -H "Content-Type: application/json"
 ```
+
+**`brow fetch` cannot authenticate against auth-gated JSON APIs.** It forwards the cookie jar, yet
+returns 401 / "not signed in" even when the profile's UI is fully logged in (seen on Luma); injecting
+the session cookie as a header does not help. A 401 from `brow fetch` is therefore NOT evidence of a
+logout: a health check built on it reported "logged out" on every run for weeks. Issue the request
+from inside the loaded page instead:
+
+```python
+js = "async (u) => { const r = await fetch(u, {credentials:'include'}); return {status:r.status, body: await r.text()}; }"
+r = await page.evaluate(js, url)   # brow run -s <sid> file.py; `await` is required
+```
+
+Verify login state with `brow snapshot` or the cookie jar, never with a `brow fetch` status. First
+check whether the endpoint is auth-gated at all: public ones work with `--no-cookies`, and if they
+carry the data, auth is a red herring.
 
 ## Running Python Workflows (`run`)
 
@@ -203,15 +247,16 @@ brow upload -s 1 "[3]" data.csv                   # fails with 500
 Persistent Chromium profiles survive across sessions. Log in once, reuse forever:
 
 ```bash
-brow session new --profile gmail --headed
+brow session new --profile gmail --reclaim --headed
 brow navigate -s 1 "https://gmail.com"
 brow session delete 1
 
 # Next time — already logged in:
-brow session new --profile gmail
+brow session new --profile gmail --reclaim
 ```
 
-**Profile conflict:** `session new` fails if the profile is already in use: `Profile 'default' already in use by session N`. Fix: use a unique `--profile <name>` per concurrent session, or pass `--reclaim` to close the stale session and take over the profile.
+A named profile collides exactly like `default` does when a stale session still
+holds it, so `--reclaim` belongs here too. See "Session rules" above.
 
 ## Saving & Restoring Login State
 
@@ -280,6 +325,7 @@ brow page list -s 1
 
 ## Tips
 
+- Before verifying against `localhost:<port>`, prove which process answers: `lsof -nP -iTCP:<port> -sTCP:LISTEN` should show one row; bind and use `127.0.0.1`; compare content size, not just status; never edit source while something measures a live-reloading server
 - Use `--headed` to see the browser while debugging
 - Use `snapshot` over `screenshot` — it's faster and uses fewer tokens
 - Click/fill accept the snapshot ref directly: `click "[1]"` works (same as `click --ref 1`)
