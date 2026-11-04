@@ -1,0 +1,30 @@
+{
+  "times_square": [
+    {
+      "name": "Jimmy's Corner",
+      "rating": "4.6"
+    },
+    {
+      "name": "The Dickens",
+      "rating": "4.8"
+    },
+    {
+      "name": "Haswell Green's",
+      "rating": "4.7"
+    }
+  ],
+  "prague": [
+    {
+      "name": "The Miners Coffee Old Town",
+      "rating": "4.7"
+    },
+    {
+      "name": "Boardgames cafe Meeples&Coffee",
+      "rating": "4.7"
+    },
+    {
+      "name": "Caf\u00e9 Ebel",
+      "rating": "4.8"
+    }
+  ]
+}
